@@ -72,11 +72,10 @@ default_origins = [
     "https://api.khmerx.org",
 ]
 
-allow_origin_regex = None
+allow_origin_regex = r"^https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?$|^https://([a-z0-9-]+\\.)*khmerx\\.org$"
 origins = CORS_ORIGINS
 if not origins:
     origins = default_origins
-    allow_origin_regex = r"^https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?$"
 
 app.add_middleware(
     CORSMiddleware,

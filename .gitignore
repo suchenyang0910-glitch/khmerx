@@ -6,9 +6,13 @@
 __pycache__/
 *.pyc
 khmerx.db
+*.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 artifacts/
+uploads/proofs/
 frontend/**/node_modules/
 frontend/**/dist/
 frontend/**/.vite/

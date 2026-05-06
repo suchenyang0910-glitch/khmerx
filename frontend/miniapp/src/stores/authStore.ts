@@ -89,7 +89,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ booting: false })
     } catch (e: unknown) {
-      set({ booting: false, error: errorMessage(e, "登录失败") })
+      const msg = errorMessage(e, "登录失败")
+      if (axios.isAxiosError(e) && !e.response) {
+        const origin = window.location.origin
+        const base = (api.defaults.baseURL || "").toString()
+        set({
+          booting: false,
+          error: `Network Error：无法连接到 API。\nOrigin: ${origin}\nAPI: ${base}\n请检查：api 域名/证书是否可用、CORS 是否放行该 Origin、服务器是否可达。`,
+        })
+        return
+      }
+      set({ booting: false, error: msg })
     }
   },
   refreshMe: async () => {
