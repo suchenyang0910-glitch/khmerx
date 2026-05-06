@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv
+.pytest_cache/
+__pycache__/
+*.pyc
+khmerx.db
+*.sqlite
+*.sqlite3
+artifacts/
+frontend/**/node_modules/
+frontend/**/dist/
+frontend/**/.vite/
