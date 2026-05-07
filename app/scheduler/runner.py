@@ -10,6 +10,7 @@ from app.scheduler.jobs import (
     check_repayment_overdue,
     generate_daily_risk_summary,
     generate_repayment_due_reminders,
+    push_pending_risk_events_to_openclaw,
 )
 
 
@@ -76,6 +77,14 @@ def start_scheduler():
         hour=23,
         minute=55,
         id="generate_daily_risk_summary",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        lambda: run_job(push_pending_risk_events_to_openclaw),
+        "interval",
+        minutes=1,
+        id="push_pending_risk_events_to_openclaw",
         replace_existing=True,
     )
 

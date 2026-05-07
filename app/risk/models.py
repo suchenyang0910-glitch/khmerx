@@ -119,6 +119,27 @@ class RiskEvent(Base):
     created_at = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 
+class RiskEventDelivery(Base):
+    __tablename__ = "risk_event_deliveries"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    event_id: Mapped[int] = mapped_column(Integer, ForeignKey("risk_events.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+
+    target: Mapped[str] = mapped_column(String(200), nullable=False, default="openclaw_webhook")
+    status: Mapped[str] = mapped_column(String(30), nullable=False, default="pending")
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_attempt_at = mapped_column(DateTime(timezone=True), nullable=True)
+    delivered_at = mapped_column(DateTime(timezone=True), nullable=True)
+    last_error: Mapped[str] = mapped_column(Text, nullable=True)
+
+    created_at = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+
 class Dispute(Base):
     __tablename__ = "disputes"
 

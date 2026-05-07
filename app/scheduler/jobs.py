@@ -11,7 +11,7 @@ from app.models.user import User
 from app.models.notification import Notification
 from app.ops.service import CollectionService
 from app.risk.engine import RiskEngine
-from app.risk.models import RiskEvent
+from app.risk.models import RiskEvent, RiskEventDelivery
 from app.risk.schemas import RepaymentRiskInput
 from app.risk.service import RiskService
 from app.services.notifications import create_notification, get_or_create_notification_settings
@@ -217,4 +217,60 @@ def generate_repayment_due_reminders(db: Session):
             target_type="schedule",
             target_id=str(s.id),
         )
+
+
+def push_pending_risk_events_to_openclaw(db: Session):
+    from app.services.openclaw_webhook import push_risk_event
+    from app import config
+
+    if not config.OPENCLAW_WEBHOOK_ENABLED:
+        return
+    if not config.OPENCLAW_WEBHOOK_URL:
+        return
+
+    events = (
+        db.query(RiskEvent)
+        .filter(RiskEvent.status == "pending")
+        .order_by(RiskEvent.severity.desc(), RiskEvent.created_at.asc())
+        .limit(50)
+        .all()
+    )
+
+    for ev in events:
+        delivery = db.query(RiskEventDelivery).filter(RiskEventDelivery.event_id == ev.id).first()
+        if delivery and delivery.status == "delivered":
+            continue
+        if not delivery:
+            delivery = RiskEventDelivery(event_id=ev.id)
+            db.add(delivery)
+            db.commit()
+            db.refresh(delivery)
+
+        if delivery.attempt_count >= 10:
+            continue
+
+        try:
+            payload = {
+                "event_id": ev.id,
+                "event_key": str(ev.event_key),
+                "event_type": ev.event_type,
+                "severity": ev.severity,
+                "status": ev.status,
+                "user_id": str(ev.user_id) if ev.user_id else None,
+                "trade_id": str(ev.trade_id) if ev.trade_id else None,
+                "offer_id": str(ev.offer_id) if ev.offer_id else None,
+                "payload": ev.payload,
+                "created_at": ev.created_at.isoformat() if ev.created_at else None,
+            }
+            push_risk_event(payload)
+            delivery.status = "delivered"
+            delivery.delivered_at = datetime.now(timezone.utc)
+            delivery.last_error = None
+        except Exception as e:
+            delivery.status = "failed"
+            delivery.last_error = str(e)
+        finally:
+            delivery.attempt_count = int(delivery.attempt_count or 0) + 1
+            delivery.last_attempt_at = datetime.now(timezone.utc)
+            db.commit()
 
