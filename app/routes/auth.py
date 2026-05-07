@@ -129,8 +129,10 @@ async def telegram_login(
         tokens = get_active_bot_tokens(db)
     except Exception:
         tokens = []
-    if not tokens:
-        tokens = BOT_TOKENS
+
+    for t in BOT_TOKENS:
+        if t and t not in tokens:
+            tokens.append(t)
 
     tg_user = verify_telegram_init_data(req.init_data, tokens)
     if not tg_user:

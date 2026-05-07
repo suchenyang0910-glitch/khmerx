@@ -31,8 +31,10 @@ def get_current_user_tma(
         tokens = get_active_bot_tokens(db)
     except Exception:
         tokens = []
-    if not tokens:
-        tokens = BOT_TOKENS
+
+    for t in BOT_TOKENS:
+        if t and t not in tokens:
+            tokens.append(t)
 
     tg_user = verify_telegram_init_data(init_data, tokens)
     if not tg_user:

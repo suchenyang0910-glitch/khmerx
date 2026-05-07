@@ -146,8 +146,9 @@ def verify_phone_via_telegram_contact(
         tokens = get_active_bot_tokens(db)
     except Exception:
         tokens = []
-    if not tokens:
-        tokens = BOT_TOKENS
+    for t in BOT_TOKENS:
+        if t and t not in tokens:
+            tokens.append(t)
 
     contact = verify_telegram_contact_response(payload.response, tokens)
     if not contact:
