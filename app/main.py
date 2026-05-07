@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
-from app.config import HOST, PORT, CORS_ORIGINS
+from app.config import HOST, PORT, CORS_ORIGINS, validate_runtime_config
 from app.database import init_db
 from app.routes import auth, products, orders, inspections, webhooks, p2p, rates
 from app.routes import interest_rates
@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("🚀 KhmerX API starting...")
+    validate_runtime_config()
     init_db()
     logger.info("✅ Database tables ready")
     from app.scheduler.runner import start_scheduler

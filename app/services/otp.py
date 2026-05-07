@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import logging
 import secrets
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -13,6 +14,9 @@ from app import config
 from app.models.phone_otp import PhoneOtpChallenge
 from app.models.user import User
 from app.services.sms import send_sms
+
+
+logger = logging.getLogger(__name__)
 
 
 def _utcnow() -> datetime:
@@ -27,11 +31,13 @@ def normalize_phone(phone: str) -> str:
 
 
 def _require_secret() -> bytes:
-    if config.OTP_SECRET:
-        return config.OTP_SECRET.encode()
-    if config.OTP_DEV_MODE or config.DEV_TMA_ENABLED:
+    secret = (config.OTP_SECRET or "").strip()
+    if secret:
+        return secret.encode()
+    if config.OTP_DEV_MODE:
         return b"dev-otp-secret"
-    raise HTTPException(status_code=500, detail="OTP_SECRET not configured")
+    logger.error("OTP is misconfigured: missing OTP_SECRET")
+    raise HTTPException(status_code=503, detail="OTP 服务暂不可用，请联系管理员")
 
 
 def _hash_code(secret_key: bytes, salt_hex: str, code: str) -> str:
@@ -91,7 +97,7 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
     db.commit()
     db.refresh(row)
 
-    dev_mode = bool(config.OTP_DEV_MODE or config.DEV_TMA_ENABLED)
+    dev_mode = bool(config.OTP_DEV_MODE)
     if not dev_mode:
         send_sms(
             to=phone_n,

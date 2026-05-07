@@ -62,6 +62,18 @@ OTP_RESEND_MIN_SECONDS = int(os.getenv("OTP_RESEND_MIN_SECONDS", "60"))
 OTP_MAX_VERIFY_ATTEMPTS = int(os.getenv("OTP_MAX_VERIFY_ATTEMPTS", "6"))
 OTP_DAILY_LIMIT = int(os.getenv("OTP_DAILY_LIMIT", "10"))
 
+
+def validate_runtime_config() -> None:
+    secret = (OTP_SECRET or "").strip()
+    if OTP_DEV_MODE:
+        return
+    if not secret:
+        raise RuntimeError("OTP_SECRET is required when OTP_DEV_MODE=false")
+    if secret.lower() in {"change_me", "changeme", "dev-otp-secret"}:
+        raise RuntimeError("OTP_SECRET must be a strong random secret")
+    if len(secret) < 16:
+        raise RuntimeError("OTP_SECRET must be at least 16 characters")
+
 SMS_PROVIDER = os.getenv("SMS_PROVIDER", "")
 SMS_FROM = os.getenv("SMS_FROM", "")
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
