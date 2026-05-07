@@ -10,9 +10,15 @@ def _split_csv(value: str) -> list[str]:
 
 
 BOT_TOKENS = _split_csv(os.getenv("BOT_TOKENS", ""))
+
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
-if BOT_TOKEN and not BOT_TOKENS:
-    BOT_TOKENS = [BOT_TOKEN]
+BOT_PRIMARY = os.getenv("BOT_PRIMARY", "")
+BOT_BACKUP = os.getenv("BOT_BACKUP", "")
+
+for _t in (BOT_TOKEN, BOT_PRIMARY, BOT_BACKUP):
+    t = (_t or "").strip()
+    if t and t not in BOT_TOKENS:
+        BOT_TOKENS.append(t)
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./khmerx.db")
 
