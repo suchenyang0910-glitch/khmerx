@@ -7,7 +7,8 @@ import Badge from "@/components/ui/Badge"
 import { useAuthStore } from "@/stores/authStore"
 import { errorMessage } from "@/utils/errors"
 import { useTelegram } from "@/hooks/useTelegram"
-import { apiV1 } from "@/api/client"
+import axios from "axios"
+import { api, apiV1 } from "@/api/client"
 
 export default function ProfileSetup() {
   const nav = useNavigate()
@@ -176,6 +177,12 @@ export default function ProfileSetup() {
               await updateAba(abaAccount.trim(), abaName.trim())
               nav("/", { replace: true })
             } catch (e: unknown) {
+              if (axios.isAxiosError(e) && !e.response) {
+                const origin = window.location.origin
+                const base = (api.defaults.baseURL || "").toString()
+                setErr(`Network Error：无法连接到 API。\nOrigin: ${origin}\nAPI: ${base}`)
+                return
+              }
               setErr(errorMessage(e, "保存失败"))
             } finally {
               setSaving(false)

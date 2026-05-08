@@ -34,7 +34,10 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("🚀 KhmerX API starting...")
-    validate_runtime_config()
+    try:
+        validate_runtime_config()
+    except Exception:
+        logger.error("Config validation failed; continuing startup", exc_info=True)
     init_db()
     logger.info("✅ Database tables ready")
     from app.scheduler.runner import start_scheduler
