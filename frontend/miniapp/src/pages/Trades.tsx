@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button"
 import { apiV1 } from "@/api/client"
 import { useAuthStore } from "@/stores/authStore"
 import { Clock, ChevronRight } from "lucide-react"
+import { useI18n } from "@/i18n"
 
 type TradeListItemV1 = {
   id: string
@@ -37,6 +38,7 @@ function statusTone(status: string): "blue" | "green" | "yellow" | "red" | "zinc
 }
 
 export default function Trades() {
+  const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const [data, setData] = useState<{ as_borrower: TradeListItemV1[]; as_lender: TradeListItemV1[] } | null>(null)
   const [loading, setLoading] = useState(false)
@@ -78,10 +80,10 @@ export default function Trades() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-sm font-semibold text-zinc-900">我的交易</div>
-          <div className="text-xs text-zinc-500">查看状态、下一步与倒计时</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("trades.title")}</div>
+          <div className="text-xs text-zinc-500">{t("trades.subtitle")}</div>
         </div>
-        <Link to="/borrow"><Button size="sm">创建借款</Button></Link>
+        <Link to="/borrow"><Button size="sm">{t("trades.createBorrow")}</Button></Link>
       </div>
 
       {loading ? (
@@ -91,28 +93,28 @@ export default function Trades() {
         </div>
       ) : trades.length === 0 ? (
         <Card className="p-4">
-          <div className="text-sm text-zinc-700">暂无交易记录</div>
-          <div className="mt-1 text-xs text-zinc-500">先发布借款或去出借市场接单。</div>
+          <div className="text-sm text-zinc-700">{t("trades.empty")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("trades.emptyDesc")}</div>
         </Card>
       ) : (
-        trades.map((t) => {
-          const cd = fmtCountdown(t.lend_deadline)
+        trades.map((trade) => {
+          const cd = fmtCountdown(trade.lend_deadline)
           void now
           return (
-            <Link key={t.id} to={`/trade/${t.id}`}>
+            <Link key={trade.id} to={`/trade/${trade.id}`}>
               <Card className="p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between">
-                  <div className="text-base font-semibold text-zinc-900">${t.amount}</div>
+                  <div className="text-base font-semibold text-zinc-900">${trade.amount}</div>
                   <div className="flex items-center gap-2">
-                    <Badge tone={statusTone(t.status)}>{t.status}</Badge>
+                    <Badge tone={statusTone(trade.status)}>{trade.status}</Badge>
                     <ChevronRight className="h-4 w-4 text-zinc-400" />
                   </div>
                 </div>
-                <div className="mt-1 text-xs text-zinc-500">{t.term_days} 天 · 费率 {t.rate_percent}%</div>
-                {t.status === "matched" && cd ? (
+                <div className="mt-1 text-xs text-zinc-500">{trade.term_days}{t("borrow.days")} · {t("trades.rate")} {trade.rate_percent}%</div>
+                {trade.status === "matched" && cd ? (
                   <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">
                     <Clock className="h-4 w-4" />
-                    <span>等待放款倒计时：{fmtCountdown(t.lend_deadline)}</span>
+                    <span>{t("trades.waitLendCountdown", { time: fmtCountdown(trade.lend_deadline) || "" })}</span>
                   </div>
                 ) : null}
               </Card>

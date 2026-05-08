@@ -39,7 +39,7 @@ async def set_rate(
     db.commit()
     db.refresh(rate)
 
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
 
     logger.info(f"Rate set: USD/KHR buy={buy_rate} sell={sell_rate} source={source}")
     return {
@@ -69,7 +69,7 @@ async def get_current_rate(
         Rate.rate_date == today
     ).order_by(Rate.created_at.desc()).first()
 
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
 
     if not rate:
         # 返回默认汇率

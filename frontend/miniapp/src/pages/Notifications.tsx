@@ -3,8 +3,10 @@ import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import { fetchNotifications, markNotificationRead } from "@/api/v1"
 import type { Notification } from "@/api/types"
+import { useI18n } from "@/i18n"
 
 export default function Notifications() {
+  const { t } = useI18n()
   const [rows, setRows] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -15,7 +17,7 @@ export default function Notifications() {
     try {
       setRows(await fetchNotifications())
     } catch {
-      setError("加载失败，请从 Telegram 重新打开 Mini App")
+      setError(t("noti.loadFailed"))
     } finally {
       setLoading(false)
     }
@@ -29,11 +31,11 @@ export default function Notifications() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-lg font-semibold text-zinc-900">通知</div>
-          <div className="mt-1 text-sm text-zinc-600">系统通知与提醒</div>
+          <div className="text-lg font-semibold text-zinc-900">{t("noti.title")}</div>
+          <div className="mt-1 text-sm text-zinc-600">{t("noti.subtitle")}</div>
         </div>
         <Button variant="secondary" onClick={reload} disabled={loading}>
-          {loading ? "刷新中..." : "刷新"}
+          {loading ? t("noti.refreshing") : t("noti.refresh")}
         </Button>
       </div>
 
@@ -41,7 +43,7 @@ export default function Notifications() {
 
       {rows.length === 0 ? (
         <Card className="p-4">
-          <div className="text-sm text-zinc-600">暂无通知</div>
+          <div className="text-sm text-zinc-600">{t("noti.empty")}</div>
         </Card>
       ) : (
         rows.map((n) => (
@@ -63,7 +65,7 @@ export default function Notifications() {
                     await reload()
                   }}
                 >
-                  已读
+                  {t("noti.markRead")}
                 </Button>
               ) : null}
             </div>
@@ -73,4 +75,3 @@ export default function Notifications() {
     </div>
   )
 }
-

@@ -1,6 +1,6 @@
 """
 KhmerX 多语言适配模块（i18n）
-支持：km（高棉语）、cn（中文） — 默认中文，逐步过渡到全高棉语
+支持：km（高棉语）、en（英语）、cn（中文） — 默认高棉语
 
 用法:
   from app.i18n import t, LANG
@@ -14,6 +14,7 @@ from typing import Optional, Any
 # 柬埔寨人看 KHR 更直观，内部计算用 USD
 CURRENCY = {
     "km": {"symbol": "៛", "code": "KHR", "rate": 4100},
+    "en": {"symbol": "$", "code": "USD", "rate": 1.0},
     "cn": {"symbol": "$", "code": "USD", "rate": 1.0},
 }
 
@@ -22,174 +23,215 @@ STRINGS = {
     # ── 通用 ──
     "ok": {
         "km": "រួចរាល់",
+        "en": "OK",
         "cn": "成功",
     },
     "error": {
         "km": "កំហុស",
+        "en": "Error",
         "cn": "错误",
     },
     "loading": {
         "km": "កំពុងផ្ទុក...",
+        "en": "Loading...",
         "cn": "加载中...",
     },
     "submit": {
         "km": "ដាក់ស្នើ",
+        "en": "Submit",
         "cn": "提交",
     },
     "cancel": {
         "km": "បោះបង់",
+        "en": "Cancel",
         "cn": "取消",
     },
     "confirm": {
         "km": "បញ្ជាក់",
+        "en": "Confirm",
         "cn": "确认",
     },
 
     # ── 借贷 ──
     "borrow": {
         "km": "ខ្ចីប្រាក់",
+        "en": "Borrow",
         "cn": "借款",
     },
     "lend": {
         "km": "ឱ្យខ្ចី",
+        "en": "Lend",
         "cn": "放款",
     },
     "loan_amount": {
         "km": "ចំនួនទឹកប្រាក់",
+        "en": "Loan amount",
         "cn": "借款金额",
     },
     "loan_term": {
         "km": "រយៈពេលកម្ចី",
+        "en": "Loan term",
         "cn": "借款期限",
     },
     "interest_rate": {
         "km": "អត្រាការប្រាក់",
+        "en": "Interest rate",
         "cn": "利率",
     },
     "platform_fee": {
         "km": "ថ្លៃសេវាកម្ម",
+        "en": "Platform fee",
         "cn": "平台服务费",
     },
     "total_repayable": {
         "km": "សរុបត្រូវសង",
+        "en": "Total repayable",
         "cn": "总应还",
     },
     "repayment_schedule": {
         "km": "កាលវិភាគសងប្រាក់",
+        "en": "Repayment schedule",
         "cn": "还款计划",
     },
     "period": {
         "km": "វគ្គ",
+        "en": "Period",
         "cn": "第",
     },
     "due_date": {
         "km": "ថ្ងៃកំណត់",
+        "en": "Due date",
         "cn": "到期日",
     },
     "principal": {
         "km": "ដើមទុន",
+        "en": "Principal",
         "cn": "本金",
     },
     "interest": {
         "km": "ការប្រាក់",
+        "en": "Interest",
         "cn": "利息",
     },
     "status_pending": {
         "km": "រង់ចាំ",
+        "en": "Pending",
         "cn": "待处理",
     },
     "status_matched": {
         "km": "បានផ្គូផ្គង",
+        "en": "Matched",
         "cn": "已匹配",
     },
     "status_completed": {
         "km": "បានបញ្ចប់",
+        "en": "Completed",
         "cn": "已完成",
     },
     "status_cancelled": {
         "km": "បានបោះបង់",
+        "en": "Cancelled",
         "cn": "已取消",
     },
     "status_defaulted": {
         "km": "ខកខានសង",
+        "en": "Defaulted",
         "cn": "违约",
     },
     "credit_score": {
         "km": "ពិន្ទុឥណទាន",
+        "en": "Credit score",
         "cn": "信用分",
     },
     "days": {
         "km": "ថ្ងៃ",
+        "en": "days",
         "cn": "天",
     },
     "monthly": {
         "km": "ប្រចាំខែ",
+        "en": "month",
         "cn": "月",
     },
     "proof_upload": {
         "km": "ភស្តុតាងនៃការទូទាត់",
+        "en": "Payment proof",
         "cn": "打款凭证",
     },
     "aba_account": {
         "km": "គណនី ABA",
+        "en": "ABA account",
         "cn": "ABA 账号",
     },
     "aba_name": {
         "km": "ឈ្មោះ ABA",
+        "en": "ABA account name",
         "cn": "ABA 账户名",
     },
     "phone_verify": {
         "km": "ផ្ទៀងផ្ទាត់លេខទូរស័ព្ទ",
+        "en": "Phone verification",
         "cn": "手机号验证",
     },
     "kyc_verify": {
         "km": "ផ្ទៀងផ្ទាត់អត្តសញ្ញាណ",
+        "en": "Identity verification",
         "cn": "身份验证",
     },
     "create_offer": {
         "km": "បង្កើតសំណើខ្ចី",
+        "en": "Create offer",
         "cn": "创建借款挂单",
     },
     "my_offers": {
         "km": "សំណើរបស់ខ្ញុំ",
+        "en": "My offers",
         "cn": "我的挂单",
     },
     "my_trades": {
         "km": "ប្រតិបត្តិការរបស់ខ្ញុំ",
+        "en": "My trades",
         "cn": "我的交易",
     },
 
     # ── 认证 ──
     "no_rate_warning": {
         "km": "មិនទាន់មានអត្រាប្តូរប្រាក់ថ្ងៃនេះទេ កំពុងប្រើតម្លៃលំនាំដើម",
+        "en": "Today's exchange rate is not set yet; using default",
         "cn": "今日汇率尚未设置，正在使用默认值",
     },
 
     # ── 认证 ──
     "login": {
         "km": "ចូល",
+        "en": "Log in",
         "cn": "登录",
     },
     "register": {
         "km": "ចុះឈ្មោះ",
+        "en": "Sign up",
         "cn": "注册",
     },
     "welcome": {
         "km": "សូមស្វាគមន៍មកកាន់ KhmerX",
+        "en": "Welcome to KhmerX",
         "cn": "欢迎来到 KhmerX",
     },
 
     # ── 产品/订单（旧模块） ──
     "product_list": {
         "km": "បញ្ជីផលិតផល",
+        "en": "Products",
         "cn": "商品列表",
     },
     "order_list": {
         "km": "បញ្ជីការបញ្ជាទិញ",
+        "en": "Orders",
         "cn": "订单列表",
     },
     "price": {
         "km": "តម្លៃ",
+        "en": "Price",
         "cn": "价格",
     },
 }
@@ -197,11 +239,12 @@ STRINGS = {
 # 中文期数格式
 PERIOD_FMT = {
     "km": "វគ្គទី{}",
+    "en": "Period {}",
     "cn": "第{}期",
 }
 
 
-def t(key: str, lang: str = "cn", **kwargs: Any) -> str:
+def t(key: str, lang: str = "km", **kwargs: Any) -> str:
     """获取翻译文本"""
     translations = STRINGS.get(key)
     if not translations:
@@ -209,7 +252,7 @@ def t(key: str, lang: str = "cn", **kwargs: Any) -> str:
 
     text = translations.get(lang)
     if not text:
-        text = translations.get("cn", key)  # 默认 fallback 中文
+        text = translations.get("km") or translations.get("cn") or key
 
     if kwargs:
         text = text.format(**kwargs)
@@ -217,7 +260,7 @@ def t(key: str, lang: str = "cn", **kwargs: Any) -> str:
     return text
 
 
-def fmt_amount(usd_amount: float, lang: str = "cn", currency: str = "") -> str:
+def fmt_amount(usd_amount: float, lang: str = "km", currency: str = "") -> str:
     """
     格式化金额显示
     柬埔寨用户默认显示 KHR，中文用户显示 USD
@@ -230,18 +273,18 @@ def fmt_amount(usd_amount: float, lang: str = "cn", currency: str = "") -> str:
         return f"${usd_amount:,.2f}"
 
 
-def fmt_period(period: int, lang: str = "cn") -> str:
+def fmt_period(period: int, lang: str = "km") -> str:
     """格式化期数"""
-    fmt = PERIOD_FMT.get(lang, PERIOD_FMT["cn"])
+    fmt = PERIOD_FMT.get(lang) or PERIOD_FMT.get("km") or PERIOD_FMT["cn"]
     return fmt.format(period)
 
 
-def fmt_days(days: int, lang: str = "cn") -> str:
+def fmt_days(days: int, lang: str = "km") -> str:
     """格式化天数"""
     return f"{days} {t('days', lang)}"
 
 
-def status_text(status: str, lang: str = "cn") -> str:
+def status_text(status: str, lang: str = "km") -> str:
     """状态转本地化文字"""
     key_map = {
         "pending": "status_pending",
@@ -259,7 +302,7 @@ def status_text(status: str, lang: str = "cn") -> str:
     return status
 
 
-def localize_offer(offer_dict: dict, lang: str = "cn", currency: str = "") -> dict:
+def localize_offer(offer_dict: dict, lang: str = "km", currency: str = "") -> dict:
     """将挂单数据本地化"""
     localized = dict(offer_dict)
     localized["_label"] = {
@@ -281,7 +324,7 @@ def localize_offer(offer_dict: dict, lang: str = "cn", currency: str = "") -> di
     return localized
 
 
-def localize_trade(trade_dict: dict, lang: str = "cn", currency: str = "") -> dict:
+def localize_trade(trade_dict: dict, lang: str = "km", currency: str = "") -> dict:
     """将交易数据本地化"""
     localized = dict(trade_dict)
     localized["_label"] = {
@@ -309,7 +352,7 @@ def localize_trade(trade_dict: dict, lang: str = "cn", currency: str = "") -> di
     return localized
 
 
-def localize_schedule(schedule_list: list, lang: str = "cn", currency: str = "") -> list:
+def localize_schedule(schedule_list: list, lang: str = "km", currency: str = "") -> list:
     """本地化还款计划列表"""
     localized = []
     for s in schedule_list:
@@ -323,7 +366,7 @@ def localize_schedule(schedule_list: list, lang: str = "cn", currency: str = "")
     return localized
 
 
-def localize_auth(user_dict: dict, lang: str = "cn") -> dict:
+def localize_auth(user_dict: dict, lang: str = "km") -> dict:
     """本地化用户认证信息"""
     localized = dict(user_dict)
     localized["_label"] = {

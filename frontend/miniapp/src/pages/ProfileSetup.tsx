@@ -9,10 +9,12 @@ import { errorMessage } from "@/utils/errors"
 import { useTelegram } from "@/hooks/useTelegram"
 import axios from "axios"
 import { api, apiV1 } from "@/api/client"
+import { useI18n } from "@/i18n"
 
 export default function ProfileSetup() {
   const nav = useNavigate()
   const { tg } = useTelegram()
+  const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const requestPhoneOtp = useAuthStore((s) => s.requestPhoneOtp)
   const verifyPhoneOtp = useAuthStore((s) => s.verifyPhoneOtp)
@@ -44,14 +46,14 @@ export default function ProfileSetup() {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
       <div className="rounded-2xl bg-white p-4 shadow-sm">
-        <div className="text-sm font-semibold text-zinc-900">完善资料（必须）</div>
-        <div className="mt-1 text-sm text-zinc-600">手机号 + ABA 信息会用于交易确认与风控，缺失会导致流程崩。</div>
+        <div className="text-sm font-semibold text-zinc-900">{t("setup.title")}</div>
+        <div className="mt-1 text-sm text-zinc-600">{t("setup.desc")}</div>
       </div>
 
       <Card className="mt-4 p-4">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold text-zinc-900">手机号</div>
-          <Badge tone={phoneVerified ? "green" : phoneOk ? "yellow" : "yellow"}>{phoneVerified ? "已验证" : "待验证"}</Badge>
+          <Badge tone={phoneVerified ? "green" : phoneOk ? "yellow" : "yellow"}>{phoneVerified ? t("setup.phoneVerified") : t("setup.phonePending")}</Badge>
         </div>
 
         {canTelegramContact ? (
@@ -88,9 +90,9 @@ export default function ProfileSetup() {
                 }
               }}
             >
-              {phoneVerified ? "手机号已验证" : saving ? "处理中…" : "使用 Telegram 验证手机号"}
+              {phoneVerified ? t("setup.phoneVerifiedBtn") : saving ? t("common.processing") : t("setup.useTelegramVerify")}
             </Button>
-            <div className="mt-2 text-xs text-zinc-500">说明：会弹出 Telegram 授权弹窗，你确认后才会写入手机号。</div>
+            <div className="mt-2 text-xs text-zinc-500">{t("setup.phoneTelegramHint")}</div>
           </div>
         ) : null}
 
@@ -118,7 +120,7 @@ export default function ProfileSetup() {
               }
             }}
           >
-            {saving ? "处理中…" : otpCooldown > 0 ? `重新发送(${otpCooldown}s)` : "发送验证码"}
+            {saving ? t("common.processing") : otpCooldown > 0 ? `${t("setup.sendCode")}(${otpCooldown}s)` : t("setup.sendCode")}
           </Button>
           <Button
             className="flex-1"
@@ -136,15 +138,15 @@ export default function ProfileSetup() {
               }
             }}
           >
-            {saving ? "处理中…" : "验证"}
+            {saving ? t("common.processing") : t("setup.verify")}
           </Button>
         </div>
 
         {otpSent ? (
           <div className="mt-2 space-y-2">
-            <Input value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder="输入 6 位验证码" inputMode="numeric" />
+            <Input value={otpCode} onChange={(e) => setOtpCode(e.target.value)} placeholder={t("setup.codePlaceholder")} inputMode="numeric" />
             {otpDevCode ? (
-              <div className="text-xs text-zinc-500">本地开发验证码：{otpDevCode}</div>
+              <div className="text-xs text-zinc-500">{t("setup.devCode", { code: otpDevCode })}</div>
             ) : null}
           </div>
         ) : null}
@@ -153,11 +155,11 @@ export default function ProfileSetup() {
       <Card className="mt-3 p-4">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold text-zinc-900">ABA 账户</div>
-          <Badge tone={abaOk ? "green" : "yellow"}>{abaOk ? "已填写" : "待填写"}</Badge>
+          <Badge tone={abaOk ? "green" : "yellow"}>{abaOk ? t("setup.abaFilled") : t("setup.abaPending")}</Badge>
         </div>
         <div className="mt-2 space-y-2">
-          <Input value={abaAccount} onChange={(e) => setAbaAccount(e.target.value)} placeholder="ABA 账号" />
-          <Input value={abaName} onChange={(e) => setAbaName(e.target.value)} placeholder="ABA 账户名" />
+          <Input value={abaAccount} onChange={(e) => setAbaAccount(e.target.value)} placeholder={t("setup.abaAccount")} />
+          <Input value={abaName} onChange={(e) => setAbaName(e.target.value)} placeholder={t("setup.abaName")} />
         </div>
       </Card>
 
@@ -180,16 +182,16 @@ export default function ProfileSetup() {
               if (axios.isAxiosError(e) && !e.response) {
                 const origin = window.location.origin
                 const base = (api.defaults.baseURL || "").toString()
-                setErr(`Network Error：无法连接到 API。\nOrigin: ${origin}\nAPI: ${base}`)
+                setErr(`${t("common.networkError")}\nOrigin: ${origin}\nAPI: ${base}`)
                 return
               }
-              setErr(errorMessage(e, "保存失败"))
+              setErr(errorMessage(e, t("setup.saveFailed")))
             } finally {
               setSaving(false)
             }
           }}
         >
-          {saving ? "保存中…" : phoneVerified ? "保存并继续" : "请先验证手机号"}
+          {saving ? t("common.saving") : phoneVerified ? t("common.saveContinue") : t("setup.verifyPhoneFirst")}
         </Button>
         <div className="text-xs text-zinc-500">
           说明：KhmerX 不会向陌生人主动私聊；所有通知都需要你主动触发或订阅。

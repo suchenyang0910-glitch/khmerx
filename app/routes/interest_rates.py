@@ -88,7 +88,7 @@ async def list_rates(
             "enabled": r.enabled,
         })
 
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
     return {
         "total": len(result),
         "rates": result,
@@ -133,7 +133,7 @@ async def calculate_rate(
     if rate_percent is None:
         raise HTTPException(status_code=400, detail="No matching rate for the given credit level and term")
 
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
 
     result = InterestCalculator.calc_cut_interest_loan(amount, term_days, rate_percent)
 

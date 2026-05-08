@@ -139,7 +139,7 @@ async def telegram_login(
         raise HTTPException(status_code=401, detail="Invalid Telegram init data")
 
     user = login_or_register(db, tg_user)
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
     return localize_auth({
         "id": str(user.id),
         "global_user_id": str(user.id),
@@ -169,7 +169,7 @@ async def get_me(
 ):
     """获取当前用户信息"""
     user = _get_user(db, user_id)
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
     return localize_auth({
         "id": str(user.id),
         "global_user_id": str(user.id),
@@ -374,7 +374,7 @@ async def get_credit_score(
 ):
     """查看我的信用分"""
     user = _get_user(db, user_id)
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
 
     return {
         "user_id": str(user.id),

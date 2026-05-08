@@ -9,6 +9,7 @@ import { apiV1 } from "@/api/client"
 import { useAuthStore } from "@/stores/authStore"
 import { errorMessage } from "@/utils/errors"
 import { Shield, TrendingUp } from "lucide-react"
+import { useI18n } from "@/i18n"
 
 type Tab = "steady" | "recommended" | "high"
 
@@ -32,6 +33,7 @@ type MarketOffer = {
 
 export default function Lend() {
   const nav = useNavigate()
+  const { t } = useI18n()
   const me = useAuthStore((s) => s.user)
   const [tab, setTab] = useState<Tab>("steady")
   const [offers, setOffers] = useState<MarketOffer[]>([])
@@ -52,7 +54,7 @@ export default function Lend() {
         const list = res.data.data || []
         if (!cancelled) setOffers(list)
       } catch (e: unknown) {
-        if (!cancelled) setErr(errorMessage(e, "加载失败"))
+        if (!cancelled) setErr(errorMessage(e, t("lend.loadFailed")))
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -91,17 +93,17 @@ export default function Lend() {
   return (
     <div className="space-y-4">
       <div>
-        <div className="text-sm font-semibold text-zinc-900">出借市场</div>
-        <div className="mt-1 text-xs text-zinc-500">看得懂风险 · 确认收益 · 再出借</div>
+        <div className="text-sm font-semibold text-zinc-900">{t("lend.market")}</div>
+        <div className="mt-1 text-xs text-zinc-500">{t("lend.marketDesc")}</div>
       </div>
 
       <Segmented<Tab>
         value={tab}
         onChange={setTab}
         options={[
-          { value: "steady", label: "稳健" },
-          { value: "recommended", label: "推荐" },
-          { value: "high", label: "高收益" },
+          { value: "steady", label: t("lend.tabSteady") },
+          { value: "recommended", label: t("lend.tabRecommended") },
+          { value: "high", label: t("lend.tabHigh") },
         ]}
       />
 
@@ -112,18 +114,18 @@ export default function Lend() {
         </div>
       ) : err ? (
         <Card className="p-4">
-          <div className="text-sm font-semibold text-zinc-900">加载失败</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("lend.loadFailed")}</div>
           <div className="mt-2 text-sm text-zinc-600">{err}</div>
         </Card>
       ) : filtered.length === 0 ? (
         <Card className="p-4">
-          <div className="text-sm text-zinc-700">暂无符合条件的挂单</div>
-          <div className="mt-1 text-xs text-zinc-500">你可以切换分类或稍后再来。</div>
+          <div className="text-sm text-zinc-700">{t("lend.empty")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("lend.emptyDesc")}</div>
         </Card>
       ) : (
         <div className="space-y-3">
           {filtered.map(({ offer, creditLevel, isNew }) => {
-            const rb = offer.risk_level === "low" ? { label: "低风险", tone: "green" as const } : offer.risk_level === "mid" ? { label: "中风险", tone: "yellow" as const } : { label: "高风险", tone: "red" as const }
+            const rb = offer.risk_level === "low" ? { label: t("lend.riskLow"), tone: "green" as const } : offer.risk_level === "mid" ? { label: t("lend.riskMid"), tone: "yellow" as const } : { label: t("lend.riskHigh"), tone: "red" as const }
             const profit = offer.interest
             return (
               <Card key={offer.id} className="p-4">
@@ -131,16 +133,16 @@ export default function Lend() {
                   <div className="text-lg font-bold text-zinc-900">${offer.amount}</div>
                   <div className="text-green-600 font-bold">+${profit.toFixed(2)}</div>
                 </div>
-                <div className="mt-1 text-xs text-zinc-500">{offer.term_days}天 · 收益 {offer.rate_percent}%</div>
+                <div className="mt-1 text-xs text-zinc-500">{offer.term_days}{t("borrow.days")} · {t("lend.yield")} {offer.rate_percent}%</div>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Badge tone={creditLevel === "A" ? "green" : creditLevel === "B" ? "blue" : creditLevel === "C" ? "yellow" : "red"}>信用 {creditLevel}</Badge>
+                  <Badge tone={creditLevel === "A" ? "green" : creditLevel === "B" ? "blue" : creditLevel === "C" ? "yellow" : "red"}>{t("me.credit", { level: creditLevel })}</Badge>
                   <Badge tone={rb.tone}>{rb.label}</Badge>
-                  {isNew ? <Badge tone="red">新用户</Badge> : null}
-                  <Badge tone="zinc">完成单 {offer.borrower_completed_trades}</Badge>
-                  <Badge tone={offer.borrower_overdue_count > 0 ? "yellow" : "zinc"}>逾期 {offer.borrower_overdue_count}</Badge>
+                  {isNew ? <Badge tone="red">{t("lend.newUser")}</Badge> : null}
+                  <Badge tone="zinc">{t("lend.completed", { count: offer.borrower_completed_trades })}</Badge>
+                  <Badge tone={offer.borrower_overdue_count > 0 ? "yellow" : "zinc"}>{t("lend.overdue", { count: offer.borrower_overdue_count })}</Badge>
                 </div>
 
-                <Button className="mt-3 w-full" onClick={() => openConfirm(offer)}>出借（先确认）</Button>
+                <Button className="mt-3 w-full" onClick={() => openConfirm(offer)}>{t("lend.lendConfirm")}</Button>
               </Card>
             )
           })}
@@ -153,28 +155,28 @@ export default function Lend() {
             <Shield className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-zinc-900">资金说明</div>
-            <div className="mt-1 text-sm text-zinc-600">平台提供撮合与风控信息，不承诺兜底。请在确认风险后出借。</div>
+            <div className="text-sm font-semibold text-zinc-900">{t("lend.funds")}</div>
+            <div className="mt-1 text-sm text-zinc-600">{t("lend.fundsDesc")}</div>
           </div>
         </div>
       </Card>
 
-      <Modal open={open} title="确认出借" onClose={() => setOpen(false)}>
+      <Modal open={open} title={t("lend.modalTitle")} onClose={() => setOpen(false)}>
         <div className="space-y-3">
           {selected ? (
             <>
               <Card className="p-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-zinc-900">你将借出：${selected.amount}</div>
-                  <Badge tone="zinc">{selected.term_days}天</Badge>
+                  <div className="text-sm font-semibold text-zinc-900">{t("lend.youWillLend", { amount: selected.amount })}</div>
+                  <Badge tone="zinc">{selected.term_days}{t("borrow.days")}</Badge>
                 </div>
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <div className="rounded-2xl bg-zinc-50 p-3">
-                    <div className="text-xs text-zinc-500">预计收益</div>
+                    <div className="text-xs text-zinc-500">{t("lend.expectedProfit")}</div>
                     <div className="mt-1 text-base font-semibold text-green-700">+${selected.interest.toFixed(2)}</div>
                   </div>
                   <div className="rounded-2xl bg-zinc-50 p-3">
-                    <div className="text-xs text-zinc-500">到期收回</div>
+                    <div className="text-xs text-zinc-500">{t("lend.receiveAtDue")}</div>
                     <div className="mt-1 text-base font-semibold text-zinc-900">${selected.repay_amount.toFixed(2)}</div>
                   </div>
                 </div>
@@ -184,8 +186,8 @@ export default function Lend() {
                 <div className="flex items-start gap-2">
                   <TrendingUp className="mt-0.5 h-4 w-4" />
                   <div>
-                    <div className="font-semibold">请仅在确认风险后出借</div>
-                    <div className="mt-1 text-xs">下一步：接单后在交易页查看 ABA 信息并上传打款凭证。</div>
+                    <div className="font-semibold">{t("lend.warnTitle")}</div>
+                    <div className="mt-1 text-xs">{t("lend.warnDesc")}</div>
                   </div>
                 </div>
               </div>
@@ -202,17 +204,17 @@ export default function Lend() {
                     setOpen(false)
                     nav(`/trade/${res.data.data.trade_id}`)
                   } catch (e: unknown) {
-                    setErr(errorMessage(e, "接单失败"))
+                    setErr(errorMessage(e, t("lend.matchFailed")))
                   } finally {
                     setConfirming(false)
                   }
                 }}
               >
-                {confirming ? "处理中…" : "确认出借（接单）"}
+                {confirming ? t("common.processing") : t("lend.confirmMatch")}
               </Button>
             </>
           ) : (
-            <div className="text-sm text-zinc-600">请选择一个挂单</div>
+            <div className="text-sm text-zinc-600">{t("lend.pickOffer")}</div>
           )}
 
           {err ? <div className="rounded-2xl bg-red-50 p-3 text-sm text-red-700">{err}</div> : null}

@@ -4,37 +4,28 @@ import Button from "@/components/ui/Button"
 import Card from "@/components/ui/Card"
 import { ShieldCheck, HandCoins, Users } from "lucide-react"
 import { useAuthStore } from "@/stores/authStore"
-
-const steps = [
-  {
-    title: "什么是 KhmerX",
-    desc: "KhmerX 是本地信任的 P2P 微借贷撮合系统，让借款与出借更透明。",
-    icon: ShieldCheck,
-  },
-  {
-    title: "如何借钱",
-    desc: "选择金额与期限 → 生成挂单 → 出借人接单 → 双方确认 → 按期还款。",
-    icon: HandCoins,
-  },
-  {
-    title: "安全说明",
-    desc: "平台不主动私聊、不批量拉群；所有通知必须由你触发或订阅；关键步骤都有记录。",
-    icon: Users,
-  },
-]
+import { useI18n } from "@/i18n"
 
 export default function Onboarding() {
+  const { t } = useI18n()
   const [i, setI] = useState(0)
   const setOnboardingDone = useAuthStore((s) => s.setOnboardingDone)
   const nav = useNavigate()
-  const step = useMemo(() => steps[i], [i])
+  const steps = useMemo(() => {
+    return [
+      { title: t("onboarding.s1.title"), desc: t("onboarding.s1.desc"), icon: ShieldCheck },
+      { title: t("onboarding.s2.title"), desc: t("onboarding.s2.desc"), icon: HandCoins },
+      { title: t("onboarding.s3.title"), desc: t("onboarding.s3.desc"), icon: Users },
+    ]
+  }, [t])
+  const step = useMemo(() => steps[i], [i, steps])
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
       <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-5 text-white shadow-sm">
-        <div className="text-xs opacity-90">KhmerX Mini App</div>
-        <div className="mt-1 text-lg font-semibold">金融 + 本地信任 + 现代科技</div>
-        <div className="mt-2 text-sm opacity-90">3 屏了解清楚，避免迷路与纠纷</div>
+        <div className="text-xs opacity-90">{t("onboarding.brand")}</div>
+        <div className="mt-1 text-lg font-semibold">{t("onboarding.title")}</div>
+        <div className="mt-2 text-sm opacity-90">{t("onboarding.subtitle")}</div>
       </div>
 
       <Card className="mt-4 p-4">
@@ -57,7 +48,7 @@ export default function Onboarding() {
               disabled={i === 0}
               onClick={() => setI((v) => Math.max(0, v - 1))}
             >
-              上一页
+              {t("onboarding.prev")}
             </Button>
             <Button
               size="sm"
@@ -69,16 +60,15 @@ export default function Onboarding() {
                 }
               }}
             >
-              {i < steps.length - 1 ? "下一页" : "开始使用"}
+              {i < steps.length - 1 ? t("onboarding.next") : t("onboarding.start")}
             </Button>
           </div>
         </div>
       </Card>
 
       <div className="mt-4 text-xs text-zinc-500">
-        继续即表示你理解：借款会显示“实际到账/到期需还”，并以双方确认与凭证为准。
+        {t("onboarding.footer")}
       </div>
     </div>
   )
 }
-

@@ -99,9 +99,9 @@ async def add_lang_header(request: Request, call_next):
     """
     lang = request.headers.get("X-Lang", "")
     if not lang:
-        lang = request.query_params.get("lang", "cn")
-    if lang not in ("km", "cn"):
-        lang = "cn"
+        lang = request.query_params.get("lang", "km")
+    if lang not in ("km", "en", "cn"):
+        lang = "km"
     request.state.lang = lang
     response = await call_next(request)
     return response

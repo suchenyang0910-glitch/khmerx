@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore"
 import type { AppUser } from "@/api/types"
 import { api } from "@/api/client"
 import axios from "axios"
+import { useI18n } from "@/i18n"
 
 function needsProfile(user: AppUser | null) {
   const phoneOk = Boolean((user?.phone || "").trim()) && Boolean(user?.phone_verified)
@@ -16,6 +17,7 @@ function needsProfile(user: AppUser | null) {
 
 export default function AppShell() {
   const { initData, tg } = useTelegram()
+  const { t } = useI18n()
   const { pathname } = useLocation()
   const booting = useAuthStore((s) => s.booting)
   const error = useAuthStore((s) => s.error)
@@ -111,8 +113,8 @@ export default function AppShell() {
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA]">
         <div className="p-4">
           <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white shadow-sm">
-            <div className="text-sm opacity-90">KhmerX</div>
-            <div className="mt-1 text-lg font-semibold">正在加载你的账户…</div>
+            <div className="text-sm opacity-90">{t("app.brand")}</div>
+            <div className="mt-1 text-lg font-semibold">{t("common.loadingAccount")}</div>
           </div>
           <div className="mt-4 space-y-3">
             <div className="h-20 animate-pulse rounded-2xl bg-white" />
@@ -128,10 +130,10 @@ export default function AppShell() {
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] p-4">
         <div className="rounded-2xl bg-white p-4 shadow-sm">
-          <div className="text-sm font-semibold text-zinc-900">无法登录</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("auth.loginFailed")}</div>
           <div className="mt-2 text-sm text-zinc-600">{error}</div>
           <div className="mt-4">
-            <Button onClick={() => window.location.reload()} className="w-full">刷新重试</Button>
+            <Button onClick={() => window.location.reload()} className="w-full">{t("common.retry")}</Button>
           </div>
 
           {canDevBoot ? (
@@ -197,15 +199,15 @@ export default function AppShell() {
       <header className="sticky top-0 z-30 border-b border-zinc-200 bg-white/90 backdrop-blur">
         <div className="flex items-center justify-between px-4 py-3">
           <div>
-            <div className="text-xs text-zinc-500">Verified · Trusted · Secure</div>
-            <div className="text-sm font-semibold text-zinc-900">KhmerX</div>
+            <div className="text-xs text-zinc-500">{t("app.tagline")}</div>
+            <div className="text-sm font-semibold text-zinc-900">{t("app.brand")}</div>
           </div>
           <div className="text-xs text-zinc-600">{user?.name || ""}</div>
         </div>
         {blocked ? (
           <div className="px-4 pb-3">
             <div className="rounded-2xl bg-amber-50 p-3 text-sm text-amber-900">
-              你的账户当前受限，部分操作已关闭。请在“我的”查看原因。
+              {t("shell.accountRestricted")}
             </div>
           </div>
         ) : null}

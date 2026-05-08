@@ -7,8 +7,10 @@ import { useAuthStore } from "@/stores/authStore"
 import { scoreToLevel } from "@/utils/credit"
 import { Bell } from "lucide-react"
 import { fetchNotificationSettings, updateNotificationSettings, type NotificationSettings } from "@/api/v1"
+import { SUPPORTED_LANGS, useI18n } from "@/i18n"
 
 export default function Me() {
+  const { lang, setLang, t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
   const level = scoreToLevel(user?.credit_score || 650)
@@ -27,11 +29,11 @@ export default function Me() {
   }, [])
 
   const reasons: string[] = []
-  if (risk?.overdue_count) reasons.push(`有 ${risk.overdue_count} 次逾期记录`)
-  if (risk?.default_count) reasons.push(`有 ${risk.default_count} 次违约记录`)
-  if (risk?.cancel_count && risk.cancel_count >= 3) reasons.push("取消次数偏高")
+  if (risk?.overdue_count) reasons.push(t("me.riskOverdue", { count: risk.overdue_count }))
+  if (risk?.default_count) reasons.push(t("me.riskDefault", { count: risk.default_count }))
+  if (risk?.cancel_count && risk.cancel_count >= 3) reasons.push(t("me.riskCancelHigh"))
   if (risk?.block_reason) reasons.push(risk.block_reason)
-  if (!reasons.length) reasons.push("暂无明显负面记录")
+  if (!reasons.length) reasons.push(t("me.noNeg"))
 
   return (
     <div className="space-y-4">
@@ -41,20 +43,34 @@ export default function Me() {
             <div className="text-sm font-semibold text-zinc-900">{user?.name || ""}</div>
             <div className="mt-1 text-xs text-zinc-500">tg_id: {user?.tg_id}</div>
           </div>
-          <Badge tone={level === "A" ? "green" : level === "B" ? "blue" : level === "C" ? "yellow" : "red"}>信用 {level}</Badge>
+          <Badge tone={level === "A" ? "green" : level === "B" ? "blue" : level === "C" ? "yellow" : "red"}>{t("me.credit", { level })}</Badge>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-2xl bg-zinc-50 p-3">
-            <div className="text-xs text-zinc-500">手机号</div>
-            <div className="mt-1 text-sm font-medium text-zinc-900">{user?.phone || "未填写"}</div>
+            <div className="text-xs text-zinc-500">{t("me.phone")}</div>
+            <div className="mt-1 text-sm font-medium text-zinc-900">{user?.phone || t("me.notSet")}</div>
           </div>
           <div className="rounded-2xl bg-zinc-50 p-3">
-            <div className="text-xs text-zinc-500">ABA</div>
-            <div className="mt-1 text-sm font-medium text-zinc-900">{user?.aba_account ? "已绑定" : "未绑定"}</div>
+            <div className="text-xs text-zinc-500">{t("me.aba")}</div>
+            <div className="mt-1 text-sm font-medium text-zinc-900">{user?.aba_account ? t("me.bound") : t("me.unbound")}</div>
           </div>
         </div>
         <div className="mt-3">
-          <Link to="/setup"><Button variant="secondary" className="w-full">修改资料</Button></Link>
+          <Link to="/setup"><Button variant="secondary" className="w-full">{t("auth.profileEdit")}</Button></Link>
+        </div>
+      </Card>
+
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-semibold text-zinc-900">{t("me.language")}</div>
+          <div className="text-xs text-zinc-500">{lang.toUpperCase()}</div>
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {SUPPORTED_LANGS.map((l) => (
+            <Button key={l} variant={lang === l ? "primary" : "secondary"} onClick={() => setLang(l)}>
+              {t(`lang.${l}`)}
+            </Button>
+          ))}
         </div>
       </Card>
 
@@ -65,11 +81,11 @@ export default function Me() {
               <Bell className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-semibold text-zinc-900">通知</div>
-              <div className="mt-1 text-xs text-zinc-500">还款提醒、系统消息、争议处理结果</div>
+              <div className="text-sm font-semibold text-zinc-900">{t("me.notifications")}</div>
+              <div className="mt-1 text-xs text-zinc-500">{t("me.notificationsDesc")}</div>
             </div>
           </div>
-          <Link to="/notifications" className="text-sm text-blue-600">查看</Link>
+          <Link to="/notifications" className="text-sm text-blue-600">{t("me.view")}</Link>
         </div>
 
         {ns ? (
@@ -87,7 +103,7 @@ export default function Me() {
                 }
               }}
             >
-              还款提醒：{ns.repayment_reminders ? "开" : "关"}
+              {t("me.repayRemind")}：{ns.repayment_reminders ? t("me.on") : t("me.off")}
             </Button>
             <Button
               variant={ns.dispute_updates ? "primary" : "secondary"}
@@ -102,15 +118,15 @@ export default function Me() {
                 }
               }}
             >
-              争议更新：{ns.dispute_updates ? "开" : "关"}
+              {t("me.disputeUpdates")}：{ns.dispute_updates ? t("me.on") : t("me.off")}
             </Button>
           </div>
         ) : null}
       </Card>
 
       <Card className="p-4">
-        <div className="text-sm font-semibold text-zinc-900">风控解释（避免投诉）</div>
-        <div className="mt-2 text-sm text-zinc-700">你的风控状态：<span className="font-semibold">{risk?.risk_level || user?.risk_level || "normal"}</span></div>
+        <div className="text-sm font-semibold text-zinc-900">{t("me.riskExplain")}</div>
+        <div className="mt-2 text-sm text-zinc-700">{t("me.riskStatus")}: <span className="font-semibold">{risk?.risk_level || user?.risk_level || "normal"}</span></div>
         <div className="mt-2 space-y-1 text-sm text-zinc-600">
           {reasons.map((r) => (
             <div key={r}>- {r}</div>
@@ -119,11 +135,11 @@ export default function Me() {
       </Card>
 
       <Card className="p-4">
-        <div className="text-sm font-semibold text-zinc-900">如何提高额度</div>
+        <div className="text-sm font-semibold text-zinc-900">{t("me.howIncrease")}</div>
         <div className="mt-2 space-y-1 text-sm text-zinc-600">
-          <div>- 完成 1-2 笔借款并按时还款</div>
-          <div>- 避免逾期与频繁取消</div>
-          <div>- 绑定手机号与 ABA 信息</div>
+          <div>- {t("me.how1")}</div>
+          <div>- {t("me.how2")}</div>
+          <div>- {t("me.how3")}</div>
         </div>
       </Card>
     </div>

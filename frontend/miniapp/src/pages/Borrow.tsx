@@ -8,6 +8,7 @@ import { apiV1 } from "@/api/client"
 import { useAuthStore } from "@/stores/authStore"
 import { scoreToLevel } from "@/utils/credit"
 import { errorMessage } from "@/utils/errors"
+import { useI18n } from "@/i18n"
 
 type CalcResultV1 = {
   amount: number
@@ -25,6 +26,7 @@ function clamp(n: number, min: number, max: number) {
 
 export default function Borrow() {
   const nav = useNavigate()
+  const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
 
@@ -65,7 +67,7 @@ export default function Borrow() {
         })
         if (!cancelled) setCalc(res.data.data)
       } catch (e: unknown) {
-        if (!cancelled) setErr(errorMessage(e, "试算失败"))
+        if (!cancelled) setErr(errorMessage(e, t("borrow.calcFailed")))
       } finally {
         if (!cancelled) setLoadingCalc(false)
       }
@@ -88,24 +90,24 @@ export default function Borrow() {
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-xs text-zinc-500">可借额度</div>
+            <div className="text-xs text-zinc-500">{t("borrow.max")}</div>
             <div className="mt-1 text-2xl font-bold text-zinc-900">${Math.round(maxBorrow)}</div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-zinc-500">信用等级</div>
+            <div className="text-xs text-zinc-500">{t("borrow.creditLevel")}</div>
             <div className="mt-1 text-2xl font-bold text-zinc-900">{creditLevel}</div>
           </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
-          {isNewUser ? <Badge tone="blue">新用户首单建议 ≤ $100</Badge> : <Badge tone="green">按时还款可提升额度</Badge>}
-          <Badge tone="zinc">推荐借款：${suggested}</Badge>
+          {isNewUser ? <Badge tone="blue">{t("borrow.newUserFirst")}</Badge> : <Badge tone="green">{t("borrow.onTimeMore")}</Badge>}
+          <Badge tone="zinc">{t("borrow.suggest")}: ${suggested}</Badge>
         </div>
       </Card>
 
       <Card className="p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-zinc-900">金额</div>
-          {limited ? <Badge tone="red">超过额度</Badge> : <Badge tone="zinc">$ {amount}</Badge>}
+          <div className="text-sm font-semibold text-zinc-900">{t("borrow.amount")}</div>
+          {limited ? <Badge tone="red">{t("borrow.overLimit")}</Badge> : <Badge tone="zinc">$ {amount}</Badge>}
         </div>
 
         <div className="mt-3">
@@ -125,7 +127,7 @@ export default function Borrow() {
             type="number"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value || 0))}
-            placeholder="输入金额"
+            placeholder={t("borrow.enterAmount")}
             min={0}
           />
         </div>
@@ -138,25 +140,25 @@ export default function Borrow() {
               className="flex-1"
               onClick={() => setTerm(d as 7 | 14 | 30)}
             >
-              {d}天
+              {d}{t("borrow.days")}
             </Button>
           ))}
         </div>
       </Card>
 
       <Card className="p-4">
-        <div className="text-sm font-semibold text-zinc-900">关键说明（避免纠纷）</div>
+        <div className="text-sm font-semibold text-zinc-900">{t("borrow.keyInfo")}</div>
         <div className="mt-2 grid grid-cols-3 gap-2">
           <div className="rounded-2xl bg-blue-50 p-3">
-            <div className="text-xs text-zinc-600">到账金额</div>
+            <div className="text-xs text-zinc-600">{t("borrow.receive")}</div>
             <div className="mt-1 text-base font-semibold text-zinc-900">${receive.toFixed(2)}</div>
           </div>
           <div className="rounded-2xl bg-zinc-50 p-3">
-            <div className="text-xs text-zinc-600">利息</div>
+            <div className="text-xs text-zinc-600">{t("borrow.interest")}</div>
             <div className="mt-1 text-base font-semibold text-zinc-900">${interest.toFixed(2)}</div>
           </div>
           <div className="rounded-2xl bg-amber-50 p-3">
-            <div className="text-xs text-zinc-600">到期需还</div>
+            <div className="text-xs text-zinc-600">{t("borrow.repayAtEnd")}</div>
             <div className="mt-1 text-base font-semibold text-zinc-900">${repay.toFixed(2)}</div>
           </div>
         </div>
@@ -166,7 +168,7 @@ export default function Borrow() {
         </div>
 
         <div className="mt-3 text-xs text-zinc-500">
-          提示：按时还款可提升信用与额度；逾期会降低信用并影响后续借款。
+          {t("borrow.tip")}
         </div>
       </Card>
 
@@ -185,13 +187,13 @@ export default function Borrow() {
             await apiV1.post("/offers", { amount, term_days: term, note: "" })
             nav("/trades")
           } catch (e: unknown) {
-            setErr(errorMessage(e, "创建失败"))
+            setErr(errorMessage(e, t("borrow.createFailed")))
           } finally {
             setSubmitting(false)
           }
         }}
       >
-        {submitting ? "提交中…" : "立即借款（发布挂单）"}
+        {submitting ? t("borrow.submitting") : t("borrow.submit")}
       </Button>
     </div>
   )

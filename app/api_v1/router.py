@@ -1025,7 +1025,7 @@ def list_announcements_v1(
     user: User = Depends(get_current_user_tma),
     db: Session = Depends(get_db),
 ):
-    lang = getattr(request.state, "lang", "cn")
+    lang = getattr(request.state, "lang", "km")
     if lang not in ("km", "cn"):
         lang = "cn"
     website_lang = "km" if lang == "km" else "zh"

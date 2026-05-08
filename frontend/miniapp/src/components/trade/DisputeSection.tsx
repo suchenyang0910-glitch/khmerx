@@ -7,6 +7,7 @@ import { apiV1 } from "@/api/client"
 import type { Dispute } from "@/api/types"
 import { AlertTriangle, Flag } from "lucide-react"
 import { errorMessage } from "@/utils/errors"
+import { useI18n } from "@/i18n"
 
 export default function DisputeSection({
   tradeId,
@@ -25,6 +26,7 @@ export default function DisputeSection({
   onCreated: () => Promise<void>
   onError: (msg: string) => void
 }) {
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const [evidenceOpen, setEvidenceOpen] = useState(false)
   const [reason, setReason] = useState("")
@@ -40,9 +42,9 @@ export default function DisputeSection({
       <Card className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-sm font-semibold text-zinc-900">争议/仲裁</div>
-            <div className="mt-1 text-sm text-zinc-600">凭证与确认存在分歧时可发起争议。</div>
-            {active ? <div className="mt-2 text-xs text-zinc-500">当前争议状态：{active.status}</div> : null}
+            <div className="text-sm font-semibold text-zinc-900">{t("dispute.title")}</div>
+            <div className="mt-1 text-sm text-zinc-600">{t("dispute.desc")}</div>
+            {active ? <div className="mt-2 text-xs text-zinc-500">{t("dispute.current", { status: active.status })}</div> : null}
           </div>
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 text-amber-800">
             <Flag className="h-5 w-5" />
@@ -56,7 +58,7 @@ export default function DisputeSection({
               disabled={tradeStatus === "completed" || Boolean(active)}
               onClick={() => setOpen(true)}
             >
-              发起争议
+              {t("dispute.open")}
             </Button>
             <Button
               variant="secondary"
@@ -64,24 +66,25 @@ export default function DisputeSection({
               disabled={!active}
               onClick={() => setEvidenceOpen(true)}
             >
-              补充证据
+              {t("dispute.addEvidence")}
             </Button>
           </div>
         </div>
       </Card>
 
-      <Modal open={open} title="发起争议" onClose={() => setOpen(false)}>
+      <Modal open={open} title={t("dispute.open")} onClose={() => setOpen(false)}>
         <div className="space-y-3">
           <div className="rounded-2xl bg-amber-50 p-3 text-sm text-amber-900">
             <div className="flex items-start gap-2">
               <AlertTriangle className="mt-0.5 h-4 w-4" />
               <div>
-                <div className="font-semibold">请先确认你已尝试沟通与核对凭证</div>
-                <div className="mt-1 text-xs">争议将记录在案并影响信用评估。</div>
+                <div className="font-semibold">{t("dispute.warnTitle")}</div>
+                <div className="mt-1 text-xs">{t("dispute.warnDesc")}</div>
               </div>
             </div>
           </div>
-          <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="请输入争议原因" />
+          <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={t("dispute.reason")}
+          />
           <Button
             className="w-full"
             disabled={submitting || reason.trim().length < 2}
@@ -93,25 +96,25 @@ export default function DisputeSection({
                 setReason("")
                 await onCreated()
               } catch (e: unknown) {
-                onError(errorMessage(e, "发起失败"))
+                onError(errorMessage(e, t("dispute.openFailed")))
               } finally {
                 setSubmitting(false)
               }
             }}
           >
-            {submitting ? "提交中…" : "提交争议"}
+            {submitting ? t("borrow.submitting") : t("dispute.submit")}
           </Button>
         </div>
       </Modal>
 
-      <Modal open={evidenceOpen} title="补充证据" onClose={() => setEvidenceOpen(false)}>
+      <Modal open={evidenceOpen} title={t("dispute.addEvidence")} onClose={() => setEvidenceOpen(false)}>
         <div className="space-y-3">
           <div className="rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-700">
-            <div className="font-semibold">建议提交</div>
-            <div className="mt-1 text-xs">转账截图/聊天记录/收款记录等能证明事实的材料。</div>
+            <div className="font-semibold">{t("dispute.suggest")}</div>
+            <div className="mt-1 text-xs">{t("dispute.suggestDesc")}</div>
           </div>
-          <Input value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder="证据 URL（可粘贴）" />
-          <Input value={evidenceNote} onChange={(e) => setEvidenceNote(e.target.value)} placeholder="说明（可选）" />
+          <Input value={evidenceUrl} onChange={(e) => setEvidenceUrl(e.target.value)} placeholder={t("dispute.evidenceUrl")} />
+          <Input value={evidenceNote} onChange={(e) => setEvidenceNote(e.target.value)} placeholder={t("dispute.evidenceNote")} />
           <Button
             className="w-full"
             disabled={!active || submitting || evidenceUrl.trim().length < 6}
@@ -130,13 +133,13 @@ export default function DisputeSection({
                 setEvidenceNote("")
                 await onCreated()
               } catch (e: unknown) {
-                onError(errorMessage(e, "提交失败"))
+                onError(errorMessage(e, t("dispute.submitFailed")))
               } finally {
                 setSubmitting(false)
               }
             }}
           >
-            {submitting ? "提交中…" : "提交证据"}
+            {submitting ? t("borrow.submitting") : t("dispute.submitEvidence")}
           </Button>
         </div>
       </Modal>

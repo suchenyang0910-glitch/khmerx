@@ -14,6 +14,7 @@ import type { Dispute } from "@/api/types"
 import { useAuthStore } from "@/stores/authStore"
 import { ArrowLeft } from "lucide-react"
 import { errorMessage } from "@/utils/errors"
+import { useI18n } from "@/i18n"
 
 type ScheduleV1 = {
   id: string
@@ -50,6 +51,7 @@ type TradeV1 = {
 export default function TradeDetail() {
   const { tradeId } = useParams()
   const nav = useNavigate()
+  const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const [trade, setTrade] = useState<TradeV1 | null>(null)
   const [schedules, setSchedules] = useState<ScheduleV1[]>([])
@@ -81,7 +83,7 @@ export default function TradeDetail() {
       const ds = await apiV1.get<{ ok: boolean; data: Dispute[] }>("/disputes", { params: { trade_id: tradeId } })
       setDisputes(ds.data.data || [])
     } catch (e: unknown) {
-      setErr(errorMessage(e, "加载失败"))
+      setErr(errorMessage(e, t("trade.loadFailed")))
     } finally {
       setLoading(false)
     }
@@ -104,34 +106,37 @@ export default function TradeDetail() {
     if (!trade) return { title: "", desc: "" }
     if (trade.status === "matched") {
       return role === "lender"
-        ? { title: "当前：等待打款", desc: "下一步：请在 24 小时内转账并上传凭证" }
-        : { title: "当前：等待放款", desc: "下一步：等待放款人转账并上传凭证" }
+        ? { title: t("trade.tip.waitTransfer"), desc: t("trade.tip.uploadWithin24h") }
+        : { title: t("trade.tip.waitLend"), desc: t("trade.tip.waitLenderTransfer") }
     }
     if (trade.status === "lend_confirmed") {
       return role === "borrower"
-        ? { title: "当前：已打款", desc: "下一步：请确认收款（可选上传收款凭证）" }
-        : { title: "当前：已上传凭证", desc: "下一步：等待借款人确认收款" }
+        ? { title: t("trade.tip.lent"), desc: t("trade.tip.confirmReceive") }
+        : { title: t("trade.tip.proofUploaded"), desc: t("trade.tip.waitBorrowerConfirm") }
     }
     if (trade.status === "repayment_confirmed") {
       return role === "borrower"
-        ? { title: "当前：已确认收款", desc: "下一步：开始还款（上传还款凭证）" }
-        : { title: "当前：已确认收款", desc: "下一步：等待借款人还款" }
+        ? { title: t("trade.tip.receivedConfirmed"), desc: t("trade.tip.startRepay") }
+        : { title: t("trade.tip.receivedConfirmed"), desc: t("trade.tip.waitBorrowerRepay") }
     }
     if (trade.status === "repaying") {
       if (role === "borrower") {
         const next = schedules.find((s) => s.status === "pending" || s.status === "overdue")
         return next
-          ? { title: `当前：还款中（第 ${next.period} 期）`, desc: `下一步：上传还款凭证（到期日：${next.due_at ? new Date(next.due_at).toLocaleDateString() : "-"}）` }
-          : { title: "当前：还款中", desc: "下一步：等待放款人确认" }
+          ? {
+              title: t("trade.tip.repayingPeriod", { period: next.period }),
+              desc: t("trade.tip.uploadRepayProof", { date: next.due_at ? new Date(next.due_at).toLocaleDateString() : "-" }),
+            }
+          : { title: t("trade.tip.repaying"), desc: t("trade.tip.waitLenderConfirm") }
       }
       const pendingConfirm = schedules.find((s) => s.status === "paid_pending")
       return pendingConfirm
-        ? { title: "当前：待确认还款", desc: `下一步：确认第 ${pendingConfirm.period} 期回款` }
-        : { title: "当前：还款中", desc: "下一步：等待借款人操作" }
+        ? { title: t("trade.tip.pendingConfirm"), desc: t("trade.tip.confirmPeriod", { period: pendingConfirm.period }) }
+        : { title: t("trade.tip.repaying"), desc: t("trade.tip.waitBorrowerAction") }
     }
-    if (trade.status === "completed") return { title: "已完成", desc: "交易结束，感谢按流程完成" }
-    if (trade.status === "dispute") return { title: "争议处理中", desc: "已进入仲裁流程，请在下方查看/补充证据" }
-    return { title: `状态：${trade.status}`, desc: "请查看详情" }
+    if (trade.status === "completed") return { title: t("trade.tip.completed"), desc: t("trade.tip.completedDesc") }
+    if (trade.status === "dispute") return { title: t("trade.tip.dispute"), desc: t("trade.tip.disputeDesc") }
+    return { title: t("trade.tip.status", { status: trade.status }), desc: t("trade.tip.seeDetail") }
   }, [role, schedules, trade])
 
   const actions = useMemo(() => {
@@ -140,9 +145,9 @@ export default function TradeDetail() {
     if (trade.status === "matched" && role === "lender") {
       return [{
         key: "lend",
-        label: "上传打款凭证",
+        label: t("trade.action.uploadLendProof"),
         onClick: () => {
-          setProofTitle("上传打款凭证")
+          setProofTitle(t("trade.action.uploadLendProof"))
           setProofScheduleId("")
           setProofUrl("")
           setProofAmount(trade.received_amount || trade.amount)
@@ -153,7 +158,7 @@ export default function TradeDetail() {
     if (trade.status === "lend_confirmed" && role === "borrower") {
       return [{
         key: "recv",
-        label: "确认收款",
+        label: t("trade.action.confirmReceive"),
         onClick: async () => {
           setSubmitting(true)
           setErr(null)
@@ -161,7 +166,7 @@ export default function TradeDetail() {
             await apiV1.post(`/trades/${trade.id}/confirm-receive`, { confirmed: true })
             await refresh()
           } catch (e: unknown) {
-            setErr(errorMessage(e, "确认失败"))
+            setErr(errorMessage(e, t("trade.confirmFailed")))
           } finally {
             setSubmitting(false)
           }
@@ -173,9 +178,9 @@ export default function TradeDetail() {
       if (next) {
         return [{
           key: "repay",
-          label: `上传第 ${next.period} 期还款凭证`,
+          label: t("trade.action.uploadRepayProof", { period: next.period }),
           onClick: () => {
-            setProofTitle(`上传第 ${next.period} 期还款凭证`)
+            setProofTitle(t("trade.action.uploadRepayProof", { period: next.period }))
             setProofScheduleId(next.id)
             setProofUrl("")
             setProofAmount(next.total)
@@ -187,14 +192,14 @@ export default function TradeDetail() {
     if (trade.status === "repaying" && role === "lender") {
       const pending = schedules.find((s) => s.status === "paid_pending")
       if (pending) {
-        return [{ key: "confirm", label: `确认第 ${pending.period} 期回款`, onClick: async () => {
+        return [{ key: "confirm", label: t("trade.action.confirmRepay", { period: pending.period }), onClick: async () => {
           setSubmitting(true)
           setErr(null)
           try {
             await apiV1.post(`/trades/${trade.id}/confirm-repayment`, { schedule_id: pending.id, confirmed: true })
             await refresh()
           } catch (e: unknown) {
-            setErr(errorMessage(e, "确认失败"))
+            setErr(errorMessage(e, t("trade.confirmFailed")))
           } finally {
             setSubmitting(false)
           }
@@ -211,7 +216,7 @@ export default function TradeDetail() {
   if (err && !trade) {
     return (
       <Card className="p-4">
-        <div className="text-sm font-semibold text-zinc-900">无法加载交易</div>
+        <div className="text-sm font-semibold text-zinc-900">{t("trade.unableLoad")}</div>
         <div className="mt-2 text-sm text-zinc-600">{err}</div>
       </Card>
     )
@@ -225,7 +230,7 @@ export default function TradeDetail() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <button onClick={() => nav(-1)} className="inline-flex items-center gap-2 text-sm text-zinc-600">
-          <ArrowLeft className="h-4 w-4" /> 返回
+          <ArrowLeft className="h-4 w-4" /> {t("common.back")}
         </button>
         <Badge tone={trade.status === "completed" ? "green" : trade.status === "dispute" ? "yellow" : "blue"}>{trade.status}</Badge>
       </div>
@@ -240,17 +245,17 @@ export default function TradeDetail() {
 
       <Card className="p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-zinc-900">交易信息</div>
-          <div className="text-xs text-zinc-500">{role === "lender" ? "你是放款人" : "你是借款人"}</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("trade.info")}</div>
+          <div className="text-xs text-zinc-500">{role === "lender" ? t("trade.roleLender") : t("trade.roleBorrower")}</div>
         </div>
         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
           <div className="rounded-2xl bg-zinc-50 p-3">
-            <div className="text-xs text-zinc-500">金额</div>
+            <div className="text-xs text-zinc-500">{t("trade.amount")}</div>
             <div className="mt-1 font-semibold text-zinc-900">${trade.amount}</div>
           </div>
           <div className="rounded-2xl bg-zinc-50 p-3">
-            <div className="text-xs text-zinc-500">期限</div>
-            <div className="mt-1 font-semibold text-zinc-900">{trade.term_days} 天</div>
+            <div className="text-xs text-zinc-500">{t("trade.term")}</div>
+            <div className="mt-1 font-semibold text-zinc-900">{trade.term_days}{t("borrow.days")}</div>
           </div>
         </div>
       </Card>
@@ -261,7 +266,7 @@ export default function TradeDetail() {
         onUpload={(period) => {
           const s = schedules.find((x) => x.period === period)
           if (!s) return
-          setProofTitle(`上传第 ${period} 期还款凭证`)
+          setProofTitle(t("trade.action.uploadRepayProof", { period }))
           setProofScheduleId(s.id)
           setProofUrl("")
           setProofAmount(s.total)
@@ -277,7 +282,7 @@ export default function TradeDetail() {
             await apiV1.post(`/trades/${trade.id}/confirm-repayment`, { schedule_id: s.id, confirmed: true })
             await refresh()
           } catch (e: unknown) {
-            setErr(errorMessage(e, "确认失败"))
+            setErr(errorMessage(e, t("trade.confirmFailed")))
           } finally {
             setSubmitting(false)
           }
@@ -308,7 +313,7 @@ export default function TradeDetail() {
 
       <ProofSheet
         open={proofOpen}
-        title={proofTitle || "提交"}
+        title={proofTitle || t("proof.confirm")}
         defaultUrl={proofUrl}
         defaultAmount={proofAmount}
         submitting={submitting}
@@ -327,7 +332,7 @@ export default function TradeDetail() {
             setProofOpen(false)
             await refresh()
           } catch (e: unknown) {
-            setErr(errorMessage(e, "提交失败"))
+            setErr(errorMessage(e, t("trade.submitFailed")))
           } finally {
             setSubmitting(false)
           }
