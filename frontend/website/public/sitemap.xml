@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://khmerx.org/km</loc></url>
+  <url><loc>https://khmerx.org/km/products</loc></url>
+  <url><loc>https://khmerx.org/km/trust</loc></url>
   <url><loc>https://khmerx.org/km/borrow</loc></url>
   <url><loc>https://khmerx.org/km/fees</loc></url>
   <url><loc>https://khmerx.org/km/faq</loc></url>
   <url><loc>https://khmerx.org/km/contact</loc></url>
 
   <url><loc>https://khmerx.org/en</loc></url>
+  <url><loc>https://khmerx.org/en/products</loc></url>
+  <url><loc>https://khmerx.org/en/trust</loc></url>
   <url><loc>https://khmerx.org/en/borrow</loc></url>
   <url><loc>https://khmerx.org/en/fees</loc></url>
   <url><loc>https://khmerx.org/en/faq</loc></url>
   <url><loc>https://khmerx.org/en/contact</loc></url>
 
   <url><loc>https://khmerx.org/zh</loc></url>
+  <url><loc>https://khmerx.org/zh/products</loc></url>
+  <url><loc>https://khmerx.org/zh/trust</loc></url>
   <url><loc>https://khmerx.org/zh/borrow</loc></url>
   <url><loc>https://khmerx.org/zh/fees</loc></url>
   <url><loc>https://khmerx.org/zh/faq</loc></url>
   <url><loc>https://khmerx.org/zh/contact</loc></url>
 </urlset>
-

@@ -61,15 +61,17 @@
             </div>
           </a>
           <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
+            <a class="hover:text-slate-900" href="/km/products">ផលិតផល</a>
+            <a class="hover:text-slate-900" href="/km/trust">ទុកចិត្ត & អំពី</a>
             <a class="hover:text-slate-900" href="/km/borrow">របៀបខ្ចីប្រាក់</a>
             <a class="hover:text-slate-900" href="/km/fees">ថ្លៃសេវា</a>
             <a class="hover:text-slate-900" href="/km/faq">សំណួរញឹកញាប់</a>
             <a class="hover:text-slate-900" href="/km/contact">ទំនាក់ទំនង</a>
           </nav>
           <div class="flex gap-2 text-sm">
-            <a class="rounded-lg bg-slate-100 px-3 py-1" href="/km">ខ្មែរ</a>
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/en">EN</a>
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/zh">中文</a>
+            <a data-lang="km" class="rounded-lg bg-slate-100 px-3 py-1" href="/km">ខ្មែរ</a>
+            <a data-lang="en" class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/en">EN</a>
+            <a data-lang="zh" class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/zh">中文</a>
           </div>
         </div>
       </header>
@@ -110,11 +112,55 @@
       </section>
 
       <section class="mx-auto max-w-6xl px-5 pb-16">
-        <div class="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="text-2xl font-bold">KhmerX ជាអ្វី?</h2>
-          <p class="mt-3 text-slate-700">
-            KhmerX គឺជាវេទិកាព័ត៌មានសម្រាប់អ្នកប្រើនៅកម្ពុជា ដើម្បីដាក់សំណើខ្ចីប្រាក់ខ្នាតតូចរយៈពេលខ្លី តាម Telegram Mini App ហើយបញ្ចប់ប្រតិបត្តិការតាម ABA។
-          </p>
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <h2 class="text-2xl font-bold">KhmerX ជាអ្វី?</h2>
+            <p class="mt-3 text-slate-700">
+              KhmerX គឺជាវេទិកាព័ត៌មានសម្រាប់អ្នកប្រើនៅកម្ពុជា ដើម្បីដាក់សំណើខ្ចីប្រាក់ខ្នាតតូចរយៈពេលខ្លី តាម Telegram Mini App ហើយបញ្ចប់ប្រតិបត្តិការតាម ABA។
+            </p>
+            <div class="mt-5">
+              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="/km/products">មើលផលិតផល & ច្រកចូល</a>
+            </div>
+          </div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <h2 class="text-2xl font-bold">ហេតុអ្វីអាចទុកចិត្ត?</h2>
+            <ul class="mt-3 space-y-2 text-sm text-slate-700">
+              <li>• ថ្លៃសេវាច្បាស់ មុនពេលធ្វើជំហានសំខាន់ៗ</li>
+              <li>• កំណត់ត្រាភស្តុតាង សម្រាប់ការផ្ទៀងផ្ទាត់</li>
+              <li>• ច្រកជំនួយ/វិវាទ តាម Telegram</li>
+            </ul>
+            <div class="mt-5">
+              <a class="inline-flex rounded-xl border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-600" href="/km/trust">មើលទុកចិត្ត & អំពី</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 grid gap-4 md:grid-cols-3">
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="text-xs text-slate-500">Primary</div>
+            <div class="mt-2 text-lg font-bold">Telegram Mini App</div>
+            <p class="mt-2 text-sm leading-6 text-slate-700">ដាក់សំណើខ្ចី, ផ្គូផ្គង, proof, និងកំណត់ត្រាបង់សង។</p>
+            <div class="mt-4">
+              <a class="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white" href="https://t.me/KhmerXBot/app">Open</a>
+            </div>
+          </div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="text-xs text-slate-500">Support</div>
+            <div class="mt-2 text-lg font-bold">Telegram Bot</div>
+            <p class="mt-2 text-sm leading-6 text-slate-700">ដំណឹងរំលឹក និងច្រកគាំទ្រ។</p>
+            <div class="mt-4">
+              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Chat</a>
+            </div>
+          </div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="text-xs text-slate-500">Guides</div>
+            <div class="mt-2 text-lg font-bold">មគ្គុទេសក៍ & ថ្លៃសេវា</div>
+            <p class="mt-2 text-sm leading-6 text-slate-700">សង្ខេបដំណើរការ និង fee rules។</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="/km/borrow">Borrow</a>
+              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="/km/fees">Fees</a>
+            </div>
+          </div>
         </div>
       </section>
 
