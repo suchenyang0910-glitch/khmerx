@@ -66,7 +66,33 @@ def _start_intro_text() -> str:
     return "\n".join(parts).strip()
 
 
-async def _send_telegram_message(*, bot_token: str, chat_id: int, text: str) -> None:
+def _start_intro_keyboard() -> dict:
+    site = (os.getenv("KHMERX_SITE_URL") or "https://khmerx.org").strip()
+    app_url = (os.getenv("KHMERX_MINIAPP_URL") or "https://app.khmerx.org").strip()
+
+    miniapp_btn_text = (os.getenv("TG_START_BTN_MINIAPP") or "").strip() or "Open Mini App / 打开 Mini App / បើក Mini App"
+    website_btn_text = (os.getenv("TG_START_BTN_WEBSITE") or "").strip() or "Website / 官网 / គេហទំព័រ"
+
+    keyboard = []
+    if app_url:
+        keyboard.append([
+            {
+                "text": miniapp_btn_text,
+                "web_app": {"url": app_url},
+            }
+        ])
+    if site:
+        keyboard.append([
+            {
+                "text": website_btn_text,
+                "url": site,
+            }
+        ])
+
+    return {"inline_keyboard": keyboard}
+
+
+async def _send_telegram_message(*, bot_token: str, chat_id: int, text: str, reply_markup: dict | None = None) -> None:
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
     payload: dict[str, Any] = {
         "chat_id": chat_id,
@@ -74,6 +100,8 @@ async def _send_telegram_message(*, bot_token: str, chat_id: int, text: str) -> 
         "parse_mode": "HTML",
         "disable_web_page_preview": True,
     }
+    if reply_markup is not None:
+        payload["reply_markup"] = reply_markup
     async with httpx.AsyncClient(timeout=10) as client:
         r = await client.post(url, json=payload)
         r.raise_for_status()
@@ -110,14 +138,14 @@ async def telegram_webhook(bot_token: str, request: Request, db: Session = Depen
         return {"ok": True}
 
     intro = _start_intro_text()
+    keyboard = _start_intro_keyboard()
 
     if (os.getenv("TELEGRAM_SEND_DISABLED") or "").lower() == "true":
         return {"ok": True, "sent": False, "dry_run": True}
 
     try:
-        await _send_telegram_message(bot_token=bot_token, chat_id=chat_id, text=intro)
+        await _send_telegram_message(bot_token=bot_token, chat_id=chat_id, text=intro, reply_markup=keyboard)
         return {"ok": True, "sent": True}
     except Exception:
         logger.error("telegram /start reply failed", exc_info=True)
         return {"ok": True, "sent": False}
-
