@@ -3,165 +3,320 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>联系我们 — KhmerX</title>
-    <meta name="description" content="通过 Telegram 联系 KhmerX，获取 Mini App 支持或争议帮助。" />
-    <meta name="keywords" content="联系我们, Telegram 客服, Telegram Bot, Email, 柬埔寨, ABA" />
-    <meta property="og:type" content="article" />
+    <title>联系 KhmerX | Telegram 与 ABA 小额周转支持</title>
+    <meta name="description" content="如需借款帮助、交易问题或风险咨询，请通过官方 Telegram 联系 KhmerX 客服。我们提供全天候的柬埔寨本地小额周转支持。" />
+    <meta name="keywords" content="KhmerX contact, Telegram Cambodia, ABA support Cambodia, Telegram loan support, KhmerX 客服" />
+    <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KhmerX" />
-    <meta property="og:title" content="联系我们 — KhmerX" />
-    <meta property="og:description" content="通过 Telegram 或 Email 联系 KhmerX，获取支持与争议协助。" />
+    <meta property="og:title" content="联系 KhmerX | Telegram 与 ABA 小额周转支持" />
+    <meta property="og:description" content="如需借款帮助、交易问题或风险咨询，请通过官方 Telegram 联系 KhmerX 客服。我们提供全天候的柬埔寨本地小额周转支持。" />
     <meta property="og:url" content="https://khmerx.org/zh/contact" />
     <meta property="og:image" content="https://khmerx.org/logo.jpg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="联系 KhmerX | Telegram 与 ABA 小额周转支持" />
+    <meta name="twitter:description" content="如需借款帮助、交易问题或风险咨询，请通过官方 Telegram 联系 KhmerX 客服。我们提供全天候的柬埔寨本地小额周转支持。" />
     <link rel="canonical" href="https://khmerx.org/zh/contact" />
     <link rel="alternate" href="https://khmerx.org/km/contact" hreflang="km" />
     <link rel="alternate" href="https://khmerx.org/en/contact" hreflang="en" />
     <link rel="alternate" href="https://khmerx.org/zh/contact" hreflang="zh" />
-    <link rel="alternate" href="https://khmerx.org/zh/contact" hreflang="x-default" />
+    <link rel="alternate" href="https://khmerx.org/km/contact" hreflang="x-default" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": "https://khmerx.org/#organization",
-            "name": "KhmerX",
-            "url": "https://khmerx.org",
-            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/logo.jpg" },
-            "sameAs": ["https://t.me/KhmerXBot"]
-          },
-          {
-            "@type": "WebSite",
-            "@id": "https://khmerx.org/#website",
-            "url": "https://khmerx.org",
-            "name": "KhmerX",
-            "publisher": { "@id": "https://khmerx.org/#organization" }
-          },
-          {
-            "@type": "ContactPage",
-            "@id": "https://khmerx.org/zh/contact#webpage",
-            "url": "https://khmerx.org/zh/contact",
-            "name": "联系我们 — KhmerX",
-            "isPartOf": { "@id": "https://khmerx.org/#website" },
-            "about": { "@id": "https://khmerx.org/#organization" },
-            "inLanguage": "zh"
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": "https://khmerx.org/zh/contact#breadcrumb",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "首页", "item": "https://khmerx.org/zh" },
-              { "@type": "ListItem", "position": 2, "name": "联系我们", "item": "https://khmerx.org/zh/contact" }
-            ]
-          }
-        ]
+        "@type": "Organization",
+        "name": "KhmerX",
+        "url": "https://khmerx.org",
+        "logo": "https://khmerx.org/logo.jpg",
+        "sameAs": [
+          "https://t.me/KhmerXBot"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "support@khmerx.org"
+        }
       }
     </script>
+    <style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 4s ease-in-out infinite;
+      }
+    </style>
   </head>
   <body>
     <script type="module" src="/src/site.ts"></script>
-    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900">
-      <header class="border-b bg-white">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <a href="/zh" class="flex items-center gap-3">
-            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm" />
+    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900 font-sans">
+      
+      <!-- Header -->
+      <header class="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
+        <div class="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4">
+          <a href="/zh" class="flex items-center gap-3 group">
+            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             <div>
-              <div class="font-bold">KhmerX</div>
-              <div class="text-xs text-slate-500">ABA · Telegram · Cambodia</div>
+              <div class="font-bold text-lg">KhmerX</div>
             </div>
           </a>
-          <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
-            <a class="hover:text-slate-900" href="/zh/products">产品</a>
-            <a class="hover:text-slate-900" href="/zh/trust">信任与关于</a>
-            <a class="hover:text-slate-900" href="/zh/borrow">借款说明</a>
-            <a class="hover:text-slate-900" href="/zh/fees">费用说明</a>
-            <a class="hover:text-slate-900" href="/zh/faq">常见问题</a>
-            <a class="hover:text-slate-900" href="/zh/contact">联系</a>
+          <nav class="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
+            <a class="hover:text-blue-600 transition-colors" href="/zh/borrow">如何借款</a>
+            <a class="hover:text-blue-600 transition-colors" href="/zh/fees">费用说明</a>
+            <a class="hover:text-blue-600 transition-colors" href="/zh/faq">FAQ</a>
+            <a class="text-blue-600 transition-colors" href="/zh/contact">联系我们</a>
           </nav>
-          <div class="flex gap-2 text-sm">
-            <a data-lang="km" class="rounded-lg px-3 py-1" href="/km/contact">ខ្មែរ</a>
-            <a data-lang="en" class="rounded-lg px-3 py-1" href="/en/contact">EN</a>
-            <a data-lang="zh" class="rounded-lg px-3 py-1" href="/zh/contact">中文</a>
+          <div class="flex items-center gap-4">
+            <div class="hidden md:flex gap-1 text-sm bg-slate-100 p-1 rounded-xl">
+              <a data-lang="km" class="rounded-lg px-3 py-1.5 transition-colors font-medium " href="/km/contact">ខ្មែរ</a>
+              <a data-lang="en" class="rounded-lg px-3 py-1.5 transition-colors font-medium " href="/en/contact">EN</a>
+              <a data-lang="zh" class="rounded-lg px-3 py-1.5 transition-colors font-medium bg-white shadow-sm text-blue-600" href="/zh/contact">中文</a>
+            </div>
+            <a class="hidden md:inline-flex rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg hover:scale-105 transition-all" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
           </div>
         </div>
       </header>
 
-      <section class="mx-auto max-w-4xl px-5 py-14">
-        <h1 class="text-4xl font-bold">联系我们</h1>
-        <p class="mt-4 text-slate-700">借款问题、Mini App 支持或争议帮助，请通过 Telegram 联系 KhmerX。</p>
-        <div class="mt-8 grid gap-4 md:grid-cols-2">
-          <div class="rounded-3xl bg-white p-6 shadow-sm">
-            <div class="text-xs text-slate-500">主要入口</div>
-            <div class="mt-2 text-lg font-bold">Telegram Bot</div>
-            <p class="mt-2 text-sm text-slate-700">通知与支持入口。</p>
-            <div class="mt-4">
-              <a class="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white" href="https://t.me/KhmerXBot">打开 Telegram</a>
+      <!-- Hero 区 -->
+      <section class="relative bg-white border-b border-slate-100 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-white"></div>
+        <div class="relative mx-auto max-w-[1200px] px-5 py-16 md:py-24">
+          <div class="grid gap-12 md:grid-cols-2 md:items-center">
+            <div class="max-w-xl z-10">
+              <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-6xl mb-6">
+                联系 KhmerX
+              </h1>
+              <p class="text-lg leading-relaxed text-slate-600 md:text-xl mb-10">
+                如需借款帮助、交易问题或风险咨询，请通过官方 Telegram 联系 KhmerX。
+              </p>
+            </div>
+            
+            <div class="relative z-10 flex justify-center md:justify-end">
+              <div class="relative w-[300px] sm:w-[340px] animate-float">
+                <div class="absolute inset-0 bg-blue-500 rounded-[3rem] blur-3xl opacity-20 transform translate-y-10"></div>
+                <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Telegram%20customer%20support%20chat%20UI%20mockup%20blue%20white%20gradient%20background%20modern%20clean%20business%20style&image_size=portrait_9_16" alt="KhmerX Telegram Support" class="relative rounded-[2.5rem] shadow-2xl border-[6px] border-slate-800 object-cover w-full h-[500px] bg-slate-100" />
+                
+                <div class="absolute -bottom-6 -left-8 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float" style="animation-delay: 1.5s;">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-500">Official Support</div>
+                    <div class="font-bold text-slate-800">Online Now</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="rounded-3xl bg-white p-6 shadow-sm">
-            <div class="text-xs text-slate-500">Email</div>
-            <div class="mt-2 text-lg font-bold">support@khmerx.org</div>
-            <p class="mt-2 text-sm text-slate-700">通用咨询与技术问题。</p>
-            <div class="mt-4">
-              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="mailto:support@khmerx.org?subject=KhmerX%20Support">发送邮件</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="text-xl font-bold">联系表单</h2>
-          <p class="mt-2 text-sm text-slate-700">填写后将打开邮件草稿，方便你发送。</p>
-          <form id="contactForm" class="mt-5 grid gap-3">
-            <input class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="name" placeholder="姓名" />
-            <input class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="telegram" placeholder="Telegram 用户名（可选）" />
-            <textarea class="min-h-32 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="message" placeholder="问题描述"></textarea>
-            <button type="submit" class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 text-sm font-semibold text-white shadow">发送</button>
-          </form>
-        </div>
-
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
-          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/zh/faq">FAQ</a>
         </div>
       </section>
 
-      <script>
-        ;(() => {
-          const form = document.getElementById('contactForm')
-          if (!(form instanceof HTMLFormElement)) return
-          form.addEventListener('submit', (e) => {
-            e.preventDefault()
-            const data = new FormData(form)
-            const name = String(data.get('name') || '').trim()
-            const tg = String(data.get('telegram') || '').trim()
-            const msg = String(data.get('message') || '').trim()
-            const subject = encodeURIComponent('KhmerX Support')
-            const body = encodeURIComponent(
-              `姓名: ${name}\nTelegram: ${tg}\n\n内容:\n${msg}\n\n页面: ${window.location.href}`
-            )
-            window.location.href = `mailto:support@khmerx.org?subject=${subject}&body=${body}`
-          })
-        })()
-      </script>
+      <!-- 联系方式卡片 -->
+      <section class="mx-auto max-w-[1200px] px-5 py-20 -mt-10 relative z-20">
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Card 1 -->
+          <div class="bg-white rounded-3xl p-8 shadow-lg border border-slate-100 flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+            <div class="w-16 h-16 bg-[#0088cc]/10 text-[#0088cc] rounded-2xl flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Telegram Mini App</h3>
+            <p class="text-slate-500 mb-8 flex-1">通过 Telegram 快速发布需求、匹配借款。</p>
+            <a href="https://t.me/KhmerXBot/app" class="w-full inline-flex justify-center items-center rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-700 transition-colors">
+              打开 Mini App
+            </a>
+          </div>
+          
+          <!-- Card 2 -->
+          <div class="bg-white rounded-3xl p-8 shadow-lg border border-blue-200 ring-2 ring-blue-500/20 flex flex-col items-center text-center hover:-translate-y-2 transition-transform">
+            <div class="absolute top-0 right-0 -mt-3 -mr-3 flex h-6 w-6">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-6 w-6 bg-blue-500"></span>
+            </div>
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Telegram 客服</h3>
+            <p class="text-slate-500 mb-8 flex-1">获取借款与交易的官方人工帮助。</p>
+            <a href="https://t.me/KhmerXBot" class="w-full inline-flex justify-center items-center rounded-xl bg-gradient-to-r from-blue-600 to-[#00AEEF] px-6 py-3 font-bold text-white shadow-md hover:shadow-lg transition-all">
+              联系 Telegram
+            </a>
+          </div>
+          
+          <!-- Card 3 -->
+          <div class="bg-white rounded-3xl p-8 shadow-lg border border-slate-100 flex flex-col items-center text-center hover:-translate-y-2 transition-transform md:col-span-2 lg:col-span-1">
+            <div class="w-16 h-16 bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Email</h3>
+            <p class="text-slate-500 mb-8 flex-1">非紧急事务可通过邮件联系我们。</p>
+            <a href="mailto:support@khmerx.org" class="w-full inline-flex justify-center items-center rounded-xl border-2 border-slate-200 px-6 py-3 font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-colors">
+              support@khmerx.org
+            </a>
+          </div>
+        </div>
+      </section>
 
-      <footer class="bg-slate-950 px-5 py-10 text-white">
-        <div class="mx-auto max-w-6xl">
-          <p class="text-sm text-slate-300">KhmerX 是本地用户之间的小额周转信息服务与信用记录工具。平台不承诺放款成功，不承诺收益，不吸收存款，不提供担保。所有交易请用户自行确认风险。</p>
-          <div class="mt-6 text-xs text-slate-400">© <span data-year></span> KhmerX</div>
+      <!-- 客服支持与工作时间 -->
+      <section class="mx-auto max-w-[1200px] px-5 pb-20">
+        <div class="grid gap-8 md:grid-cols-2">
+          <!-- 支持范围 -->
+          <div class="bg-white rounded-3xl p-8 border border-slate-200">
+            <h3 class="text-2xl font-bold text-slate-900 mb-6">支持范围</h3>
+            <ul class="space-y-4 mb-8">
+              <li class="flex items-center gap-3 text-slate-600">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                借款问题
+              </li>
+              <li class="flex items-center gap-3 text-slate-600">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                还款问题
+              </li>
+              <li class="flex items-center gap-3 text-slate-600">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                ABA 转账问题
+              </li>
+              <li class="flex items-center gap-3 text-slate-600">
+                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                凭证上传问题
+              </li>
+            </ul>
+            <div class="text-sm text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              提示：为了更快速地解决问题，请优先通过 Telegram 联系 KhmerX 客服。
+            </div>
+          </div>
+          
+          <!-- 工作时间 -->
+          <div class="bg-slate-900 text-white rounded-3xl p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-20 -mr-10 -mt-10"></div>
+            <h3 class="text-2xl font-bold mb-8 relative z-10">工作时间</h3>
+            
+            <div class="flex items-start gap-4 mb-8 relative z-10">
+              <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <div>
+                <div class="text-lg font-bold">周一 - 周日</div>
+                <div class="text-3xl font-extrabold text-blue-400 mt-1">09:00 - 21:00</div>
+                <div class="text-slate-400 mt-1">(Cambodia Time)</div>
+              </div>
+            </div>
+            
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-sm text-slate-300 relative z-10">
+              非工作时间消息可能延迟回复，请您耐心等待。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 安全与风险提醒（重点） -->
+      <section class="mx-auto max-w-[1200px] px-5 pb-20">
+        <div class="bg-[#FFFBEB] border-2 border-[#FDE68A] rounded-[2rem] p-8 md:p-12 shadow-sm">
+          <div class="flex flex-col md:flex-row gap-6 items-start">
+            <div class="w-16 h-16 bg-[#F59E0B] rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <div>
+              <h2 class="text-2xl font-bold text-[#92400E] mb-4">安全与风险提醒</h2>
+              <div class="space-y-4 text-[#B45309] font-medium text-lg">
+                <p>KhmerX 官方客服绝对不会通过私人 Telegram 账号主动要求您转账。</p>
+                <p>请确认您正在与官方 Telegram 账号进行沟通。</p>
+                <div class="bg-[#FEF3C7] px-4 py-3 rounded-xl border border-[#FDE68A] inline-block mt-2">
+                  <span class="font-bold text-[#92400E]">提醒：请勿向任何陌生人转账，保护您的资金安全！</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ 快捷入口 -->
+      <section class="mx-auto max-w-[800px] px-5 pb-20 text-center">
+        <h3 class="text-2xl font-bold text-slate-900 mb-8">常见问题</h3>
+        <div class="grid sm:grid-cols-2 gap-4 mb-8 text-left">
+          <a href="/zh/faq" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+            <span class="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">如何借款？</span>
+            <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </a>
+          <a href="/zh/faq" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+            <span class="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">如何还款？</span>
+            <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </a>
+          <a href="/zh/faq" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+            <span class="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">为什么到账金额不同？</span>
+            <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </a>
+          <a href="/zh/faq" class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+            <span class="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">逾期会怎样？</span>
+            <svg class="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </a>
+        </div>
+        <a href="/zh/faq" class="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition-colors">
+          查看完整 FAQ
+          <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+        </a>
+      </section>
+
+      <!-- CTA 引导 -->
+      <section class="mx-auto max-w-[1200px] px-5 pb-24">
+        <div class="bg-gradient-to-br from-[#0A5BFF] to-[#00AEEF] rounded-[3rem] p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+          
+          <div class="relative z-10 max-w-2xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8">立即打开 Telegram Mini App</h2>
+            <div class="flex flex-col items-center justify-center gap-8">
+              <div class="bg-white p-4 rounded-3xl shadow-lg inline-block">
+                <img class="w-48 h-48 rounded-2xl" alt="KhmerX Mini App QR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Ft.me%2FKhmerXBot%2Fapp" />
+                <div class="text-slate-500 text-sm font-medium mt-3">Scan with Camera</div>
+              </div>
+              <a class="inline-flex justify-center items-center rounded-2xl bg-white px-10 py-5 text-xl font-bold text-blue-600 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300" href="https://t.me/KhmerXBot/app">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                打开 Mini App
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-slate-950 px-5 py-12 text-slate-400">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="grid gap-8 md:grid-cols-4 border-b border-slate-800 pb-12">
+            <div class="col-span-2">
+              <a href="/zh" class="flex items-center gap-3 mb-6">
+                <img src="/logo.jpg" alt="KhmerX Logo" class="h-8 w-8 rounded-lg object-cover grayscale opacity-80" />
+                <div class="font-bold text-lg text-white">KhmerX</div>
+              </a>
+              <p class="text-sm leading-relaxed max-w-md">
+                KhmerX 是本地小额周转信息服务平台，不保证借款成功，不提供担保。
+              </p>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-6">Links</h4>
+              <ul class="space-y-4 text-sm">
+                <li><a href="https://t.me/KhmerXBot" class="hover:text-white transition-colors">Telegram Support</a></li>
+                <li><a href="mailto:support@khmerx.org" class="hover:text-white transition-colors">support@khmerx.org</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-6">Legal</h4>
+              <ul class="space-y-4 text-sm">
+                <li><a href="/zh/terms" class="hover:text-white transition-colors">User Agreement</a></li>
+                <li><a href="/zh/privacy" class="hover:text-white transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row items-center justify-between pt-8 gap-4 text-sm">
+            <div>© <span data-year></span> KhmerX. All rights reserved.</div>
+            <div class="flex gap-4">
+              <a href="/km" class="hover:text-white transition-colors">ខ្មែរ</a>
+              <a href="/en" class="hover:text-white transition-colors">English</a>
+              <a href="/zh" class="hover:text-white transition-colors">中文</a>
+            </div>
+          </div>
         </div>
       </footer>
-
-      <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
-        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
-          <div class="min-w-0">
-            <div class="truncate text-sm font-semibold">KhmerX</div>
-            <div class="truncate text-xs text-slate-600">Telegram + ABA · 小额短期 · 信息服务</div>
-          </div>
-          <div class="flex shrink-0 gap-2">
-            <a class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Telegram</a>
-            <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-4 py-2 text-sm font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
-          </div>
-        </div>
-      </div>
     </main>
   </body>
 </html>
