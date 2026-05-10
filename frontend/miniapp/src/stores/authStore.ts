@@ -3,10 +3,17 @@ import axios from "axios"
 import { api, apiV1 } from "@/api/client"
 import type { AppUser, UserRiskProfile } from "@/api/types"
 import { errorMessage } from "@/utils/errors"
-import { ensureDefaultLang, translate } from "@/i18n"
+import { ensureDefaultLang, readStoredLang, setLang, translate } from "@/i18n"
 
 function t(key: string, vars?: Record<string, string | number>) {
   return translate(ensureDefaultLang(), key, vars)
+}
+
+function applyUserLang(next: unknown) {
+  if (next !== "km" && next !== "cn" && next !== "en") return
+  const current = readStoredLang()
+  if (current === next) return
+  setLang(next)
 }
 
 type AuthState = {
@@ -82,6 +89,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user })
 
       try {
+        const me = await apiV1.get<{ ok: boolean; data: AppUser }>("/me")
+        applyUserLang((me.data as any)?.data?.language)
+        set({ user: { ...user, ...(me.data as any).data } })
+      } catch {
+      }
+
+      try {
         const riskRes = await api.get<UserRiskProfile>(`/risk/users/${user.id}`)
         set({ risk: riskRes.data })
       } catch (e: unknown) {
@@ -112,6 +126,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!user) return
 
     const me = await apiV1.get<{ ok: boolean; data: AppUser }>("/me")
+    applyUserLang((me.data as any)?.data?.language)
     set({ user: me.data.data })
 
     const riskRes = await api.get<UserRiskProfile>(`/risk/users/${user.id}`)

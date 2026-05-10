@@ -9,7 +9,7 @@ class PatchProfileRequest(BaseModel):
     aba_account: Optional[str] = None
     aba_name: Optional[str] = None
     phone: Optional[str] = None
-    language: Optional[Literal["cn", "km"]] = None
+    language: Optional[Literal["cn", "km", "en"]] = None
 
 
 class VerifyTelegramContactRequest(BaseModel):

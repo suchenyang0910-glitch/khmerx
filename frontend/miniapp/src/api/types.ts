@@ -19,6 +19,7 @@ export interface AppUser {
   name: string
   photo_url?: string
   role: string
+  language?: "km" | "cn" | "en"
   risk_level: string
   credit_score: number
   verification_level: string
@@ -29,6 +30,10 @@ export interface AppUser {
   total_borrowed?: number
   total_repaid?: number
   active_loans?: number
+  profile_completed?: boolean
+  credit_level?: string
+  max_borrow_amount?: number
+  active_trades?: number
   created_at: string
 }
 

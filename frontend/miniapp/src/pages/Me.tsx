@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button"
 import { useAuthStore } from "@/stores/authStore"
 import { scoreToLevel } from "@/utils/credit"
 import { Bell } from "lucide-react"
-import { fetchNotificationSettings, updateNotificationSettings, type NotificationSettings } from "@/api/v1"
+import { fetchNotificationSettings, updateNotificationSettings, updatePreferredLanguage, type NotificationSettings } from "@/api/v1"
 import { SUPPORTED_LANGS, useI18n } from "@/i18n"
 
 export default function Me() {
@@ -67,7 +67,18 @@ export default function Me() {
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {SUPPORTED_LANGS.map((l) => (
-            <Button key={l} variant={lang === l ? "primary" : "secondary"} onClick={() => setLang(l)}>
+            <Button
+              key={l}
+              variant={lang === l ? "primary" : "secondary"}
+              onClick={async () => {
+                setLang(l)
+                if (!user) return
+                try {
+                  await updatePreferredLanguage(l)
+                } catch {
+                }
+              }}
+            >
               {t(`lang.${l}`)}
             </Button>
           ))}

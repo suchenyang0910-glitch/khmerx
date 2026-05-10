@@ -1,9 +1,9 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 import type { ReactNode } from "react"
 import { STRINGS, type Lang } from "./strings"
 
 const STORAGE_KEY = "khx_lang"
-const MIGRATION_KEY = "khx_lang_migrated_v1"
+const LANG_EVENT = "khx_lang_changed"
 
 export const SUPPORTED_LANGS: Lang[] = ["km", "en", "cn"]
 
@@ -16,25 +16,15 @@ export function readStoredLang(): Lang | null {
 
 export function ensureDefaultLang(): Lang {
   const stored = readStoredLang()
-  if (typeof window === "undefined") return stored || "km"
-
-  const migrated = localStorage.getItem(MIGRATION_KEY) === "1"
-  if (stored) {
-    if (!migrated && stored === "cn") {
-      localStorage.setItem(STORAGE_KEY, "km")
-      localStorage.setItem(MIGRATION_KEY, "1")
-      return "km"
-    }
-    return stored
-  }
-
-  localStorage.setItem(STORAGE_KEY, "km")
+  if (stored) return stored
+  if (typeof window !== "undefined") localStorage.setItem(STORAGE_KEY, "km")
   return "km"
 }
 
 export function setLang(lang: Lang) {
   if (typeof window === "undefined") return
   localStorage.setItem(STORAGE_KEY, lang)
+  window.dispatchEvent(new CustomEvent(LANG_EVENT, { detail: lang }))
 }
 
 function format(template: string, vars?: Record<string, string | number>) {
@@ -63,6 +53,16 @@ const I18nContext = createContext<I18nValue | null>(null)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(() => ensureDefaultLang())
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const onLang = (e: Event) => {
+      const next = (e as CustomEvent).detail
+      if (next === "km" || next === "en" || next === "cn") setLangState(next)
+    }
+    window.addEventListener(LANG_EVENT, onLang as EventListener)
+    return () => window.removeEventListener(LANG_EVENT, onLang as EventListener)
+  }, [])
 
   const setLangSafe = useCallback((next: Lang) => {
     setLang(next)

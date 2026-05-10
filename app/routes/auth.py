@@ -396,7 +396,7 @@ async def get_credit_score(
 
 class LangPreferenceRequest(BaseModel):
     user_id: str = Field(..., description="User UUID")
-    lang: str = Field(..., min_length=2, max_length=8, description="语言偏好: km/cn")
+    lang: str = Field(..., min_length=2, max_length=8, description="语言偏好: km/cn/en")
 
 
 @router.post("/lang")
@@ -406,15 +406,12 @@ async def set_lang(
 ):
     """设置用户语言偏好"""
     user = _get_user(db, req.user_id)
-    if req.lang not in ("km", "cn"):
-        raise HTTPException(status_code=400, detail="Language must be 'km' or 'cn'")
+    if req.lang not in ("km", "cn", "en"):
+        raise HTTPException(status_code=400, detail="Language must be 'km', 'cn' or 'en'")
     user.preferred_lang = req.lang
     db.commit()
     return {
         "status": "ok",
         "preferred_lang": req.lang,
-        "message": f"Language set to {'ភាសាខ្មែរ' if req.lang == 'km' else '中文'}",
+        "message": f"Language set to {'ភាសាខ្មែរ' if req.lang == 'km' else '中文' if req.lang == 'cn' else 'English'}",
     }
-
-
-print("=== Task 3.3 done ===")

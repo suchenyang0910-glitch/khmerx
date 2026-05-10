@@ -1,6 +1,11 @@
 import { apiV1 } from "@/api/client"
 import type { Announcement, Notification } from "@/api/types"
 
+export async function updatePreferredLanguage(lang: "km" | "cn" | "en") {
+  const res = await apiV1.patch<{ ok: boolean; data: { profile_completed: boolean } }>("/me/profile", { language: lang })
+  return res.data.data
+}
+
 export async function fetchAnnouncements() {
   const res = await apiV1.get<{ ok: boolean; data: Announcement[] }>("/announcements")
   return res.data.data
