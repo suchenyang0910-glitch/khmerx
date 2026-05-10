@@ -3,167 +3,496 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>How to Borrow — KhmerX</title>
-    <meta name="description" content="How to borrow via KhmerX: open Telegram Mini App, bind ABA, choose amount and term, submit request, complete ABA transfer and repayment records." />
-    <meta
-      name="keywords"
-      content="ABA loan Cambodia, how to borrow, Telegram Mini App, ABA transfer, repayment, risk"
-    />
-    <meta property="og:type" content="article" />
+    <title>How to Borrow with KhmerX | ABA Micro Lending</title>
+    <meta name="description" content="Learn how to quickly publish borrowing requests via KhmerX Telegram Mini App and complete transactions with ABA transfer. Transparent fees and simple process." />
+    <meta name="keywords" content="ABA loan, Cambodia loan, Telegram loan, Micro lending, Phnom Penh loan" />
+    <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KhmerX" />
-    <meta property="og:title" content="How to Borrow — KhmerX" />
-    <meta property="og:description" content="Step-by-step borrowing guide for Telegram Mini App + ABA transfer." />
+    <meta property="og:title" content="How to Borrow with KhmerX | ABA Micro Lending" />
+    <meta property="og:description" content="Learn how to quickly publish borrowing requests via KhmerX Telegram Mini App and complete transactions with ABA transfer. Transparent fees and simple process." />
     <meta property="og:url" content="https://khmerx.org/en/borrow" />
     <meta property="og:image" content="https://khmerx.org/logo.jpg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="How to Borrow with KhmerX | ABA Micro Lending" />
+    <meta name="twitter:description" content="Learn how to quickly publish borrowing requests via KhmerX Telegram Mini App and complete transactions with ABA transfer. Transparent fees and simple process." />
     <link rel="canonical" href="https://khmerx.org/en/borrow" />
     <link rel="alternate" href="https://khmerx.org/km/borrow" hreflang="km" />
     <link rel="alternate" href="https://khmerx.org/en/borrow" hreflang="en" />
     <link rel="alternate" href="https://khmerx.org/zh/borrow" hreflang="zh" />
-    <link rel="alternate" href="https://khmerx.org/en/borrow" hreflang="x-default" />
+    <link rel="alternate" href="https://khmerx.org/km/borrow" hreflang="x-default" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@graph": [
+        "@type": "FAQPage",
+        "mainEntity": [
           {
-            "@type": "Organization",
-            "@id": "https://khmerx.org/#organization",
-            "name": "KhmerX",
-            "url": "https://khmerx.org",
-            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/logo.jpg" },
-            "sameAs": ["https://t.me/KhmerXBot"]
+            "@type": "Question",
+            "name": "How to start borrowing?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Open the KhmerX Telegram Mini App, bind your ABA account, and you can publish a borrowing request."
+            }
           },
           {
-            "@type": "WebSite",
-            "@id": "https://khmerx.org/#website",
-            "url": "https://khmerx.org",
-            "name": "KhmerX",
-            "publisher": { "@id": "https://khmerx.org/#organization" }
+            "@type": "Question",
+            "name": "Does it support ABA?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All loan disbursements and repayments must be completed via ABA bank transfers."
+            }
           },
           {
-            "@type": "WebPage",
-            "@id": "https://khmerx.org/en/borrow#webpage",
-            "url": "https://khmerx.org/en/borrow",
-            "name": "How to Borrow — KhmerX",
-            "isPartOf": { "@id": "https://khmerx.org/#website" },
-            "about": { "@id": "https://khmerx.org/#organization" },
-            "inLanguage": "en"
-          },
-          {
-            "@type": "BreadcrumbList",
-            "@id": "https://khmerx.org/en/borrow#breadcrumb",
-            "itemListElement": [
-              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://khmerx.org/en" },
-              { "@type": "ListItem", "position": 2, "name": "How to Borrow", "item": "https://khmerx.org/en/borrow" }
-            ]
+            "@type": "Question",
+            "name": "How fast will I receive the money?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Once matched, the lender will transfer directly to your ABA account, usually within minutes."
+            }
           }
         ]
       }
     </script>
+    <style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 4s ease-in-out infinite;
+      }
+    </style>
   </head>
   <body>
     <script type="module" src="/src/site.ts"></script>
-    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900">
-      <header class="border-b bg-white">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <a href="/en" class="flex items-center gap-3">
-            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm" />
+    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900 font-sans">
+      
+      <!-- 1. Header -->
+      <header class="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
+        <div class="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4">
+          <a href="/en" class="flex items-center gap-3 group">
+            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             <div>
-              <div class="font-bold">KhmerX</div>
-              <div class="text-xs text-slate-500">ABA · Telegram · Cambodia</div>
+              <div class="font-bold text-lg">KhmerX</div>
             </div>
           </a>
-          <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
-            <a class="hover:text-slate-900" href="/en/products">Products</a>
-            <a class="hover:text-slate-900" href="/en/trust">Trust & About</a>
-            <a class="hover:text-slate-900" href="/en/borrow">How to Borrow</a>
-            <a class="hover:text-slate-900" href="/en/fees">Fees</a>
-            <a class="hover:text-slate-900" href="/en/faq">FAQ</a>
-            <a class="hover:text-slate-900" href="/en/contact">Contact</a>
+          <nav class="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
+            <a class="text-blue-600 transition-colors" href="/en/borrow">How to Borrow</a>
+            <a class="hover:text-blue-600 transition-colors" href="/en/fees">Fees</a>
+            <a class="hover:text-blue-600 transition-colors" href="/en/faq">FAQ</a>
+            <a class="hover:text-blue-600 transition-colors" href="/en/contact">Contact</a>
           </nav>
-          <div class="flex gap-2 text-sm">
-            <a data-lang="km" class="rounded-lg px-3 py-1" href="/km/borrow">ខ្មែរ</a>
-            <a data-lang="en" class="rounded-lg px-3 py-1" href="/en/borrow">EN</a>
-            <a data-lang="zh" class="rounded-lg px-3 py-1" href="/zh/borrow">中文</a>
+          <div class="flex items-center gap-4">
+            <div class="hidden md:flex gap-1 text-sm bg-slate-100 p-1 rounded-xl">
+              <a data-lang="km" class="rounded-lg px-3 py-1.5 transition-colors font-medium " href="/km/borrow">ខ្មែរ</a>
+              <a data-lang="en" class="rounded-lg px-3 py-1.5 transition-colors font-medium bg-white shadow-sm text-blue-600" href="/en/borrow">EN</a>
+              <a data-lang="zh" class="rounded-lg px-3 py-1.5 transition-colors font-medium " href="/zh/borrow">中文</a>
+            </div>
+            <a class="hidden md:inline-flex rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg hover:scale-105 transition-all" href="https://t.me/KhmerXBot/app">Open Mini App</a>
+            <button class="md:hidden p-2 text-slate-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
           </div>
         </div>
       </header>
 
-      <section class="mx-auto max-w-4xl px-5 py-14">
-        <h1 class="text-4xl font-bold">How to Borrow with KhmerX</h1>
-        <p class="mt-4 text-slate-700">
-          KhmerX helps Cambodia users publish small short-term borrowing requests via Telegram Mini App and complete transactions through ABA transfer.
-        </p>
-
-        <div class="mt-8 grid gap-4">
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><div class="text-sm text-blue-600">Step 1</div><div class="mt-1 font-semibold">Open Telegram Mini App</div></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><div class="text-sm text-blue-600">Step 2</div><div class="mt-1 font-semibold">Bind your ABA account and phone number</div></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><div class="text-sm text-blue-600">Step 3</div><div class="mt-1 font-semibold">Choose amount and term</div></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><div class="text-sm text-blue-600">Step 4</div><div class="mt-1 font-semibold">Review received amount and repayment amount</div></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><div class="text-sm text-blue-600">Step 5</div><div class="mt-1 font-semibold">Submit request and complete ABA transfer + repayment records</div></div>
-        </div>
-
-        <div class="mt-10 grid gap-4">
-          <div class="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 class="text-xl font-bold">Borrowing limits</h2>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Amount/term can depend on your history and risk signals</li>
-              <li>• KhmerX does not guarantee approval, payout, or any outcome</li>
-              <li>• Always verify Receive/Repay before completing</li>
-            </ul>
+      <!-- 2. Hero 区 -->
+      <section class="relative overflow-hidden bg-white border-b border-slate-100">
+        <div class="absolute inset-0 bg-gradient-to-b from-blue-50/50 to-white"></div>
+        <div class="relative mx-auto max-w-[1200px] px-5 py-16 md:py-24">
+          <div class="grid gap-12 md:grid-cols-2 md:items-center">
+            <div class="max-w-xl z-10">
+              <h1 class="text-4xl font-extrabold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
+                How to Borrow with KhmerX
+              </h1>
+              <p class="mt-6 text-lg leading-relaxed text-slate-600 md:text-xl">
+                Publish small short-term borrowing requests quickly<br class='hidden md:block'/>via Telegram Mini App.
+              </p>
+              <div class="mt-10 flex flex-col sm:flex-row gap-4">
+                <a class="inline-flex justify-center items-center rounded-2xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-8 py-4 text-lg font-bold text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:-translate-y-1 transition-all duration-300" href="https://t.me/KhmerXBot/app">
+                  <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                  Open Mini App
+                </a>
+                <a class="inline-flex justify-center items-center rounded-2xl border-2 border-slate-200 bg-white px-8 py-4 text-lg font-bold text-slate-700 hover:border-blue-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300" href="/en/fees">
+                  View Fees
+                </a>
+              </div>
+            </div>
+            <div class="relative z-10 flex justify-center md:justify-end">
+              <div class="relative w-[280px] sm:w-[320px] animate-float">
+                <div class="absolute inset-0 bg-blue-500 rounded-[3rem] blur-3xl opacity-20 transform translate-y-10"></div>
+                <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Telegram%20mini%20app%20UI%20for%20borrowing%20money%20amount%20input%20duration%20selection%20modern%20clean%20financial%20blue%20white%20gradient%20background&image_size=portrait_9_16" alt="KhmerX Mini App Borrowing" class="relative rounded-[2.5rem] shadow-2xl border-[6px] border-slate-800 object-cover w-full h-[600px] bg-slate-100" />
+                
+                <div class="absolute top-20 -left-12 bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 animate-float" style="animation-delay: 1s;">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                  </div>
+                  <div>
+                    <div class="text-xs text-slate-500">New Request</div>
+                    <div class="font-bold text-slate-800">$100.00 / 7 Days</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 class="text-xl font-bold">Repayment rules</h2>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Repay through ABA by the agreed due time</li>
-              <li>• Keep proof screenshots/transaction IDs</li>
-              <li>• Contact Telegram support if you hit issues</li>
-            </ul>
-          </div>
-          <div class="rounded-2xl bg-white p-6 shadow-sm">
-            <h2 class="text-xl font-bold">Risk notice</h2>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• KhmerX is an information service, not a bank or guarantor</li>
-              <li>• Overdue can affect your credit/limits and cause disputes</li>
-              <li>• Users should assess risk and keep their own proofs</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="mt-10 rounded-2xl bg-white p-6 shadow-sm">
-          <h2 class="text-xl font-bold">GEO Q&A</h2>
-          <div class="mt-4 grid gap-3">
-            <div><div class="text-sm font-semibold">What is KhmerX?</div><div class="mt-1 text-sm text-slate-700">A Cambodia-focused micro‑lending information workflow using Telegram Mini App and ABA transfers.</div></div>
-            <div><div class="text-sm font-semibold">How does KhmerX work?</div><div class="mt-1 text-sm text-slate-700">Users publish requests in Mini App and complete ABA transfers with proof records.</div></div>
-            <div><div class="text-sm font-semibold">Does KhmerX support ABA?</div><div class="mt-1 text-sm text-slate-700">Yes. Transfers are completed through ABA.</div></div>
-          </div>
-        </div>
-
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">Open Mini App</a>
-          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/en/fees">Fees</a>
-          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/en">Back</a>
         </div>
       </section>
 
-      <footer class="bg-slate-950 px-5 py-10 text-white">
-        <div class="mx-auto max-w-6xl">
-          <p class="text-sm text-slate-300">KhmerX is an information and credit record tool. KhmerX does not guarantee approval, returns, deposits, or repayment.</p>
-          <div class="mt-6 text-xs text-slate-400">© <span data-year></span> KhmerX</div>
+      <!-- 3. 借款流程模块 -->
+      <section class="mx-auto max-w-[1200px] px-5 py-20">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <h2 class="text-3xl font-bold text-slate-900">Borrowing Process</h2>
+          <p class="mt-4 text-slate-600">Simple steps to complete your borrowing</p>
+        </div>
+        
+        <div class="relative">
+          <div class="hidden md:block absolute top-[40px] left-10 right-10 h-1 bg-slate-200 z-0"></div>
+          
+          <div class="grid gap-8 md:grid-cols-5 relative z-10">
+            <!-- Step 1 -->
+            <div class="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div class="w-16 h-16 mx-auto bg-[#0088cc]/10 text-[#0088cc] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+              </div>
+              <h4 class="font-bold text-slate-900 mb-2">Open Telegram Mini App</h4>
+              <p class="text-sm text-slate-500">Enter KhmerX via Telegram.</p>
+            </div>
+            <!-- Step 2 -->
+            <div class="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div class="w-16 h-16 mx-auto bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+              </div>
+              <h4 class="font-bold text-slate-900 mb-2">Bind ABA Info</h4>
+              <p class="text-sm text-slate-500">Fill in your ABA account and name.</p>
+            </div>
+            <!-- Step 3 -->
+            <div class="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div class="w-16 h-16 mx-auto bg-green-50 text-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <h4 class="font-bold text-slate-900 mb-2">Select Amount & Duration</h4>
+              <p class="text-sm text-slate-500">Choose how much and how long.</p>
+            </div>
+            <!-- Step 4 -->
+            <div class="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div class="w-16 h-16 mx-auto bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              </div>
+              <h4 class="font-bold text-slate-900 mb-2">Confirm Fees & Receive</h4>
+              <p class="text-sm text-slate-500">System shows the actual receive amount.</p>
+            </div>
+            <!-- Step 5 -->
+            <div class="group bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
+              <div class="w-16 h-16 mx-auto bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+              </div>
+              <h4 class="font-bold text-slate-900 mb-2">Complete ABA Transfer & Repay</h4>
+              <p class="text-sm text-slate-500">Repay on time to build credit.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. 借款条件 -->
+      <section class="bg-white py-20 border-y border-slate-100">
+        <div class="mx-auto max-w-[1200px] px-5">
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <h2 class="text-3xl font-bold text-slate-900">Borrowing Requirements</h2>
+          </div>
+          
+          <div class="grid gap-8 md:grid-cols-3">
+            <div class="bg-[#F5F7FA] rounded-3xl p-8">
+              <h3 class="text-xl font-bold text-slate-900 mb-4">New Users</h3>
+              <ul class="space-y-3 text-slate-600">
+                <li class="flex items-center gap-3">
+                  <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  Up to $50
+                </li>
+                <li class="flex items-center gap-3">
+                  <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                  7 Days Limit
+                </li>
+              </ul>
+            </div>
+            
+            <div class="bg-[#F5F7FA] rounded-3xl p-8">
+              <h3 class="text-xl font-bold text-slate-900 mb-4">Regular Users</h3>
+              <p class="text-slate-600 flex items-start gap-3">
+                <svg class="w-5 h-5 text-green-500 shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                Higher limits available after timely repayments
+              </p>
+            </div>
+            
+            <div class="bg-[#F5F7FA] rounded-3xl p-8">
+              <h3 class="text-xl font-bold text-slate-900 mb-4">Must Have</h3>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-4 py-2 bg-white rounded-xl text-sm font-medium border border-slate-200">Telegram</span>
+                <span class="px-4 py-2 bg-white rounded-xl text-sm font-medium border border-slate-200">ABA Account</span>
+                <span class="px-4 py-2 bg-white rounded-xl text-sm font-medium border border-slate-200">Phone Number</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-8 text-center text-sm text-slate-500 bg-slate-50 py-3 rounded-xl">
+            <svg class="w-4 h-4 inline-block mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Risk Tip: System dynamically adjusts limits based on credit history.
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. 费用与到账说明（重点） -->
+      <section class="mx-auto max-w-[1200px] px-5 py-20">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <h2 class="text-3xl font-bold text-slate-900">Fees & Receive Explanation</h2>
+          <p class="mt-4 text-slate-600">Transparent pricing, no hidden fees</p>
+        </div>
+        
+        <div class="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
+          <!-- Example 1 -->
+          <div class="bg-white rounded-3xl p-8 shadow-lg border border-slate-100">
+            <div class="text-center pb-6 border-b border-slate-100">
+              <div class="text-sm font-medium text-slate-500 mb-1">Example 1</div>
+              <div class="text-4xl font-extrabold text-slate-900">$100</div>
+            </div>
+            <div class="space-y-5 pt-6">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Interest/Fee</span>
+                <span class="text-lg font-bold text-slate-900">$10</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Actual Receive</span>
+                <span class="text-lg font-bold text-blue-600">$90</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Total Repay</span>
+                <span class="text-lg font-bold text-slate-900">$100</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Example 2 -->
+          <div class="bg-white rounded-3xl p-8 shadow-lg border border-slate-100">
+            <div class="text-center pb-6 border-b border-slate-100">
+              <div class="text-sm font-medium text-slate-500 mb-1">Example 2</div>
+              <div class="text-4xl font-extrabold text-slate-900">$50</div>
+            </div>
+            <div class="space-y-5 pt-6">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Interest/Fee</span>
+                <span class="text-lg font-bold text-slate-900">$5</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Actual Receive</span>
+                <span class="text-lg font-bold text-blue-600">$45</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-600">Total Repay</span>
+                <span class="text-lg font-bold text-slate-900">$50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-10 bg-[#FFFBEB] border border-[#FDE68A] rounded-2xl p-5 max-w-2xl mx-auto flex items-center justify-center gap-3 text-[#B45309] font-medium text-center">
+          <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          Please confirm the actual received amount and the total repayment amount to avoid misunderstanding.
+        </div>
+      </section>
+
+      <!-- 6. 还款方式 & 7. 风险与信用 -->
+      <section class="bg-white py-20 border-y border-slate-100">
+        <div class="mx-auto max-w-[1200px] px-5">
+          <div class="grid gap-12 md:grid-cols-2">
+            <!-- 还款方式 -->
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 mb-8">How to Repay</h2>
+              <div class="space-y-6 relative">
+                <div class="absolute top-0 bottom-0 left-[19px] w-0.5 bg-slate-100"></div>
+                
+                <div class="relative flex gap-4 items-start">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 z-10 border-4 border-white">1</div>
+                  <div class="pt-2 pb-6">
+                    <h4 class="font-bold text-slate-900">Transfer via ABA</h4>
+                  </div>
+                </div>
+                
+                <div class="relative flex gap-4 items-start">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 z-10 border-4 border-white">2</div>
+                  <div class="pt-2 pb-6">
+                    <h4 class="font-bold text-slate-900">Upload Repayment Proof</h4>
+                  </div>
+                </div>
+                
+                <div class="relative flex gap-4 items-start">
+                  <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 z-10 border-4 border-white">3</div>
+                  <div class="pt-2">
+                    <h4 class="font-bold text-slate-900">Wait for Confirmation</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-8 bg-blue-50 text-blue-700 p-4 rounded-xl text-sm flex gap-3">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                System will send a reminder 24 hours before the due date.
+              </div>
+            </div>
+            
+            <!-- 风险与信用 -->
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 mb-8">Risk & Credit Rules</h2>
+              <div class="space-y-6">
+                <div class="bg-[#F5F7FA] p-6 rounded-2xl">
+                  <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Credit Mechanism
+                  </h4>
+                  <p class="text-slate-600 text-sm">Timely repayments can increase your limit and credit level.</p>
+                </div>
+                
+                <div class="bg-[#F5F7FA] p-6 rounded-2xl">
+                  <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Overdue Rules
+                  </h4>
+                  <p class="text-slate-600 text-sm">Overdue may lead to lower limits or borrowing restrictions.</p>
+                </div>
+                
+                <div class="bg-[#F5F7FA] p-6 rounded-2xl">
+                  <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Risk Warning
+                  </h4>
+                  <p class="text-slate-600 text-sm">KhmerX does not guarantee success. Users must confirm risks.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. FAQ -->
+      <section class="mx-auto max-w-[800px] px-5 py-20">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-bold text-slate-900">FAQ</h2>
+        </div>
+        <div class="space-y-4">
+          <details class="group rounded-3xl border border-slate-200 bg-white [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-slate-900">
+              How to start borrowing?
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600">
+              <p>Open the KhmerX Telegram Mini App, bind your ABA account, and you can publish a borrowing request.</p>
+            </div>
+          </details>
+          <details class="group rounded-3xl border border-slate-200 bg-white [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-slate-900">
+              Does it support ABA?
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600">
+              <p>Yes. All loan disbursements and repayments must be completed via ABA bank transfers.</p>
+            </div>
+          </details>
+          <details class="group rounded-3xl border border-slate-200 bg-white [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-slate-900">
+              How fast will I receive the money?
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600">
+              <p>Once matched, the lender will transfer directly to your ABA account, usually within minutes.</p>
+            </div>
+          </details>
+          <details class="group rounded-3xl border border-slate-200 bg-white [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-slate-900">
+              What happens if I am overdue?
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600">
+              <p>Overdue payments will decrease your credit level, potentially blocking future requests. Lenders may also pursue debt collection.</p>
+            </div>
+          </details>
+          <details class="group rounded-3xl border border-slate-200 bg-white [&_summary::-webkit-details-marker]:hidden">
+            <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg text-slate-900">
+              How to increase my limit?
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="px-6 pb-6 text-slate-600">
+              <p>Maintain a good borrowing history and repay on time. The system will automatically increase your limit based on your credit performance.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- 9. CTA 引导 -->
+      <section class="mx-auto max-w-[1200px] px-5 pb-24">
+        <div class="bg-gradient-to-br from-[#0A5BFF] to-[#00AEEF] rounded-[3rem] p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+          <div class="absolute top-0 right-0 -mt-20 -mr-20 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+          
+          <div class="relative z-10 max-w-2xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8">Start Using KhmerX Now</h2>
+            <div class="flex flex-col items-center justify-center gap-8">
+              <div class="bg-white p-4 rounded-3xl shadow-lg inline-block">
+                <img class="w-48 h-48 rounded-2xl" alt="KhmerX Mini App QR" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Ft.me%2FKhmerXBot%2Fapp" />
+                <div class="text-slate-500 text-sm font-medium mt-3">Scan with Camera</div>
+              </div>
+              <a class="inline-flex justify-center items-center rounded-2xl bg-white px-10 py-5 text-xl font-bold text-blue-600 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300" href="https://t.me/KhmerXBot/app">
+                <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                Open Telegram Mini App
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Footer -->
+      <footer class="bg-slate-950 px-5 py-12 text-slate-400">
+        <div class="mx-auto max-w-[1200px]">
+          <div class="grid gap-8 md:grid-cols-4 border-b border-slate-800 pb-12">
+            <div class="col-span-2">
+              <a href="/en" class="flex items-center gap-3 mb-6">
+                <img src="/logo.jpg" alt="KhmerX Logo" class="h-8 w-8 rounded-lg object-cover grayscale opacity-80" />
+                <div class="font-bold text-lg text-white">KhmerX</div>
+              </a>
+              <p class="text-sm leading-relaxed max-w-md">
+                KhmerX is a local micro lending information service platform. We do not guarantee successful borrowing and provide no guarantees.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-6">Links</h4>
+              <ul class="space-y-4 text-sm">
+                <li><a href="https://t.me/KhmerXBot" class="hover:text-white transition-colors">Telegram Support</a></li>
+                <li><a href="mailto:support@khmerx.org" class="hover:text-white transition-colors">support@khmerx.org</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-white font-bold mb-6">Legal</h4>
+              <ul class="space-y-4 text-sm">
+                <li><a href="/en/terms" class="hover:text-white transition-colors">User Agreement</a></li>
+                <li><a href="/en/privacy" class="hover:text-white transition-colors">Privacy Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row items-center justify-between pt-8 gap-4 text-sm">
+            <div>© <span data-year></span> KhmerX. All rights reserved.</div>
+            <div class="flex gap-4">
+              <a href="/km" class="hover:text-white transition-colors">ខ្មែរ</a>
+              <a href="/en" class="hover:text-white transition-colors">English</a>
+              <a href="/zh" class="hover:text-white transition-colors">中文</a>
+            </div>
+          </div>
         </div>
       </footer>
-
-      <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
-        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
-          <div class="min-w-0">
-            <div class="truncate text-sm font-semibold">KhmerX</div>
-            <div class="truncate text-xs text-slate-600">Telegram + ABA · Small short-term · Information service</div>
-          </div>
-          <div class="flex shrink-0 gap-2">
-            <a class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Telegram</a>
-            <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-4 py-2 text-sm font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">Open Mini App</a>
-          </div>
-        </div>
-      </div>
     </main>
   </body>
 </html>
