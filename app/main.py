@@ -9,7 +9,7 @@ from starlette.staticfiles import StaticFiles
 
 from app.config import HOST, PORT, CORS_ORIGINS, validate_runtime_config
 from app.database import init_db
-from app.routes import auth, products, orders, inspections, webhooks, p2p, rates
+from app.routes import auth, products, orders, inspections, webhooks, p2p, rates, telegram_bot
 from app.routes import interest_rates
 from app.risk.router import router as risk_router
 from app.disputes.router import router as disputes_router
@@ -113,6 +113,7 @@ app.include_router(products.router)
 app.include_router(orders.router)
 app.include_router(inspections.router)
 app.include_router(webhooks.router)
+app.include_router(telegram_bot.router)
 app.include_router(p2p.router)
 app.include_router(rates.router)
 app.include_router(interest_rates.router)
