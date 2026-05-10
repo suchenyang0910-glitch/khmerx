@@ -3,7 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from app.risk.schemas import CreateOfferRiskInput, MatchOfferRiskInput, RepaymentRiskInput, RiskDecision
-from app.risk.rules import MAX_BORROW_AMOUNT_CAP
+from app.risk.rules import MAX_BORROW_AMOUNT_CAP, NEW_USER_MAX_BORROW_AMOUNT
 from app.risk.service import RiskService
 
 
@@ -48,7 +48,7 @@ class RiskEngine:
                 risk_level=profile.risk_level,
             )
 
-        if data.user_age_days < 7 and data.amount > Decimal("300.00"):
+        if data.user_age_days < 7 and data.amount > NEW_USER_MAX_BORROW_AMOUNT:
             self.risk_service.create_risk_event(
                 event_type="new_user_large_amount",
                 severity="medium",

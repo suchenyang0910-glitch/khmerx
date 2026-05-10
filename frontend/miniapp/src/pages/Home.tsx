@@ -19,6 +19,7 @@ function scoreToLevel(score: number) {
 export default function Home() {
   const { t } = useI18n()
   const MAX_BORROW_CAP = 800
+  const NEW_USER_BORROW_CAP = 500
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
   const refresh = useAuthStore((s) => s.refreshMe)
@@ -37,8 +38,8 @@ export default function Home() {
     const base = risk?.max_borrow_amount ?? MAX_BORROW_CAP
     const capped = Math.min(base, MAX_BORROW_CAP)
     const isNew = (user?.total_borrowed || 0) <= 0
-    return isNew ? Math.min(capped, 100) : capped
-  }, [MAX_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
+    return isNew ? Math.min(capped, NEW_USER_BORROW_CAP) : capped
+  }, [MAX_BORROW_CAP, NEW_USER_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
 
   const isNewUser = (user?.total_borrowed || 0) <= 0
 
@@ -79,7 +80,8 @@ export default function Home() {
           <div className="text-lg font-semibold">${Math.round(maxBorrow)}</div>
         </div>
         <div className="mt-2 text-xs text-white/90">
-          {t("borrow.limitUpdate", { cap: MAX_BORROW_CAP })} {t("borrow.largeAmountContact")}{" "}
+          {t("borrow.platformCap", { cap: MAX_BORROW_CAP })}
+          {isNewUser ? ` ${t("borrow.newUserCap", { cap: NEW_USER_BORROW_CAP })}` : ""} {t("borrow.largeAmountContact")}{" "}
           <a className="underline" href="https://t.me/KhmerXBot" target="_blank" rel="noreferrer">
             {t("borrow.telegramBot")}
           </a>

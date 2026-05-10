@@ -40,7 +40,7 @@ class TestRiskEngine(unittest.TestCase):
         decision = engine.check_create_offer(
             CreateOfferRiskInput(
                 user_id=user.id,
-                amount=Decimal("301.00"),
+                amount=Decimal("501.00"),
                 term_days=7,
                 user_age_days=1,
                 active_trades_count=0,

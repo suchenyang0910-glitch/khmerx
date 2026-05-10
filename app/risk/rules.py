@@ -2,6 +2,7 @@ from decimal import Decimal
 
 
 MAX_BORROW_AMOUNT_CAP = Decimal("800.00")
+NEW_USER_MAX_BORROW_AMOUNT = Decimal("500.00")
 
 
 def credit_level_from_score(score: int) -> str:

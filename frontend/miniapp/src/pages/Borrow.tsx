@@ -31,14 +31,15 @@ export default function Borrow() {
   const risk = useAuthStore((s) => s.risk)
 
   const MAX_BORROW_CAP = 800
+  const NEW_USER_BORROW_CAP = 500
 
   const creditLevel = useMemo(() => scoreToLevel(user?.credit_score || 650), [user?.credit_score])
   const maxBorrow = useMemo(() => {
     const base = risk?.max_borrow_amount ?? MAX_BORROW_CAP
     const isNew = (user?.total_borrowed || 0) <= 0
     const capped = Math.min(base, MAX_BORROW_CAP)
-    return isNew ? Math.min(capped, 100) : capped
-  }, [MAX_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
+    return isNew ? Math.min(capped, NEW_USER_BORROW_CAP) : capped
+  }, [MAX_BORROW_CAP, NEW_USER_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
 
   const suggested = useMemo(() => {
     const s = Math.floor((maxBorrow * 0.8) / 10) * 10
@@ -109,7 +110,8 @@ export default function Borrow() {
 
       <Card className="p-4">
         <div className="text-sm text-zinc-700">
-          {t("borrow.limitUpdate", { cap: MAX_BORROW_CAP })} {t("borrow.largeAmountContact")}{" "}
+          {t("borrow.platformCap", { cap: MAX_BORROW_CAP })}
+          {isNewUser ? ` ${t("borrow.newUserCap", { cap: NEW_USER_BORROW_CAP })}` : ""} {t("borrow.largeAmountContact")}{" "}
           <a className="text-blue-600" href="https://t.me/KhmerXBot" target="_blank" rel="noreferrer">
             {t("borrow.telegramBot")}
           </a>
