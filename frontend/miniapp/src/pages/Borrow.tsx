@@ -164,7 +164,11 @@ export default function Borrow() {
         </div>
 
         <div className="mt-3 rounded-2xl bg-white p-3 text-sm text-zinc-700 border border-zinc-100">
-          你借 <span className="font-semibold">${amount.toFixed(0)}</span>，实际到账 <span className="font-semibold">${receive.toFixed(2)}</span>，到期需还 <span className="font-semibold">${repay.toFixed(2)}</span>。
+          {t("borrow.summary", {
+            amount: amount.toFixed(0),
+            receive: receive.toFixed(2),
+            repay: repay.toFixed(2),
+          })}
         </div>
 
         <div className="mt-3 text-xs text-zinc-500">

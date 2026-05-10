@@ -52,7 +52,7 @@ export default function ProfileSetup() {
 
       <Card className="mt-4 p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-zinc-900">手机号</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("setup.phone")}</div>
           <Badge tone={phoneVerified ? "green" : phoneOk ? "yellow" : "yellow"}>{phoneVerified ? t("setup.phoneVerified") : t("setup.phonePending")}</Badge>
         </div>
 
@@ -69,11 +69,11 @@ export default function ProfileSetup() {
                   const contactRes = await new Promise<any>((resolve, reject) => {
                     ;(tg as any).requestContact((ok: boolean, info: any) => {
                       if (!ok) {
-                        reject(new Error("你已取消手机号授权"))
+                        reject(new Error(t("setup.phoneAuthCanceled")))
                         return
                       }
                       if (!info || info.status !== "sent" || !info.response) {
-                        reject(new Error("未获取到手机号信息"))
+                        reject(new Error(t("setup.phoneAuthMissing")))
                         return
                       }
                       resolve(info)
@@ -84,7 +84,7 @@ export default function ProfileSetup() {
                   await refreshMe()
                   setPhone((useAuthStore.getState().user?.phone || "").toString())
                 } catch (e: unknown) {
-                  setErr(errorMessage(e, "验证失败"))
+                  setErr(errorMessage(e, t("setup.verifyFailed")))
                 } finally {
                   setSaving(false)
                 }
@@ -97,7 +97,7 @@ export default function ProfileSetup() {
         ) : null}
 
         <div className="mt-2">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="例如：012345678" inputMode="tel" />
+          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t("setup.phonePlaceholder")} inputMode="tel" />
         </div>
 
         <div className="mt-3 flex gap-2">
@@ -114,7 +114,7 @@ export default function ProfileSetup() {
                 setOtpDevCode(res.dev_code || null)
                 setOtpCooldown(60)
               } catch (e: unknown) {
-                setErr(errorMessage(e, "发送验证码失败"))
+                setErr(errorMessage(e, t("setup.sendCodeFailed")))
               } finally {
                 setSaving(false)
               }
@@ -132,7 +132,7 @@ export default function ProfileSetup() {
               try {
                 await verifyPhoneOtp(phone.trim(), otpCode.trim())
               } catch (e: unknown) {
-                setErr(errorMessage(e, "验证失败"))
+                setErr(errorMessage(e, t("setup.verifyFailed")))
               } finally {
                 setSaving(false)
               }
@@ -154,7 +154,7 @@ export default function ProfileSetup() {
 
       <Card className="mt-3 p-4">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-semibold text-zinc-900">ABA 账户</div>
+          <div className="text-sm font-semibold text-zinc-900">{t("setup.abaTitle")}</div>
           <Badge tone={abaOk ? "green" : "yellow"}>{abaOk ? t("setup.abaFilled") : t("setup.abaPending")}</Badge>
         </div>
         <div className="mt-2 space-y-2">
@@ -194,7 +194,7 @@ export default function ProfileSetup() {
           {saving ? t("common.saving") : phoneVerified ? t("common.saveContinue") : t("setup.verifyPhoneFirst")}
         </Button>
         <div className="text-xs text-zinc-500">
-          说明：KhmerX 不会向陌生人主动私聊；所有通知都需要你主动触发或订阅。
+          {t("setup.securityNote")}
         </div>
       </div>
     </div>

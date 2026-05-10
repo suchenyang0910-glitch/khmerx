@@ -52,11 +52,11 @@ export default function AppShell() {
       if (status === 500) {
         const detail = e?.response?.data?.detail
         if (typeof detail === "string" && detail.toLowerCase().includes("bot token")) {
-          throw new Error("后端未配置 BOT_TOKENS：请在后端 .env 设置 BOT_TOKENS=... 并重启")
+          throw new Error(t("dev.botTokensMissing"))
         }
       }
       if (status === 404) {
-        throw new Error("本地调试接口未开启：请在后端设置 DEV_TMA_ENABLED=true 并重启后端")
+        throw new Error(t("dev.devTmaDisabled"))
       }
 
       const bases = [
@@ -79,7 +79,7 @@ export default function AppShell() {
         }
       }
 
-      throw new Error("无法连接后端：请先启动后端（建议 3040）：python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 3040")
+      throw new Error(t("dev.backendUnreachable"))
     }
   }
 
@@ -94,7 +94,7 @@ export default function AppShell() {
       getDevInitData()
         .then((devInit) => bootstrap(devInit))
         .catch((e) => {
-          setDevError(e instanceof Error ? e.message : "本地登录失败")
+          setDevError(e instanceof Error ? e.message : t("dev.localLoginFailed"))
           return bootstrap("")
         })
         .finally(() => setDevBooting(false))
@@ -145,7 +145,7 @@ export default function AppShell() {
                   window.location.reload()
                 }}
               >
-                切到 3040
+                {t("dev.switchTo3040")}
               </Button>
               <Button
                 variant="secondary"
@@ -154,7 +154,7 @@ export default function AppShell() {
                   window.location.reload()
                 }}
               >
-                切到 3030
+                {t("dev.switchTo3030")}
               </Button>
             </div>
           ) : null}
@@ -171,14 +171,14 @@ export default function AppShell() {
                     const devInit = await getDevInitData()
                     await bootstrap(devInit)
                   } catch (e) {
-                    setDevError(e instanceof Error ? e.message : "本地登录失败")
+                    setDevError(e instanceof Error ? e.message : t("dev.localLoginFailed"))
                   } finally {
                     setDevBooting(false)
                   }
                 }}
                 className="w-full"
               >
-                {devBooting ? "正在生成本地测试账号…" : "本地调试：生成测试账号"}
+                {devBooting ? t("dev.generatingAccount") : t("dev.generateAccount")}
               </Button>
               {devError ? <div className="mt-2 text-xs text-amber-700">{devError}</div> : null}
             </div>

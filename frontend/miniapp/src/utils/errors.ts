@@ -1,6 +1,6 @@
 import type { AxiosError } from "axios"
 
-export function errorMessage(e: unknown, fallback = "请求失败") {
+export function errorMessage(e: unknown, fallback = "Request failed") {
   if (typeof e === "string") return e
   if (!e || typeof e !== "object") return fallback
 

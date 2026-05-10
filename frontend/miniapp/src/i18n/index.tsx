@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 import { STRINGS, type Lang } from "./strings"
 
 const STORAGE_KEY = "khx_lang"
+const MIGRATION_KEY = "khx_lang_migrated_v1"
 
 export const SUPPORTED_LANGS: Lang[] = ["km", "en", "cn"]
 
@@ -15,8 +16,19 @@ export function readStoredLang(): Lang | null {
 
 export function ensureDefaultLang(): Lang {
   const stored = readStoredLang()
-  if (stored) return stored
-  if (typeof window !== "undefined") localStorage.setItem(STORAGE_KEY, "km")
+  if (typeof window === "undefined") return stored || "km"
+
+  const migrated = localStorage.getItem(MIGRATION_KEY) === "1"
+  if (stored) {
+    if (!migrated && stored === "cn") {
+      localStorage.setItem(STORAGE_KEY, "km")
+      localStorage.setItem(MIGRATION_KEY, "1")
+      return "km"
+    }
+    return stored
+  }
+
+  localStorage.setItem(STORAGE_KEY, "km")
   return "km"
 }
 
@@ -73,4 +85,3 @@ export function useI18n() {
   if (!ctx) throw new Error("useI18n must be used within I18nProvider")
   return ctx
 }
-

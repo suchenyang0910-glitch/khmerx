@@ -3,6 +3,11 @@ import axios from "axios"
 import { api, apiV1 } from "@/api/client"
 import type { AppUser, UserRiskProfile } from "@/api/types"
 import { errorMessage } from "@/utils/errors"
+import { ensureDefaultLang, translate } from "@/i18n"
+
+function t(key: string, vars?: Record<string, string | number>) {
+  return translate(ensureDefaultLang(), key, vars)
+}
 
 type AuthState = {
   user: AppUser | null
@@ -38,7 +43,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ booting: true, error: null })
     try {
       if (!initData) {
-        set({ booting: false, error: "请从 Telegram 打开 KhmerX Mini App" })
+        set({ booting: false, error: t("auth.openInTelegram") })
         return
       }
 
@@ -89,13 +94,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ booting: false })
     } catch (e: unknown) {
-      const msg = errorMessage(e, "登录失败")
+      const msg = errorMessage(e, t("auth.loginFailed"))
       if (axios.isAxiosError(e) && !e.response) {
         const origin = window.location.origin
         const base = (api.defaults.baseURL || "").toString()
         set({
           booting: false,
-          error: `Network Error：无法连接到 API。\nOrigin: ${origin}\nAPI: ${base}\n请检查：api 域名/证书是否可用、CORS 是否放行该 Origin、服务器是否可达。`,
+          error: `${t("common.networkError")}\nOrigin: ${origin}\nAPI: ${base}\n${t("auth.networkChecklist")}`,
         })
         return
       }
