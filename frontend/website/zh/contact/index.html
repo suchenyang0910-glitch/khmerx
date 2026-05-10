@@ -5,10 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>联系我们 — KhmerX</title>
     <meta name="description" content="通过 Telegram 联系 KhmerX，获取 Mini App 支持或争议帮助。" />
+    <meta name="keywords" content="联系我们, Telegram 客服, Telegram Bot, Email, 柬埔寨, ABA" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="KhmerX" />
+    <meta property="og:title" content="联系我们 — KhmerX" />
+    <meta property="og:description" content="通过 Telegram 或 Email 联系 KhmerX，获取支持与争议协助。" />
+    <meta property="og:url" content="https://khmerx.org/zh/contact" />
+    <meta property="og:image" content="https://khmerx.org/logo.jpg" />
     <link rel="canonical" href="https://khmerx.org/zh/contact" />
     <link rel="alternate" href="https://khmerx.org/km/contact" hreflang="km" />
     <link rel="alternate" href="https://khmerx.org/en/contact" hreflang="en" />
     <link rel="alternate" href="https://khmerx.org/zh/contact" hreflang="zh" />
+    <link rel="alternate" href="https://khmerx.org/zh/contact" hreflang="x-default" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -18,7 +26,7 @@
             "@id": "https://khmerx.org/#organization",
             "name": "KhmerX",
             "url": "https://khmerx.org",
-            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/favicon.svg" },
+            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/logo.jpg" },
             "sameAs": ["https://t.me/KhmerXBot"]
           },
           {
@@ -51,17 +59,28 @@
   </head>
   <body>
     <script type="module" src="/src/site.ts"></script>
-    <main class="min-h-screen bg-[#F5F7FA] text-slate-900">
+    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900">
       <header class="border-b bg-white">
         <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="/zh" class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0A5BFF] to-[#00AEEF] font-bold text-white">X</div>
-            <div class="font-bold">KhmerX</div>
+            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm" />
+            <div>
+              <div class="font-bold">KhmerX</div>
+              <div class="text-xs text-slate-500">ABA · Telegram · Cambodia</div>
+            </div>
           </a>
+          <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
+            <a class="hover:text-slate-900" href="/zh/products">产品</a>
+            <a class="hover:text-slate-900" href="/zh/trust">信任与关于</a>
+            <a class="hover:text-slate-900" href="/zh/borrow">借款说明</a>
+            <a class="hover:text-slate-900" href="/zh/fees">费用说明</a>
+            <a class="hover:text-slate-900" href="/zh/faq">常见问题</a>
+            <a class="hover:text-slate-900" href="/zh/contact">联系</a>
+          </nav>
           <div class="flex gap-2 text-sm">
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/km/contact">ខ្មែរ</a>
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/en/contact">EN</a>
-            <a class="rounded-lg bg-slate-100 px-3 py-1" href="/zh/contact">中文</a>
+            <a data-lang="km" class="rounded-lg px-3 py-1" href="/km/contact">ខ្មែរ</a>
+            <a data-lang="en" class="rounded-lg px-3 py-1" href="/en/contact">EN</a>
+            <a data-lang="zh" class="rounded-lg px-3 py-1" href="/zh/contact">中文</a>
           </div>
         </div>
       </header>
@@ -69,11 +88,60 @@
       <section class="mx-auto max-w-4xl px-5 py-14">
         <h1 class="text-4xl font-bold">联系我们</h1>
         <p class="mt-4 text-slate-700">借款问题、Mini App 支持或争议帮助，请通过 Telegram 联系 KhmerX。</p>
-        <div class="mt-8 flex gap-3">
-          <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 font-semibold text-white shadow" href="https://t.me/KhmerXBot">在 Telegram 联系</a>
-          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
+        <div class="mt-8 grid gap-4 md:grid-cols-2">
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="text-xs text-slate-500">主要入口</div>
+            <div class="mt-2 text-lg font-bold">Telegram Bot</div>
+            <p class="mt-2 text-sm text-slate-700">通知与支持入口。</p>
+            <div class="mt-4">
+              <a class="inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white" href="https://t.me/KhmerXBot">打开 Telegram</a>
+            </div>
+          </div>
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <div class="text-xs text-slate-500">Email</div>
+            <div class="mt-2 text-lg font-bold">support@khmerx.org</div>
+            <p class="mt-2 text-sm text-slate-700">通用咨询与技术问题。</p>
+            <div class="mt-4">
+              <a class="inline-flex rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="mailto:support@khmerx.org?subject=KhmerX%20Support">发送邮件</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl bg-white p-6 shadow-sm">
+          <h2 class="text-xl font-bold">联系表单</h2>
+          <p class="mt-2 text-sm text-slate-700">填写后将打开邮件草稿，方便你发送。</p>
+          <form id="contactForm" class="mt-5 grid gap-3">
+            <input class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="name" placeholder="姓名" />
+            <input class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="telegram" placeholder="Telegram 用户名（可选）" />
+            <textarea class="min-h-32 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm" name="message" placeholder="问题描述"></textarea>
+            <button type="submit" class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 text-sm font-semibold text-white shadow">发送</button>
+          </form>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
+          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/zh/faq">FAQ</a>
         </div>
       </section>
+
+      <script>
+        ;(() => {
+          const form = document.getElementById('contactForm')
+          if (!(form instanceof HTMLFormElement)) return
+          form.addEventListener('submit', (e) => {
+            e.preventDefault()
+            const data = new FormData(form)
+            const name = String(data.get('name') || '').trim()
+            const tg = String(data.get('telegram') || '').trim()
+            const msg = String(data.get('message') || '').trim()
+            const subject = encodeURIComponent('KhmerX Support')
+            const body = encodeURIComponent(
+              `姓名: ${name}\nTelegram: ${tg}\n\n内容:\n${msg}\n\n页面: ${window.location.href}`
+            )
+            window.location.href = `mailto:support@khmerx.org?subject=${subject}&body=${body}`
+          })
+        })()
+      </script>
 
       <footer class="bg-slate-950 px-5 py-10 text-white">
         <div class="mx-auto max-w-6xl">
@@ -81,6 +149,19 @@
           <div class="mt-6 text-xs text-slate-400">© <span data-year></span> KhmerX</div>
         </div>
       </footer>
+
+      <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
+          <div class="min-w-0">
+            <div class="truncate text-sm font-semibold">KhmerX</div>
+            <div class="truncate text-xs text-slate-600">Telegram + ABA · 小额短期 · 信息服务</div>
+          </div>
+          <div class="flex shrink-0 gap-2">
+            <a class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Telegram</a>
+            <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-4 py-2 text-sm font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>

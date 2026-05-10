@@ -3,10 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KhmerX — 柬埔寨 ABA 小额周转信息服务平台</title>
+    <title>KhmerX | 柬埔寨 ABA 小额周转</title>
     <meta
       name="description"
       content="KhmerX 是面向柬埔寨本地用户的小额周转信息服务平台，用户可以通过 Telegram Mini App 发布借款需求，并使用 ABA 转账完成交易。"
+    />
+    <meta
+      name="keywords"
+      content="柬埔寨小额借款, ABA借款, 金边小额周转, 柬埔寨Telegram借款, 柬埔寨短期借款, Telegram Mini App, ABA 转账, 信用记录"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KhmerX" />
+    <meta property="og:title" content="KhmerX | 柬埔寨 ABA 小额周转" />
+    <meta
+      property="og:description"
+      content="KhmerX 是面向柬埔寨的 P2P 微借贷信息平台（ABA + Telegram Mini App）。条款透明可追溯。"
+    />
+    <meta property="og:url" content="https://khmerx.org/zh" />
+    <meta property="og:image" content="https://khmerx.org/logo.jpg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="KhmerX | 柬埔寨 ABA 小额周转" />
+    <meta
+      name="twitter:description"
+      content="KhmerX 是面向柬埔寨的 P2P 微借贷信息平台（ABA + Telegram Mini App）。条款透明可追溯。"
     />
     <link rel="canonical" href="https://khmerx.org/zh" />
     <link rel="alternate" href="https://khmerx.org/km" hreflang="km" />
@@ -24,7 +43,7 @@
             "url": "https://khmerx.org",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://khmerx.org/favicon.svg"
+              "url": "https://khmerx.org/logo.jpg"
             },
             "sameAs": ["https://t.me/KhmerXBot"]
           },
@@ -36,10 +55,20 @@
             "publisher": { "@id": "https://khmerx.org/#organization" }
           },
           {
+            "@type": "FinancialService",
+            "@id": "https://khmerx.org/#financialservice",
+            "name": "KhmerX",
+            "url": "https://khmerx.org",
+            "provider": { "@id": "https://khmerx.org/#organization" },
+            "areaServed": "Cambodia",
+            "serviceType": "Micro lending information service (ABA + Telegram Mini App)",
+            "sameAs": ["https://t.me/KhmerXBot"]
+          },
+          {
             "@type": "WebPage",
             "@id": "https://khmerx.org/zh#webpage",
             "url": "https://khmerx.org/zh",
-            "name": "KhmerX — 柬埔寨 ABA 小额周转信息服务平台",
+            "name": "KhmerX | 柬埔寨 ABA 小额周转",
             "isPartOf": { "@id": "https://khmerx.org/#website" },
             "about": { "@id": "https://khmerx.org/#organization" },
             "inLanguage": "zh"
@@ -50,11 +79,11 @@
   </head>
   <body>
     <script type="module" src="/src/site.ts"></script>
-    <main class="min-h-screen bg-[#F5F7FA] text-slate-900">
+    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900">
       <header class="border-b bg-white">
         <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="/zh" class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0A5BFF] to-[#00AEEF] font-bold text-white">X</div>
+            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm" />
             <div>
               <div class="font-bold">KhmerX</div>
               <div class="text-xs text-slate-500">ABA · Telegram · Cambodia</div>
@@ -163,6 +192,108 @@
         </div>
       </section>
 
+      <section class="mx-auto max-w-6xl px-5 pb-16">
+        <div class="rounded-3xl bg-white p-7 shadow-sm">
+          <h2 class="text-2xl font-bold">借款流程</h2>
+          <p class="mt-3 max-w-3xl text-slate-700">用 5 步讲清楚关键动作，减少误解与纠纷。</p>
+          <div class="mt-6 grid gap-4 md:grid-cols-5">
+            <div class="rounded-2xl bg-slate-50 p-5"><div class="text-xs text-slate-500">Step 1</div><div class="mt-2 font-semibold">打开 Telegram</div></div>
+            <div class="rounded-2xl bg-slate-50 p-5"><div class="text-xs text-slate-500">Step 2</div><div class="mt-2 font-semibold">绑定 ABA</div></div>
+            <div class="rounded-2xl bg-slate-50 p-5"><div class="text-xs text-slate-500">Step 3</div><div class="mt-2 font-semibold">发布需求</div></div>
+            <div class="rounded-2xl bg-slate-50 p-5"><div class="text-xs text-slate-500">Step 4</div><div class="mt-2 font-semibold">上传凭证</div></div>
+            <div class="rounded-2xl bg-slate-50 p-5"><div class="text-xs text-slate-500">Step 5</div><div class="mt-2 font-semibold">完成还款</div></div>
+          </div>
+          <div class="mt-6">
+            <a class="inline-flex rounded-xl border border-blue-600 px-5 py-3 font-semibold text-blue-600" href="/zh/borrow">查看借款说明</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-5 pb-16">
+        <div class="grid gap-4 md:grid-cols-2">
+          <div class="rounded-3xl bg-white p-7 shadow-sm">
+            <h2 class="text-2xl font-bold">费用透明</h2>
+            <p class="mt-3 text-slate-700">在关键步骤前展示 Borrow/Fee/Receive/Repay，方便核对条款。</p>
+            <div class="mt-6 rounded-2xl bg-blue-50 p-5">
+              <div class="flex justify-between"><span>借款</span><strong>$100</strong></div>
+              <div class="mt-2 flex justify-between"><span>服务费/利息</span><strong>$10</strong></div>
+              <div class="mt-2 flex justify-between"><span>实际到账</span><strong>$90</strong></div>
+              <div class="mt-2 flex justify-between font-bold"><span>到期应还</span><strong>$100</strong></div>
+            </div>
+            <div class="mt-6">
+              <a class="inline-flex rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/zh/fees">查看费用说明</a>
+            </div>
+          </div>
+          <div class="rounded-3xl bg-white p-7 shadow-sm">
+            <h2 class="text-2xl font-bold">信用机制</h2>
+            <p class="mt-3 text-slate-700">保留关键步骤记录与凭证，帮助核对与风险提示；额度/等级会随历史变化。</p>
+            <ul class="mt-5 space-y-2 text-sm text-slate-700">
+              <li>• 关键操作留存凭证与时间记录</li>
+              <li>• 信用/额度与历史相关，不承诺结果</li>
+              <li>• 提供争议支持入口，便于沟通</li>
+            </ul>
+            <div class="mt-6">
+              <a class="inline-flex rounded-xl border border-blue-600 px-5 py-3 font-semibold text-blue-600" href="/zh/trust">查看信任与关于</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-5 pb-16">
+        <div class="rounded-3xl bg-white p-7 shadow-sm">
+          <div class="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <div class="max-w-3xl">
+              <h2 class="text-2xl font-bold">FAQ（AI 友好）</h2>
+              <p class="mt-3 text-slate-700">面向 Google/ChatGPT 的简短定义与问答。</p>
+              <div class="mt-6 space-y-3">
+                <details class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <summary class="cursor-pointer font-semibold">KhmerX 是什么？</summary>
+                  <div class="mt-2 text-sm text-slate-700">KhmerX 是面向柬埔寨的小额周转信息服务平台，核心入口为 Telegram Mini App，资金转账由 ABA 完成。</div>
+                </details>
+                <details class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <summary class="cursor-pointer font-semibold">KhmerX 如何工作？</summary>
+                  <div class="mt-2 text-sm text-slate-700">你在 Mini App 发布需求与条款，双方核对后通过 ABA 转账完成，并留存凭证记录。</div>
+                </details>
+                <details class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <summary class="cursor-pointer font-semibold">支持 ABA 吗？</summary>
+                  <div class="mt-2 text-sm text-slate-700">支持。转账通过 ABA 完成（由用户自行操作转账）。</div>
+                </details>
+                <details class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <summary class="cursor-pointer font-semibold">支持 Telegram 吗？</summary>
+                  <div class="mt-2 text-sm text-slate-700">支持。Telegram Mini App 是主要入口；Telegram Bot 提供通知与支持。</div>
+                </details>
+              </div>
+              <div class="mt-6">
+                <a class="inline-flex rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/zh/faq">查看全部 FAQ</a>
+              </div>
+            </div>
+            <div class="w-full max-w-xs rounded-3xl bg-slate-50 p-5">
+              <div class="text-sm font-semibold">扫码进入</div>
+              <div class="mt-3 text-xs text-slate-600">Telegram Mini App</div>
+              <img
+                class="mt-4 h-40 w-40 rounded-2xl bg-white p-2"
+                alt="KhmerX Mini App QR"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Ft.me%2FKhmerXBot%2Fapp"
+              />
+              <div class="mt-4">
+                <a class="inline-flex w-full items-center justify-center rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl px-5 pb-16">
+        <div class="rounded-3xl bg-gradient-to-br from-slate-950 to-slate-800 p-7 text-white shadow-sm">
+          <h2 class="text-2xl font-bold">联系我们</h2>
+          <p class="mt-3 max-w-2xl text-sm opacity-90">使用问题或争议协助，优先通过 Telegram 联系。</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a class="inline-flex rounded-xl bg-white px-5 py-3 font-semibold text-slate-900" href="https://t.me/KhmerXBot">Telegram Bot</a>
+            <a class="inline-flex rounded-xl border border-white/20 px-5 py-3 font-semibold text-white" href="/zh/contact">联系页</a>
+          </div>
+        </div>
+      </section>
+
       <footer class="bg-slate-950 px-5 py-10 text-white">
         <div class="mx-auto max-w-6xl">
           <div class="text-xl font-bold">KhmerX</div>
@@ -172,6 +303,19 @@
           <div class="mt-6 text-xs text-slate-400">© <span data-year></span> KhmerX</div>
         </div>
       </footer>
+
+      <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
+          <div class="min-w-0">
+            <div class="truncate text-sm font-semibold">KhmerX</div>
+            <div class="truncate text-xs text-slate-600">Telegram + ABA · 小额短期 · 信息服务</div>
+          </div>
+          <div class="flex shrink-0 gap-2">
+            <a class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Telegram</a>
+            <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-4 py-2 text-sm font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">打开 Mini App</a>
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>

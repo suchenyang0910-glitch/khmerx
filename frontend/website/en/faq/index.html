@@ -5,10 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FAQ — KhmerX</title>
     <meta name="description" content="Frequently asked questions: what is KhmerX, how borrowing works, required info, repayment, overdue impact, ABA support, and Telegram Mini App." />
+    <meta name="keywords" content="FAQ, ABA, Telegram Mini App, repayment, overdue, Cambodia" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="KhmerX" />
+    <meta property="og:title" content="FAQ — KhmerX" />
+    <meta property="og:description" content="FAQ about KhmerX: ABA, Telegram Mini App, borrowing, repayment, and risk." />
+    <meta property="og:url" content="https://khmerx.org/en/faq" />
+    <meta property="og:image" content="https://khmerx.org/logo.jpg" />
     <link rel="canonical" href="https://khmerx.org/en/faq" />
     <link rel="alternate" href="https://khmerx.org/km/faq" hreflang="km" />
     <link rel="alternate" href="https://khmerx.org/en/faq" hreflang="en" />
     <link rel="alternate" href="https://khmerx.org/zh/faq" hreflang="zh" />
+    <link rel="alternate" href="https://khmerx.org/en/faq" hreflang="x-default" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -18,7 +26,7 @@
             "@id": "https://khmerx.org/#organization",
             "name": "KhmerX",
             "url": "https://khmerx.org",
-            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/favicon.svg" },
+            "logo": { "@type": "ImageObject", "url": "https://khmerx.org/logo.jpg" },
             "sameAs": ["https://t.me/KhmerXBot"]
           },
           {
@@ -63,6 +71,14 @@
               },
               {
                 "@type": "Question",
+                "name": "Do I need an ID card?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "It depends on the flow and verification requirements inside the Mini App. KhmerX does not guarantee approval." 
+                }
+              },
+              {
+                "@type": "Question",
                 "name": "Does KhmerX support ABA?",
                 "acceptedAnswer": {
                   "@type": "Answer",
@@ -71,10 +87,26 @@
               },
               {
                 "@type": "Question",
+                "name": "Does KhmerX support Telegram?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. Telegram Mini App is the primary entry. Telegram Bot supports notifications and help." 
+                }
+              },
+              {
+                "@type": "Question",
                 "name": "What happens if overdue?",
                 "acceptedAnswer": {
                   "@type": "Answer",
                   "text": "Overdue may reduce credit level and borrowing limit, and may trigger dispute and collection workflow."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I repay?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Repay via ABA by the agreed due time and keep proof (screenshots / transaction IDs)." 
                 }
               },
               {
@@ -101,31 +133,67 @@
   </head>
   <body>
     <script type="module" src="/src/site.ts"></script>
-    <main class="min-h-screen bg-[#F5F7FA] text-slate-900">
+    <main class="min-h-screen bg-[#F5F7FA] pb-24 text-slate-900">
       <header class="border-b bg-white">
         <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <a href="/en" class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0A5BFF] to-[#00AEEF] font-bold text-white">X</div>
-            <div class="font-bold">KhmerX</div>
+            <img src="/logo.jpg" alt="KhmerX Logo" class="h-10 w-10 rounded-xl object-cover shadow-sm" />
+            <div>
+              <div class="font-bold">KhmerX</div>
+              <div class="text-xs text-slate-500">ABA · Telegram · Cambodia</div>
+            </div>
           </a>
+          <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
+            <a class="hover:text-slate-900" href="/en/products">Products</a>
+            <a class="hover:text-slate-900" href="/en/trust">Trust & About</a>
+            <a class="hover:text-slate-900" href="/en/borrow">How to Borrow</a>
+            <a class="hover:text-slate-900" href="/en/fees">Fees</a>
+            <a class="hover:text-slate-900" href="/en/faq">FAQ</a>
+            <a class="hover:text-slate-900" href="/en/contact">Contact</a>
+          </nav>
           <div class="flex gap-2 text-sm">
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/km/faq">ខ្មែរ</a>
-            <a class="rounded-lg bg-slate-100 px-3 py-1" href="/en/faq">EN</a>
-            <a class="rounded-lg px-3 py-1 hover:bg-slate-100" href="/zh/faq">中文</a>
+            <a data-lang="km" class="rounded-lg px-3 py-1" href="/km/faq">ខ្មែរ</a>
+            <a data-lang="en" class="rounded-lg px-3 py-1" href="/en/faq">EN</a>
+            <a data-lang="zh" class="rounded-lg px-3 py-1" href="/zh/faq">中文</a>
           </div>
         </div>
       </header>
 
       <section class="mx-auto max-w-4xl px-5 py-14">
         <h1 class="text-4xl font-bold">FAQ</h1>
-        <div class="mt-8 space-y-4">
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><h2 class="font-bold">What is KhmerX?</h2><p class="mt-2 text-slate-700">KhmerX is a Cambodia-focused micro lending information platform that connects local users via Telegram Mini App and ABA transfer.</p></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><h2 class="font-bold">How does borrowing work?</h2><p class="mt-2 text-slate-700">Open Mini App → bind ABA → choose amount/term → publish request → complete ABA transfer and repayment proof records.</p></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><h2 class="font-bold">Does KhmerX support ABA?</h2><p class="mt-2 text-slate-700">Yes. Transfers are completed via ABA. KhmerX does not hold user funds.</p></div>
-          <div class="rounded-2xl bg-white p-5 shadow-sm"><h2 class="font-bold">What happens if overdue?</h2><p class="mt-2 text-slate-700">Overdue may reduce credit level and borrowing limit, and may trigger dispute and collection workflow.</p></div>
+        <div class="mt-8 space-y-3">
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">What is KhmerX?</summary>
+            <p class="mt-2 text-slate-700">KhmerX is a Cambodia-focused micro‑lending information platform using Telegram Mini App and ABA transfers.</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">How does borrowing work?</summary>
+            <p class="mt-2 text-slate-700">Open Mini App → bind ABA → choose amount/term → review Receive/Repay → publish request → complete ABA transfer with proof records.</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">Does KhmerX support ABA?</summary>
+            <p class="mt-2 text-slate-700">Yes. Transfers are completed via ABA. KhmerX does not hold user funds.</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">Does KhmerX support Telegram?</summary>
+            <p class="mt-2 text-slate-700">Yes. Telegram Mini App is the primary entry. Telegram Bot supports notifications and help.</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">Do I need an ID card?</summary>
+            <p class="mt-2 text-slate-700">It depends on verification requirements inside the Mini App. KhmerX does not guarantee approval.</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">How do I repay?</summary>
+            <p class="mt-2 text-slate-700">Repay via ABA by the agreed due time and keep proof (screenshots / transaction IDs).</p>
+          </details>
+          <details class="rounded-2xl bg-white p-5 shadow-sm">
+            <summary class="cursor-pointer font-bold">What happens if overdue?</summary>
+            <p class="mt-2 text-slate-700">Overdue may affect credit/limits and can cause disputes. Contact Telegram if you hit issues.</p>
+          </details>
         </div>
-        <div class="mt-8">
+        <div class="mt-8 flex flex-wrap gap-3">
           <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-3 font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">Open Mini App</a>
+          <a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="/en/contact">Contact</a>
         </div>
       </section>
 
@@ -135,6 +203,19 @@
           <div class="mt-6 text-xs text-slate-400">© <span data-year></span> KhmerX</div>
         </div>
       </footer>
+
+      <div class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur">
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
+          <div class="min-w-0">
+            <div class="truncate text-sm font-semibold">KhmerX</div>
+            <div class="truncate text-xs text-slate-600">Telegram + ABA · Small short-term · Information service</div>
+          </div>
+          <div class="flex shrink-0 gap-2">
+            <a class="rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold" href="https://t.me/KhmerXBot">Telegram</a>
+            <a class="rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-4 py-2 text-sm font-semibold text-white shadow" href="https://t.me/KhmerXBot/app">Open Mini App</a>
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>
