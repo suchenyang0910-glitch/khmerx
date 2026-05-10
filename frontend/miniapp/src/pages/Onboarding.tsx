@@ -5,12 +5,58 @@ import Card from "@/components/ui/Card"
 import { ShieldCheck, HandCoins, Users } from "lucide-react"
 import { useAuthStore } from "@/stores/authStore"
 import { useI18n } from "@/i18n"
+import { updatePreferredLanguage } from "@/api/v1"
 
 export default function Onboarding() {
-  const { t } = useI18n()
+  const { lang, setLang, t } = useI18n()
   const [i, setI] = useState(0)
   const setOnboardingDone = useAuthStore((s) => s.setOnboardingDone)
+  const user = useAuthStore((s) => s.user)
   const nav = useNavigate()
+
+  const [langPicked, setLangPicked] = useState(() => {
+    const onboardingDone = localStorage.getItem("khx_onboarding_done") === "1"
+    if (onboardingDone) return true
+    return localStorage.getItem("khx_lang_selected_v1") === "1"
+  })
+
+  if (!langPicked) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
+        <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-5 text-white shadow-sm">
+          <div className="text-xs opacity-90">{t("onboarding.brand")}</div>
+          <div className="mt-1 text-lg font-semibold">{t("langPicker.title")}</div>
+          <div className="mt-2 text-sm opacity-90">{t("langPicker.desc")}</div>
+        </div>
+
+        <Card className="mt-4 p-4">
+          <div className="grid grid-cols-3 gap-2">
+            {(["km", "en", "cn"] as const).map((l) => (
+              <Button key={l} variant={lang === l ? "primary" : "secondary"} onClick={() => setLang(l)}>
+                {t(`lang.${l}`)}
+              </Button>
+            ))}
+          </div>
+          <div className="mt-3">
+            <Button
+              className="w-full"
+              onClick={async () => {
+                localStorage.setItem("khx_lang_selected_v1", "1")
+                setLangPicked(true)
+                if (!user) return
+                try {
+                  await updatePreferredLanguage(lang)
+                } catch {
+                }
+              }}
+            >
+              {t("langPicker.continue")}
+            </Button>
+          </div>
+        </Card>
+      </div>
+    )
+  }
   const steps = useMemo(() => {
     return [
       { title: t("onboarding.s1.title"), desc: t("onboarding.s1.desc"), icon: ShieldCheck },
