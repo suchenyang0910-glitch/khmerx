@@ -3,6 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from app.risk.schemas import CreateOfferRiskInput, MatchOfferRiskInput, RepaymentRiskInput, RiskDecision
+from app.risk.rules import MAX_BORROW_AMOUNT_CAP
 from app.risk.service import RiskService
 
 
@@ -36,6 +37,14 @@ class RiskEngine:
                 allowed=False,
                 action="limit_active_trades",
                 reason="active trade limit reached",
+                risk_level=profile.risk_level,
+            )
+
+        if data.amount > MAX_BORROW_AMOUNT_CAP:
+            return RiskDecision(
+                allowed=False,
+                action="amount_exceeds_app_cap",
+                reason=f"amount exceeds app cap {MAX_BORROW_AMOUNT_CAP}",
                 risk_level=profile.risk_level,
             )
 

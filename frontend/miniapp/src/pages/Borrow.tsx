@@ -30,12 +30,15 @@ export default function Borrow() {
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
 
+  const MAX_BORROW_CAP = 800
+
   const creditLevel = useMemo(() => scoreToLevel(user?.credit_score || 650), [user?.credit_score])
   const maxBorrow = useMemo(() => {
-    const base = risk?.max_borrow_amount ?? (creditLevel === "A" ? 500 : creditLevel === "B" ? 300 : creditLevel === "C" ? 200 : 100)
+    const base = risk?.max_borrow_amount ?? MAX_BORROW_CAP
     const isNew = (user?.total_borrowed || 0) <= 0
-    return isNew ? Math.min(base, 100) : base
-  }, [creditLevel, risk?.max_borrow_amount, user?.total_borrowed])
+    const capped = Math.min(base, MAX_BORROW_CAP)
+    return isNew ? Math.min(capped, 100) : capped
+  }, [MAX_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
 
   const suggested = useMemo(() => {
     const s = Math.floor((maxBorrow * 0.8) / 10) * 10
@@ -101,6 +104,15 @@ export default function Borrow() {
         <div className="mt-3 flex flex-wrap gap-2">
           {isNewUser ? <Badge tone="blue">{t("borrow.newUserFirst")}</Badge> : <Badge tone="green">{t("borrow.onTimeMore")}</Badge>}
           <Badge tone="zinc">{t("borrow.suggest")}: ${suggested}</Badge>
+        </div>
+      </Card>
+
+      <Card className="p-4">
+        <div className="text-sm text-zinc-700">
+          {t("borrow.limitUpdate", { cap: MAX_BORROW_CAP })} {t("borrow.largeAmountContact")}{" "}
+          <a className="text-blue-600" href="https://t.me/KhmerXBot" target="_blank" rel="noreferrer">
+            {t("borrow.telegramBot")}
+          </a>
         </div>
       </Card>
 

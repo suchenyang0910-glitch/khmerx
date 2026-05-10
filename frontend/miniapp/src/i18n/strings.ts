@@ -92,6 +92,9 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.submit": "ខ្ចីឥឡូវនេះ (បង្ហោះសំណើ)",
     "borrow.submitting": "កំពុងដាក់ស្នើ…",
     "borrow.summary": "អ្នកខ្ចី ${{amount}} ទឹកប្រាក់បានទទួល ${{receive}} ហើយដល់កំណត់ត្រូវសង ${{repay}}។",
+    "borrow.limitUpdate": "លីមីតអាចខ្ចីបានអតិបរមា កែសម្រួលទៅ ${{cap}}។",
+    "borrow.largeAmountContact": "ប្រសិនបើមានតម្រូវការខ្ចីចំនួនធំ សូមទាក់ទង Telegram Bot ដោយផ្ទាល់។",
+    "borrow.telegramBot": "Telegram Bot",
 
     "dev.botTokensMissing": "Backend មិនបានកំណត់ BOT_TOKENS៖ សូមកំណត់ BOT_TOKENS=... នៅក្នុង .env ហើយ restart backend",
     "dev.devTmaDisabled": "Dev TMA មិនបានបើក៖ សូមកំណត់ DEV_TMA_ENABLED=true នៅក្នុង backend ហើយ restart",
@@ -356,6 +359,9 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.submit": "Borrow now (post offer)",
     "borrow.submitting": "Submitting…",
     "borrow.summary": "You borrow ${{amount}}, receive ${{receive}}, and repay ${{repay}} at due.",
+    "borrow.limitUpdate": "Borrow limit (max) updated to ${{cap}}.",
+    "borrow.largeAmountContact": "For large loan requests, please contact the Telegram bot directly.",
+    "borrow.telegramBot": "Telegram bot",
 
     "dev.botTokensMissing": "Missing BOT_TOKENS in backend: set BOT_TOKENS=... in .env and restart",
     "dev.devTmaDisabled": "Dev TMA is disabled: set DEV_TMA_ENABLED=true in backend and restart",
@@ -620,6 +626,9 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.submit": "立即借款（发布挂单）",
     "borrow.submitting": "提交中…",
     "borrow.summary": "你借 ${{amount}}，实际到账 ${{receive}}，到期需还 ${{repay}}。",
+    "borrow.limitUpdate": "可借额度最高上限调整到${{cap}}美元。",
+    "borrow.largeAmountContact": "如果有大额借款需求，请直接联系 Telegram Bot。",
+    "borrow.telegramBot": "Telegram Bot",
 
     "dev.botTokensMissing": "后端未配置 BOT_TOKENS：请在后端 .env 设置 BOT_TOKENS=... 并重启",
     "dev.devTmaDisabled": "本地调试接口未开启：请在后端设置 DEV_TMA_ENABLED=true 并重启后端",

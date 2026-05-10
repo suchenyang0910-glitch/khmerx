@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.risk.models import ManualReviewCase, RiskEvent, RiskLog, RiskScoreLog, UserRiskProfile
-from app.risk.rules import credit_level_from_score, max_borrow_amount_by_level, normalize_risk_level
+from app.risk.rules import MAX_BORROW_AMOUNT_CAP, credit_level_from_score, max_borrow_amount_by_level, normalize_risk_level
 
 
 class RiskService:
@@ -24,6 +24,9 @@ class RiskService:
             .first()
         )
         if profile:
+            if profile.max_borrow_amount is not None and profile.max_borrow_amount > MAX_BORROW_AMOUNT_CAP:
+                profile.max_borrow_amount = MAX_BORROW_AMOUNT_CAP
+                self.db.commit()
             return profile
 
         user = self.db.query(User).filter(User.id == user_id).first()
@@ -35,7 +38,7 @@ class RiskService:
             credit_score=credit_score,
             credit_level=credit_level if credit_level in ("A", "B", "C", "D") else "C",
             risk_level="normal",
-            max_borrow_amount=Decimal("300.00"),
+            max_borrow_amount=max_borrow_amount_by_level(credit_level),
         )
         self.db.add(profile)
         self.db.commit()

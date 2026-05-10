@@ -18,6 +18,7 @@ function scoreToLevel(score: number) {
 
 export default function Home() {
   const { t } = useI18n()
+  const MAX_BORROW_CAP = 800
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
   const refresh = useAuthStore((s) => s.refreshMe)
@@ -33,9 +34,11 @@ export default function Home() {
 
   const creditLevel = useMemo(() => scoreToLevel(user?.credit_score || 650), [user?.credit_score])
   const maxBorrow = useMemo(() => {
-    if (risk?.max_borrow_amount != null) return risk.max_borrow_amount
-    return creditLevel === "A" ? 500 : creditLevel === "B" ? 300 : creditLevel === "C" ? 200 : 100
-  }, [creditLevel, risk?.max_borrow_amount])
+    const base = risk?.max_borrow_amount ?? MAX_BORROW_CAP
+    const capped = Math.min(base, MAX_BORROW_CAP)
+    const isNew = (user?.total_borrowed || 0) <= 0
+    return isNew ? Math.min(capped, 100) : capped
+  }, [MAX_BORROW_CAP, risk?.max_borrow_amount, user?.total_borrowed])
 
   const isNewUser = (user?.total_borrowed || 0) <= 0
 
@@ -74,6 +77,12 @@ export default function Home() {
         <div className="mt-3 flex items-center justify-between rounded-2xl bg-white/15 px-3 py-2">
           <div className="text-sm">{t("home.borrowLimit")}</div>
           <div className="text-lg font-semibold">${Math.round(maxBorrow)}</div>
+        </div>
+        <div className="mt-2 text-xs text-white/90">
+          {t("borrow.limitUpdate", { cap: MAX_BORROW_CAP })} {t("borrow.largeAmountContact")}{" "}
+          <a className="underline" href="https://t.me/KhmerXBot" target="_blank" rel="noreferrer">
+            {t("borrow.telegramBot")}
+          </a>
         </div>
       </div>
 

@@ -1,6 +1,9 @@
 from decimal import Decimal
 
 
+MAX_BORROW_AMOUNT_CAP = Decimal("800.00")
+
+
 def credit_level_from_score(score: int) -> str:
     if score >= 800:
         return "A"
@@ -21,7 +24,8 @@ def max_borrow_amount_by_level(level: str) -> Decimal:
         "D": Decimal("200.00"),
         "E": Decimal("0.00"),
     }
-    return mapping.get(level, Decimal("0.00"))
+    raw = mapping.get(level, Decimal("0.00"))
+    return min(raw, MAX_BORROW_AMOUNT_CAP)
 
 
 def normalize_risk_level(score: int, current_level: str = "normal") -> str:
