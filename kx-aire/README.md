@@ -50,6 +50,18 @@ psql -h localhost -U postgres -d kx_aire -f kx-aire/sql/seed_mvp.sql
 - `POST /risk/check`（需要 `Authorization: Bearer <token>`）
  - `GET /risk/rules?scenarioType=...`（需要 `Authorization: Bearer <token>`）
  - `POST /risk/rules/reload?scenarioType=...`（需要 `Authorization: Bearer <token>`）
+ - `GET /risk/events?scenarioType=&status=&keyword=&page=&pageSize=`（需要 `Authorization: Bearer <token>`）
+ - `GET /risk/events/{eventId}`（需要 `Authorization: Bearer <token>`）
+ - `POST /risk/events/{eventId}/dispositions`（需要 `Authorization: Bearer <token>`）
+ - `GET /system/audit?page=&pageSize=&actorId=&action=&objectType=&objectId=`（需要 `Authorization: Bearer <token>`）
+ - `GET /system/me`（需要 `Authorization: Bearer <token>`）
+ - `GET /system/users?page=&pageSize=&keyword=`（需要 `Authorization: Bearer <token>`）
+ - `POST /system/users`（需要 `Authorization: Bearer <token>`）
+ - `POST /system/users/{userId}/status`（需要 `Authorization: Bearer <token>`）
+ - `POST /system/users/{userId}/roles`（需要 `Authorization: Bearer <token>`）
+ - `GET /system/roles`（需要 `Authorization: Bearer <token>`）
+ - `GET /system/permissions`（需要 `Authorization: Bearer <token>`）
+ - `POST /system/roles/{roleId}/permissions`（需要 `Authorization: Bearer <token>`）
 
 请求体：
 

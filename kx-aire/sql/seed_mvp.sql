@@ -10,6 +10,18 @@ insert into blacklist_center.blacklist_subjects(subject_id, subject_type, blackl
 values ('u_blocked_demo', 'user', 'demo blacklist user', 'D', 'system')
 on conflict (subject_id) do nothing;
 
+insert into api_center.permissions(perm_key, perm_name) values
+('rules.read', '规则只读'),
+('rules.write', '规则编辑'),
+('rules.publish', '规则发布'),
+('cases.read', '命中事件只读'),
+('cases.dispose', '命中事件处置'),
+('audit.read', '审计日志查看'),
+('system.read', '系统管理只读'),
+('system.admin', '系统管理写入'),
+('export.csv', '导出')
+on conflict (perm_key) do nothing;
+
 insert into risk_engine.risk_rules(rule_id, rule_name, scenario_type, rule_expression, score_weight, risk_action, status)
 values ('r_new_user_large_amount', 'new user large amount', 'phone_rental', 'userAgeDays < 7 and applyAmount > 300', 35, 'manual_review', 1)
 on conflict (rule_id) do nothing;

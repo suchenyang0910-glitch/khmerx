@@ -5,8 +5,10 @@ import com.khmerx.aire.risk.dto.RiskEvaluateRequest;
 import com.khmerx.aire.risk.mapper.ApiLogMapper;
 import com.khmerx.aire.risk.mapper.BlacklistMapper;
 import com.khmerx.aire.risk.mapper.RiskOrderMapper;
+import com.khmerx.aire.risk.mapper.RiskEventMapper;
 import com.khmerx.aire.risk.model.ApiLog;
 import com.khmerx.aire.risk.model.RiskOrder;
+import com.khmerx.aire.risk.model.RiskEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.Expression;
@@ -26,6 +28,7 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.StringJoiner;
 
 @Service
 public class RiskEvaluateService {
@@ -33,6 +36,7 @@ public class RiskEvaluateService {
     private final RiskRuleService riskRuleService;
     private final BlacklistMapper blacklistMapper;
     private final ApiLogMapper apiLogMapper;
+    private final RiskEventMapper riskEventMapper;
     private final ObjectMapper objectMapper;
     private final ExpressionParser expressionParser = new SpelExpressionParser();
 
@@ -41,12 +45,14 @@ public class RiskEvaluateService {
             RiskRuleService riskRuleService,
             BlacklistMapper blacklistMapper,
             ApiLogMapper apiLogMapper,
+            RiskEventMapper riskEventMapper,
             ObjectMapper objectMapper
     ) {
         this.riskOrderMapper = riskOrderMapper;
         this.riskRuleService = riskRuleService;
         this.blacklistMapper = blacklistMapper;
         this.apiLogMapper = apiLogMapper;
+        this.riskEventMapper = riskEventMapper;
         this.objectMapper = objectMapper;
     }
 
@@ -117,8 +123,44 @@ public class RiskEvaluateService {
         String riskLevel = mapRiskLevel(score);
         String decision = mapDecision(action, score);
         RiskDecisionResponse response = saveAndReturn(merchantId, request, score, riskLevel, decision, topReason, matchedRuleIds);
+        writeRiskEvent(merchantId, request, score, riskLevel, decision, topReason, matchedRuleIds);
         writeApiLog(merchantId, "/risk/check", request, response, start);
         return response;
+    }
+
+    private void writeRiskEvent(
+            String merchantId,
+            RiskEvaluateRequest request,
+            double score,
+            String riskLevel,
+            String decision,
+            String reason,
+            List<String> matchedRuleIds
+    ) {
+        try {
+            RiskEvent event = new RiskEvent();
+            event.setEventId(UUID.randomUUID().toString());
+            event.setMerchantId(merchantId);
+            event.setScenarioType(request.getScenarioType());
+            event.setUserId(request.getUserId());
+            event.setOrderId(request.getOrderId());
+            event.setRiskScore(BigDecimal.valueOf(score));
+            event.setRiskLevel(riskLevel);
+            event.setDecision(decision);
+            event.setReason(reason);
+
+            StringJoiner sj = new StringJoiner(",");
+            for (String id : matchedRuleIds) {
+                if (StringUtils.hasText(id)) {
+                    sj.add(id);
+                }
+            }
+            event.setMatchedRuleIds(sj.toString());
+            event.setInputSnapshot(objectMapper.writeValueAsString(request));
+            event.setStatus("open");
+            riskEventMapper.insert(event);
+        } catch (Exception ignored) {
+        }
     }
 
     private void writeApiLog(String merchantId, String apiName, Object request, Object response, long startNano) {
