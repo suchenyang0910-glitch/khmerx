@@ -23,6 +23,14 @@ public class RiskEvaluateRequest {
     private int activeTradesCount;
     private int blacklistHits;
 
+    private String phone;
+
+    private String idNumber;
+
+    private String deviceId;
+
+    private String ipAddress;
+
     public String getOrderId() {
         return orderId;
     }
@@ -93,5 +101,37 @@ public class RiskEvaluateRequest {
 
     public void setBlacklistHits(int blacklistHits) {
         this.blacklistHits = blacklistHits;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

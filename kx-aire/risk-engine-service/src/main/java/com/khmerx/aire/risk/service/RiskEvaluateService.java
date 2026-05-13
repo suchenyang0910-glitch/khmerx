@@ -2,8 +2,12 @@ package com.khmerx.aire.risk.service;
 
 import com.khmerx.aire.risk.dto.RiskDecisionResponse;
 import com.khmerx.aire.risk.dto.RiskEvaluateRequest;
+import com.khmerx.aire.risk.mapper.ApiLogMapper;
+import com.khmerx.aire.risk.mapper.BlacklistMapper;
 import com.khmerx.aire.risk.mapper.RiskOrderMapper;
+import com.khmerx.aire.risk.model.ApiLog;
 import com.khmerx.aire.risk.model.RiskOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -21,22 +25,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class RiskEvaluateService {
     private final RiskOrderMapper riskOrderMapper;
     private final RiskRuleService riskRuleService;
+    private final BlacklistMapper blacklistMapper;
+    private final ApiLogMapper apiLogMapper;
+    private final ObjectMapper objectMapper;
     private final ExpressionParser expressionParser = new SpelExpressionParser();
 
-    public RiskEvaluateService(RiskOrderMapper riskOrderMapper, RiskRuleService riskRuleService) {
+    public RiskEvaluateService(
+            RiskOrderMapper riskOrderMapper,
+            RiskRuleService riskRuleService,
+            BlacklistMapper blacklistMapper,
+            ApiLogMapper apiLogMapper,
+            ObjectMapper objectMapper
+    ) {
         this.riskOrderMapper = riskOrderMapper;
         this.riskRuleService = riskRuleService;
+        this.blacklistMapper = blacklistMapper;
+        this.apiLogMapper = apiLogMapper;
+        this.objectMapper = objectMapper;
     }
 
     public RiskDecisionResponse evaluate(RiskEvaluateRequest request) {
+        long start = System.nanoTime();
         String merchantId = getAuthenticatedMerchantId();
         if (StringUtils.hasText(request.getMerchantId()) && !merchantId.equals(request.getMerchantId())) {
-            return saveAndReturn(merchantId, request, 0.0, "D", "rejected", "merchant_mismatch", List.of());
+            RiskDecisionResponse response = saveAndReturn(merchantId, request, 0.0, "D", "rejected", "merchant_mismatch", List.of());
+            writeApiLog(merchantId, "/risk/check", request, response, start);
+            return response;
+        }
+
+        int blacklistHits = computeBlacklistHits(request);
+        if (blacklistHits > 0) {
+            request.setBlacklistHits(blacklistHits);
         }
 
         List<String> matchedRuleIds = new ArrayList<>();
@@ -51,6 +76,7 @@ public class RiskEvaluateService {
         root.put("offers24hCount", request.getOffers24hCount());
         root.put("activeTradesCount", request.getActiveTradesCount());
         root.put("blacklistHits", request.getBlacklistHits());
+        root.put("blacklistHit", request.getBlacklistHits() > 0);
         root.put("scenarioType", request.getScenarioType());
         root.put("userId", request.getUserId());
         root.put("merchantId", merchantId);
@@ -90,7 +116,45 @@ public class RiskEvaluateService {
         double score = Math.max(0.0, 100.0 - penalty.doubleValue());
         String riskLevel = mapRiskLevel(score);
         String decision = mapDecision(action, score);
-        return saveAndReturn(merchantId, request, score, riskLevel, decision, topReason, matchedRuleIds);
+        RiskDecisionResponse response = saveAndReturn(merchantId, request, score, riskLevel, decision, topReason, matchedRuleIds);
+        writeApiLog(merchantId, "/risk/check", request, response, start);
+        return response;
+    }
+
+    private void writeApiLog(String merchantId, String apiName, Object request, Object response, long startNano) {
+        try {
+            int costMs = (int) Math.max(0, (System.nanoTime() - startNano) / 1_000_000L);
+            ApiLog log = new ApiLog();
+            log.setLogId(UUID.randomUUID().toString());
+            log.setMerchantId(merchantId);
+            log.setApiName(apiName);
+            log.setRequestBody(objectMapper.writeValueAsString(request));
+            log.setResponseBody(objectMapper.writeValueAsString(response));
+            log.setResponseTime(costMs);
+            apiLogMapper.insert(log);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private int computeBlacklistHits(RiskEvaluateRequest request) {
+        int hits = 0;
+        hits += countIfHit("user", request.getUserId());
+        hits += countIfHit("phone", request.getPhone());
+        hits += countIfHit("id_card", request.getIdNumber());
+        hits += countIfHit("device", request.getDeviceId());
+        hits += countIfHit("ip", request.getIpAddress());
+        return hits;
+    }
+
+    private int countIfHit(String subjectType, String subjectId) {
+        if (!StringUtils.hasText(subjectId)) {
+            return 0;
+        }
+        try {
+            return blacklistMapper.countHit(subjectType, subjectId) > 0 ? 1 : 0;
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
 
     private RiskDecisionResponse saveAndReturn(String merchantId, RiskEvaluateRequest request, double score, String level, String decision, String reason, List<String> matchedRuleIds) {

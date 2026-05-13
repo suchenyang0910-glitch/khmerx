@@ -62,7 +62,11 @@ psql -h localhost -U postgres -d kx_aire -f kx-aire/sql/seed_mvp.sql
   "userAgeDays": 2,
   "offers24hCount": 1,
   "activeTradesCount": 0,
-  "blacklistHits": 0
+  "blacklistHits": 0,
+  "phone": "85512345678",
+  "idNumber": "KHM-ID-XXX",
+  "deviceId": "device-xxx",
+  "ipAddress": "1.2.3.4"
 }
 ```
 

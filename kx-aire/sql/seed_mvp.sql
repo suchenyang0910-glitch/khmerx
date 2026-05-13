@@ -6,6 +6,10 @@ insert into risk_engine.risk_rules(rule_id, rule_name, scenario_type, rule_expre
 values ('r_blacklist_hit', 'blacklist hit', 'phone_rental', 'blacklistHits > 0', 90, 'reject', 1)
 on conflict (rule_id) do nothing;
 
+insert into blacklist_center.blacklist_subjects(subject_id, subject_type, blacklist_reason, risk_level, reported_by)
+values ('u_blocked_demo', 'user', 'demo blacklist user', 'D', 'system')
+on conflict (subject_id) do nothing;
+
 insert into risk_engine.risk_rules(rule_id, rule_name, scenario_type, rule_expression, score_weight, risk_action, status)
 values ('r_new_user_large_amount', 'new user large amount', 'phone_rental', 'userAgeDays < 7 and applyAmount > 300', 35, 'manual_review', 1)
 on conflict (rule_id) do nothing;
