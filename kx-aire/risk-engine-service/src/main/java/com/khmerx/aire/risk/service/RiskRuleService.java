@@ -45,5 +45,13 @@ public class RiskRuleService {
         }
         return rules;
     }
+
+    public void invalidate(String scenarioType) {
+        if (!StringUtils.hasText(scenarioType)) {
+            return;
+        }
+        String cacheKey = "risk:rules:" + scenarioType;
+        stringRedisTemplate.delete(cacheKey);
+    }
 }
 

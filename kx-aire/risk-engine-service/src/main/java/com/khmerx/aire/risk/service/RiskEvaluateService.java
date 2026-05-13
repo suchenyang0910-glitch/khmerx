@@ -8,16 +8,19 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.expression.spel.support.SimpleEvaluationContext;
+import org.springframework.context.expression.MapAccessor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class RiskEvaluateService {
@@ -42,16 +45,22 @@ public class RiskEvaluateService {
         String topReason = "risk_check_passed";
 
         var rules = riskRuleService.getEnabledRules(request.getScenarioType());
-        StandardEvaluationContext context = new StandardEvaluationContext();
-        context.setVariable("applyAmount", request.getApplyAmount());
-        context.setVariable("userAgeDays", request.getUserAgeDays());
-        context.setVariable("offers24hCount", request.getOffers24hCount());
-        context.setVariable("activeTradesCount", request.getActiveTradesCount());
-        context.setVariable("blacklistHits", request.getBlacklistHits());
-        context.setVariable("scenarioType", request.getScenarioType());
-        context.setVariable("userId", request.getUserId());
-        context.setVariable("merchantId", merchantId);
-        context.setVariable("orderId", request.getOrderId());
+        Map<String, Object> root = new LinkedHashMap<>();
+        root.put("applyAmount", request.getApplyAmount());
+        root.put("userAgeDays", request.getUserAgeDays());
+        root.put("offers24hCount", request.getOffers24hCount());
+        root.put("activeTradesCount", request.getActiveTradesCount());
+        root.put("blacklistHits", request.getBlacklistHits());
+        root.put("scenarioType", request.getScenarioType());
+        root.put("userId", request.getUserId());
+        root.put("merchantId", merchantId);
+        root.put("orderId", request.getOrderId());
+
+        SimpleEvaluationContext context = SimpleEvaluationContext
+                .forReadOnlyDataBinding()
+                .withRootObject(root)
+                .withPropertyAccessors(new MapAccessor())
+                .build();
 
         for (var rule : rules) {
             if (!StringUtils.hasText(rule.getRuleExpression())) {

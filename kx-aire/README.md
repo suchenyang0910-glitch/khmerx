@@ -48,6 +48,8 @@ psql -h localhost -U postgres -d kx_aire -f kx-aire/sql/seed_mvp.sql
 ### risk-engine-service
 
 - `POST /risk/check`（需要 `Authorization: Bearer <token>`）
+ - `GET /risk/rules?scenarioType=...`（需要 `Authorization: Bearer <token>`）
+ - `POST /risk/rules/reload?scenarioType=...`（需要 `Authorization: Bearer <token>`）
 
 请求体：
 
