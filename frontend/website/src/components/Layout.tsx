@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Header from './Header';
 import Footer from './Footer';
+import { track } from '@/utils/analytics';
 
 const SUPPORTED_LANGS = ['km', 'en', 'zh'];
 
@@ -22,6 +23,11 @@ export default function Layout() {
       i18n.changeLanguage(lang);
     }
   }, [lang, navigate, location, i18n]);
+
+  useEffect(() => {
+    if (!lang || !SUPPORTED_LANGS.includes(lang)) return
+    track('page_view', { lang, path: location.pathname, referrer: document.referrer || '' })
+  }, [lang, location.pathname]);
 
   if (!lang || !SUPPORTED_LANGS.includes(lang)) {
     return null;

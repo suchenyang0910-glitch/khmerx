@@ -1,4 +1,13 @@
 {
+  "nav": {
+    "borrow": "如何借款",
+    "fees": "费用说明",
+    "faq": "FAQ",
+    "contact": "联系我们",
+    "api": "API 文档",
+    "apply": "在线申请",
+    "cta": "打开 Mini App"
+  },
   "fee": {
     "lang": "zh",
     "title": "KhmerX 费用说明 | ABA 小额借款",

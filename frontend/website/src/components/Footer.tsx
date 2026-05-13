@@ -44,6 +44,8 @@ export default function Footer() {
               <li><Link to={getPath('/faq')} className="hover:text-white transition-colors">{t('nav.faq', 'FAQ')}</Link></li>
               <li><Link to={getPath('/contact')} className="hover:text-white transition-colors">{t('nav.contact', 'Contact Us')}</Link></li>
               <li><Link to={getPath('/about')} className="hover:text-white transition-colors">{t('nav.about', 'About Us')}</Link></li>
+              <li><Link to={getPath('/api')} className="hover:text-white transition-colors">{t('nav.api', 'API Docs')}</Link></li>
+              <li><Link to={getPath('/apply')} className="hover:text-white transition-colors">{t('nav.apply', 'Apply')}</Link></li>
             </ul>
           </div>
 

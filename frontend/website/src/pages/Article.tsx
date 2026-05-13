@@ -89,16 +89,16 @@ export default function Article() {
         {/*  Sticky Header  */}
       <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4">
-          <a href="/{lang}" className="flex items-center gap-3 group">
+          <a href={`/${lang}`} className="flex items-center gap-3 group">
             <img src="/logo.jpg" alt="KhmerX Logo" className="h-10 w-10 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             <div>
               <div className="font-bold text-lg text-slate-900">KhmerX</div>
             </div>
           </a>
           <nav className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a className="text-blue-600 transition-colors" href="/{lang}/blog">Blog</a>
-            <a className="hover:text-blue-600 transition-colors" href="/{lang}/faq">{t('article.nav_faq')}</a>
-            <a className="hover:text-blue-600 transition-colors" href="/{lang}/contact">{t('article.nav_contact')}</a>
+            <a className="text-blue-600 transition-colors" href={`/${lang}/blog`}>Blog</a>
+            <a className="hover:text-blue-600 transition-colors" href={`/${lang}/faq`}>{t('article.nav_faq')}</a>
+            <a className="hover:text-blue-600 transition-colors" href={`/${lang}/contact`}>{t('article.nav_contact')}</a>
           </nav>
           <div className="flex items-center gap-4">
             <a className="inline-flex rounded-xl bg-gradient-to-r from-[#0A5BFF] to-[#00AEEF] px-5 py-2.5 text-sm font-bold text-white shadow-md hover:shadow-lg hover:scale-105 transition-all" href="https://t.me/KhmerXBot/app">{t('article.nav_cta')}</a>
@@ -110,7 +110,7 @@ export default function Article() {
       <article className="mx-auto max-w-[800px] px-5 pt-16 pb-12">
         {/*  分类与标签  */}
         <div className="flex gap-2 mb-6">
-          <a href="/{lang}/blog/{t('article.category_slug')}" className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700 uppercase tracking-wider hover:bg-blue-200 transition-colors">{t('article.category')}</a>
+          <a href={`/${lang}/blog/${t('article.category_slug')}`} className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700 uppercase tracking-wider hover:bg-blue-200 transition-colors">{t('article.category')}</a>
         </div>
         
         {/*  H1 标题  */}
@@ -193,11 +193,11 @@ export default function Article() {
         
         {/*  内链导航  */}
         <div className="mt-12 flex flex-wrap gap-4 pt-8 border-t border-slate-100">
-          <a href="/{lang}/borrow" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2 rounded-xl hover:bg-blue-100 hover:text-blue-700 transition-colors">
+          <a href={`/${lang}/borrow`} className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2 rounded-xl hover:bg-blue-100 hover:text-blue-700 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             {t('article.link_borrow')}
           </a>
-          <a href="/{lang}/faq" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2 rounded-xl hover:bg-blue-100 hover:text-blue-700 transition-colors">
+          <a href={`/${lang}/faq`} className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 bg-slate-100 px-4 py-2 rounded-xl hover:bg-blue-100 hover:text-blue-700 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             {t('article.link_faq')}
           </a>
@@ -210,7 +210,7 @@ export default function Article() {
           <h3 className="text-2xl font-bold text-slate-900 mb-8">{t('article.related_title')}</h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {/*  Related 1  */}
-            <a href="/{lang}/blog/article/telegram-finance-guide" className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow block">
+            <a href={`/${lang}/blog/article/telegram-finance-guide`} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow block">
               <div className="aspect-video bg-slate-100 overflow-hidden relative">
                 <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Telegram%20app%20chat%20interface%20with%20financial%20dashboard%20bot%20digital%20finance%20blue%20clean%20style&image_size=landscape_16_9" alt="Telegram Guide" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 <div className="absolute top-3 left-3 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Telegram</div>
@@ -224,7 +224,7 @@ export default function Article() {
               </div>
             </a>
             {/*  Related 2  */}
-            <a href="/{lang}/blog/article/micro-loan-tips" className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow block">
+            <a href={`/${lang}/blog/article/micro-loan-tips`} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow block">
               <div className="aspect-video bg-slate-100 overflow-hidden relative">
                 <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Small%20amount%20of%20money%20financial%20planning%20calculator%20coins%20business%20desk%20clean%20bright%20lighting&image_size=landscape_16_9" alt="Micro Loan Tips" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 <div className="absolute top-3 left-3 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Loan</div>

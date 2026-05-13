@@ -1,10 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
 
 export default function Privacy() {
   const { t } = useTranslation();
-  const { lang } = useParams();
 
   return (
     <>

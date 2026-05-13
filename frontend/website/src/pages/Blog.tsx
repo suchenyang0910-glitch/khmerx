@@ -27,11 +27,11 @@ export default function Blog() {
       <section className="bg-white border-b border-slate-100 sticky top-[73px] z-40">
         <div className="mx-auto max-w-[1200px] px-5">
           <div className="flex overflow-x-auto py-4 gap-6 scrollbar-hide text-sm font-medium">
-            <a href="/{lang}/blog" className="text-blue-600 whitespace-nowrap border-b-2 border-blue-600 pb-1 px-1">All Posts</a>
-            <a href="/{lang}/blog/aba" className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_aba')}</a>
-            <a href="/{lang}/blog/telegram" className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_tg')}</a>
-            <a href="/{lang}/blog/loan" className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_loan')}</a>
-            <a href="/{lang}/blog/phnom-penh" className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_pp')}</a>
+            <a href={`/${lang}/blog`} className="text-blue-600 whitespace-nowrap border-b-2 border-blue-600 pb-1 px-1">All Posts</a>
+            <a href={`/${lang}/blog/aba`} className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_aba')}</a>
+            <a href={`/${lang}/blog/telegram`} className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_tg')}</a>
+            <a href={`/${lang}/blog/loan`} className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_loan')}</a>
+            <a href={`/${lang}/blog/phnom-penh`} className="text-slate-500 hover:text-blue-600 whitespace-nowrap px-1">{t('blog.cat_pp')}</a>
           </div>
         </div>
       </section>
@@ -43,7 +43,7 @@ export default function Blog() {
           <div className="lg:col-span-2 space-y-12">
             {/*  精选文章 (Feature)  */}
             <article className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-slate-200 group hover:shadow-lg transition-shadow">
-              <a href="/{lang}/blog/article/how-to-use-aba" className="block">
+              <a href={`/${lang}/blog/article/how-to-use-aba`} className="block">
                 <div className="aspect-[16/9] bg-slate-100 overflow-hidden relative">
                   <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=ABA%20bank%20transfer%20mobile%20app%20UI%20mockup%20Cambodia%20Phnom%20Penh%20financial%20technology%20blue%20tones&image_size=landscape_16_9" alt="ABA Transfer Guide" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   <div className="absolute top-4 left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{t('blog.cat_aba')}</div>
@@ -66,7 +66,7 @@ export default function Blog() {
             <div className="grid sm:grid-cols-2 gap-8">
               {/*  Article 2  */}
               <article className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow">
-                <a href="/{lang}/blog/article/telegram-finance-guide" className="block">
+                <a href={`/${lang}/blog/article/telegram-finance-guide`} className="block">
                   <div className="aspect-[16/9] bg-slate-100 overflow-hidden relative">
                     <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Telegram%20app%20chat%20interface%20with%20financial%20dashboard%20bot%20digital%20finance%20blue%20clean%20style&image_size=landscape_16_9" alt="Telegram Finance Guide" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     <div className="absolute top-4 left-4 bg-slate-800 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{t('blog.cat_tg')}</div>
@@ -81,7 +81,7 @@ export default function Blog() {
               
               {/*  Article 3  */}
               <article className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200 group hover:shadow-md transition-shadow">
-                <a href="/{lang}/blog/article/micro-loan-tips" className="block">
+                <a href={`/${lang}/blog/article/micro-loan-tips`} className="block">
                   <div className="aspect-[16/9] bg-slate-100 overflow-hidden relative">
                     <img src="https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=Small%20amount%20of%20money%20financial%20planning%20calculator%20coins%20business%20desk%20clean%20bright%20lighting&image_size=landscape_16_9" alt="Micro Loan Tips" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     <div className="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{t('blog.cat_loan')}</div>

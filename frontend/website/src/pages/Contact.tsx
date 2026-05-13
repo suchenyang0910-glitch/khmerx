@@ -186,24 +186,24 @@ export default function Contact() {
       <section className="mx-auto max-w-[800px] px-5 pb-20 text-center">
         <h3 className="text-2xl font-bold text-slate-900 mb-8">{t('contact.faq_title')}</h3>
         <div className="grid sm:grid-cols-2 gap-4 mb-8 text-left">
-          <a href="/{lang}/faq" className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+          <a href={`/${lang}/faq`} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
             <span className="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{t('contact.faq_1')}</span>
             <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </a>
-          <a href="/{lang}/faq" className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+          <a href={`/${lang}/faq`} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
             <span className="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{t('contact.faq_2')}</span>
             <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </a>
-          <a href="/{lang}/faq" className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+          <a href={`/${lang}/faq`} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
             <span className="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{t('contact.faq_3')}</span>
             <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </a>
-          <a href="/{lang}/faq" className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
+          <a href={`/${lang}/faq`} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-between group">
             <span className="font-medium text-slate-700 group-hover:text-blue-600 transition-colors">{t('contact.faq_4')}</span>
             <svg className="w-5 h-5 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </a>
         </div>
-        <a href="/{lang}/faq" className="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition-colors">
+        <a href={`/${lang}/faq`} className="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition-colors">
           {t('contact.faq_btn')}
           <svg className="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
         </a>

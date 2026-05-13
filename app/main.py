@@ -10,6 +10,7 @@ from starlette.staticfiles import StaticFiles
 from app.config import HOST, PORT, CORS_ORIGINS, validate_runtime_config
 from app.database import init_db
 from app.routes import auth, products, orders, inspections, webhooks, p2p, rates, telegram_bot
+from app.routes import integration_requests
 from app.routes import interest_rates
 from app.risk.router import router as risk_router
 from app.disputes.router import router as disputes_router
@@ -123,6 +124,7 @@ app.include_router(ops_router)
 app.include_router(admin_router)
 app.include_router(api_v1_router)
 app.include_router(openclaw_router)
+app.include_router(integration_requests.router)
 
 
 upload_dir = os.getenv("UPLOAD_DIR", "./uploads/proofs")

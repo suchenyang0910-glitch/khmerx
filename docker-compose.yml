@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: khmerx
+      POSTGRES_USER: khmerx
+      POSTGRES_PASSWORD: khmerx
+    ports:
+      - "5432:5432"
+    volumes:
+      - khmerx_pg:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://khmerx:khmerx@db:5432/khmerx
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      HOST: 0.0.0.0
+      PORT: 3030
+    depends_on:
+      - db
+    ports:
+      - "3030:3030"
+
+  website:
+    build:
+      context: ./frontend/website
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  khmerx_pg:
+

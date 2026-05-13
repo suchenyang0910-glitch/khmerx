@@ -1,4 +1,13 @@
 {
+  "nav": {
+    "borrow": "How to Borrow",
+    "fees": "Fees",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "api": "API Docs",
+    "apply": "Apply",
+    "cta": "Open Mini App"
+  },
   "fee": {
     "lang": "en",
     "title": "KhmerX Fees Explanation | ABA Micro Lending",

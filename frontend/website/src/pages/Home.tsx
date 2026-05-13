@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Shield, Clock, FileText, Send, CheckCircle2 } from 'lucide-react';
+import { Shield, Clock, FileText, Send } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
 export default function Home() {

@@ -13,6 +13,8 @@ import About from './pages/About';
 import Blog from './pages/Blog';
 import Article from './pages/Article';
 import LandingPage from './pages/LandingPage';
+import ApiDocs from './pages/ApiDocs';
+import Apply from './pages/Apply';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
           <Route path="fees" element={<Fees />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="api" element={<ApiDocs />} />
+          <Route path="apply" element={<Apply />} />
           <Route path="risk" element={<Risk />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="terms" element={<Terms />} />

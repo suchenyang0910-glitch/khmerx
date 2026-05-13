@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import datetime
 import uuid
+import re
 
 
 # ── Auth ─────────────────────────────────────────────────────────
@@ -127,3 +128,29 @@ class SettlecoreWebhook(BaseModel):
     tx_hash: Optional[str] = None
     amount: Optional[float] = None
     status: Optional[str] = None
+
+
+class IntegrationRequestCreate(BaseModel):
+    applicantType: Literal["company", "individual"] = Field(..., description="company | individual")
+    orgName: str = Field(..., min_length=1, max_length=200)
+    contactName: str = Field(..., min_length=1, max_length=100)
+    email: str
+    phone: Optional[str] = None
+    telegram: Optional[str] = None
+    countryOrRegion: Optional[str] = None
+    useCase: str = Field(..., min_length=1)
+    interestedApis: List[str] = Field(default_factory=list)
+    expectedVolumeRange: Optional[str] = None
+    expectedLaunchTime: Optional[str] = None
+    notes: Optional[str] = None
+    consent: bool = Field(...)
+    source: Optional[str] = None
+
+    @staticmethod
+    def _is_email(v: str) -> bool:
+        return bool(re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", v or ""))
+
+
+class IntegrationRequestCreateResponse(BaseModel):
+    ok: bool
+    requestId: str

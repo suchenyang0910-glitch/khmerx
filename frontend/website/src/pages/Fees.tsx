@@ -56,17 +56,17 @@ export default function Fees() {
         {/*  1. Header  */}
       <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4">
-          <a href="/{lang}" className="flex items-center gap-3 group">
+          <a href={`/${lang}`} className="flex items-center gap-3 group">
             <img src="/logo.jpg" alt="KhmerX Logo" className="h-10 w-10 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             <div>
               <div className="font-bold text-lg">KhmerX</div>
             </div>
           </a>
           <nav className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
-            <a className="hover:text-blue-600 transition-colors" href="/{lang}/borrow">{t('fees.nav_borrow')}</a>
-            <a className="text-blue-600 transition-colors" href="/{lang}/fees">{t('fees.nav_fees')}</a>
-            <a className="hover:text-blue-600 transition-colors" href="/{lang}/faq">{t('fees.nav_faq')}</a>
-            <a className="hover:text-blue-600 transition-colors" href="/{lang}/contact">{t('fees.nav_contact')}</a>
+            <a className="hover:text-blue-600 transition-colors" href={`/${lang}/borrow`}>{t('fees.nav_borrow')}</a>
+            <a className="text-blue-600 transition-colors" href={`/${lang}/fees`}>{t('fees.nav_fees')}</a>
+            <a className="hover:text-blue-600 transition-colors" href={`/${lang}/faq`}>{t('fees.nav_faq')}</a>
+            <a className="hover:text-blue-600 transition-colors" href={`/${lang}/contact`}>{t('fees.nav_contact')}</a>
           </nav>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex gap-1 text-sm bg-slate-100 p-1 rounded-xl">
@@ -464,7 +464,7 @@ export default function Fees() {
         <div className="mx-auto max-w-[1200px]">
           <div className="grid gap-8 md:grid-cols-4 border-b border-slate-800 pb-12">
             <div className="col-span-2">
-              <a href="/{lang}" className="flex items-center gap-3 mb-6">
+              <a href={`/${lang}`} className="flex items-center gap-3 mb-6">
                 <img src="/logo.jpg" alt="KhmerX Logo" className="h-8 w-8 rounded-lg object-cover grayscale opacity-80" />
                 <div className="font-bold text-lg text-white">KhmerX</div>
               </a>
@@ -482,8 +482,8 @@ export default function Fees() {
             <div>
               <h4 className="text-white font-bold mb-6">Legal</h4>
               <ul className="space-y-4 text-sm">
-                <li><a href="/{lang}/terms" className="hover:text-white transition-colors">User Agreement</a></li>
-                <li><a href="/{lang}/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href={`/${lang}/terms`} className="hover:text-white transition-colors">User Agreement</a></li>
+                <li><a href={`/${lang}/privacy`} className="hover:text-white transition-colors">Privacy Policy</a></li>
               </ul>
             </div>
           </div>

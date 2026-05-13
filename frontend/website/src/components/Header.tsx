@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { track } from '@/utils/analytics';
 
 export default function Header() {
   const { lang } = useParams();
@@ -24,6 +25,8 @@ export default function Header() {
     { name: t('nav.fees', 'Fees'), path: '/fees' },
     { name: t('nav.faq', 'FAQ'), path: '/faq' },
     { name: t('nav.contact', 'Contact'), path: '/contact' },
+    { name: t('nav.api', 'API Docs'), path: '/api' },
+    { name: t('nav.apply', 'Apply'), path: '/apply' },
   ];
 
   return (
@@ -60,18 +63,21 @@ export default function Header() {
           <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1 text-sm">
             <Link
               to={changeLanguagePath('km')}
+              onClick={() => track('language_switch', { from_locale: lang, to_locale: 'km', from_path: location.pathname })}
               className={`rounded-md px-3 py-1 font-medium transition-colors ${lang === 'km' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
             >
               ខ្មែរ
             </Link>
             <Link
               to={changeLanguagePath('en')}
+              onClick={() => track('language_switch', { from_locale: lang, to_locale: 'en', from_path: location.pathname })}
               className={`rounded-md px-3 py-1 font-medium transition-colors ${lang === 'en' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
             >
               EN
             </Link>
             <Link
               to={changeLanguagePath('zh')}
+              onClick={() => track('language_switch', { from_locale: lang, to_locale: 'zh', from_path: location.pathname })}
               className={`rounded-md px-3 py-1 font-medium transition-colors ${lang === 'zh' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
             >
               中文
@@ -118,9 +124,36 @@ export default function Header() {
               ))}
               
               <div className="mt-4 flex gap-2">
-                <Link to={changeLanguagePath('km')} onClick={() => setIsMenuOpen(false)} className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'km' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}>ខ្មែរ</Link>
-                <Link to={changeLanguagePath('en')} onClick={() => setIsMenuOpen(false)} className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'en' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}>EN</Link>
-                <Link to={changeLanguagePath('zh')} onClick={() => setIsMenuOpen(false)} className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'zh' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}>中文</Link>
+                <Link
+                  to={changeLanguagePath('km')}
+                  onClick={() => {
+                    track('language_switch', { from_locale: lang, to_locale: 'km', from_path: location.pathname })
+                    setIsMenuOpen(false)
+                  }}
+                  className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'km' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}
+                >
+                  ខ្មែរ
+                </Link>
+                <Link
+                  to={changeLanguagePath('en')}
+                  onClick={() => {
+                    track('language_switch', { from_locale: lang, to_locale: 'en', from_path: location.pathname })
+                    setIsMenuOpen(false)
+                  }}
+                  className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'en' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}
+                >
+                  EN
+                </Link>
+                <Link
+                  to={changeLanguagePath('zh')}
+                  onClick={() => {
+                    track('language_switch', { from_locale: lang, to_locale: 'zh', from_path: location.pathname })
+                    setIsMenuOpen(false)
+                  }}
+                  className={`flex-1 rounded-lg py-2 text-center text-sm font-medium ${lang === 'zh' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'}`}
+                >
+                  中文
+                </Link>
               </div>
 
               <a
