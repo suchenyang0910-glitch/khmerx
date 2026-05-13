@@ -5,15 +5,15 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/kx_aire?currentSchema=auth
-    username: khmerx
-    password: khmerx
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:kx_aire}?currentSchema=merchant_center
+    username: ${DB_USER:khmerx}
+    password: ${DB_PASSWORD:khmerx}
     driver-class-name: org.postgresql.Driver
   data:
     redis:
-      host: localhost
-      port: 6379
-      database: 0
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DB_AUTH:0}
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -21,5 +21,5 @@ mybatis-plus:
     map-underscore-to-camel-case: true
 
 jwt:
-  secret: YmFzZTY0RW5jb2RlZFNlY3JldEtleUZvckpXVERlbW9QdXJwb3NlT25seVBsZWFzZUNoYW5nZUl0
-  expiration: 86400000
+  secret: ${JWT_SECRET_BASE64:YmFzZTY0RW5jb2RlZFNlY3JldEtleUZvckpXVERlbW9QdXJwb3NlT25seVBsZWFzZUNoYW5nZUl0}
+  expiration: ${JWT_EXPIRATION_MS:86400000}
