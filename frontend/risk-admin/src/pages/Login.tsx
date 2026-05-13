@@ -18,8 +18,11 @@ export default function Login() {
   const navigate = useNavigate()
 
   const authHint = useMemo(() => {
+    if (import.meta.env.PROD) {
+      return `${window.location.origin}/api-auth → auth-service`
+    }
     const base = import.meta.env.VITE_AUTH_BASE_URL || 'http://localhost:8081'
-    return base
+    return `${base} (dev proxy: /api-auth)`
   }, [])
 
   async function onSubmit(e: React.FormEvent) {

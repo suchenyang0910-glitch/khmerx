@@ -4,6 +4,7 @@ import { useRbacStore } from '@/stores/rbacStore'
 export type ApiError = {
   message: string
   status?: number
+  url?: string
 }
 
 export function getErrorMessage(err: unknown): string {
@@ -29,6 +30,12 @@ export async function requestJson<T>(input: string, init?: RequestInit): Promise
   const resp = await fetch(input, {
     ...init,
     headers,
+  }).catch((e: unknown) => {
+    const err: ApiError = {
+      message: (e && typeof e === 'object' && 'message' in e && typeof (e as any).message === 'string') ? (e as any).message : 'network_error',
+      url: input,
+    }
+    throw err
   })
 
   if (resp.status === 401) {
@@ -37,10 +44,26 @@ export async function requestJson<T>(input: string, init?: RequestInit): Promise
   }
 
   if (!resp.ok) {
-    const text = await resp.text().catch(() => '')
+    const contentType = resp.headers.get('content-type') || ''
+    let message = ''
+    if (contentType.includes('application/json')) {
+      try {
+        const data = (await resp.json()) as any
+        if (data && typeof data === 'object') {
+          if (typeof data.message === 'string') message = data.message
+          else if (typeof data.code === 'string') message = data.code
+        }
+      } catch {
+      }
+    }
+    if (!message) {
+      const text = await resp.text().catch(() => '')
+      message = text
+    }
     const err: ApiError = {
-      message: text || resp.statusText || 'request_failed',
+      message: message || resp.statusText || `http_${resp.status}`,
       status: resp.status,
+      url: input,
     }
     throw err
   }
