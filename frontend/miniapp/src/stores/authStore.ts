@@ -31,7 +31,7 @@ type AuthState = {
   bootstrap: (initData: string) => Promise<void>
   refreshMe: () => Promise<void>
   requestPhoneOtp: (phone: string) => Promise<{ challenge_id: string; dev_code?: string }>
-  verifyPhoneOtp: (phone: string, code: string) => Promise<void>
+  verifyPhoneOtp: (phone: string, code: string, challengeId?: string) => Promise<void>
   updateAba: (aba_account: string, aba_name: string) => Promise<void>
 }
 
@@ -160,12 +160,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     )
     return { challenge_id: res.data.challenge_id, dev_code: res.data.dev_code }
   },
-  verifyPhoneOtp: async (phone: string, code: string) => {
+  verifyPhoneOtp: async (phone: string, code: string, challengeId?: string) => {
     const user = get().user
     if (!user) throw new Error("missing user")
     await api.post(
       "/auth/otp/verify",
-      { user_id: user.id, phone, code },
+      { user_id: user.id, phone, code, challenge_id: challengeId || undefined },
     )
     await get().refreshMe()
   },

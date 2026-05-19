@@ -96,6 +96,8 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.newUserCap": "អ្នកថ្មីអតិបរមា ${{cap}}។",
     "borrow.largeAmountContact": "ប្រសិនបើមានតម្រូវការខ្ចីចំនួនធំ សូមទាក់ទង Telegram Bot ដោយផ្ទាល់។",
     "borrow.telegramBot": "Telegram Bot",
+    "borrow.needPhone": "សូមផ្ទៀងផ្ទាត់លេខទូរស័ព្ទជាមុនសិន",
+    "borrow.needAba": "សូមភ្ជាប់ព័ត៌មាន ABA ជាមុនសិន",
 
     "dev.botTokensMissing": "Backend មិនបានកំណត់ BOT_TOKENS៖ សូមកំណត់ BOT_TOKENS=... នៅក្នុង .env ហើយ restart backend",
     "dev.devTmaDisabled": "Dev TMA មិនបានបើក៖ សូមកំណត់ DEV_TMA_ENABLED=true នៅក្នុង backend ហើយ restart",
@@ -367,6 +369,8 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.newUserCap": "New users max: ${{cap}}.",
     "borrow.largeAmountContact": "For large loan requests, please contact the Telegram bot directly.",
     "borrow.telegramBot": "Telegram bot",
+    "borrow.needPhone": "Please verify your phone number first",
+    "borrow.needAba": "Please bind your ABA info first",
 
     "dev.botTokensMissing": "Missing BOT_TOKENS in backend: set BOT_TOKENS=... in .env and restart",
     "dev.devTmaDisabled": "Dev TMA is disabled: set DEV_TMA_ENABLED=true in backend and restart",
@@ -638,6 +642,8 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "borrow.newUserCap": "新用户首单最高${{cap}}美元。",
     "borrow.largeAmountContact": "如果有大额借款需求，请直接联系 Telegram Bot。",
     "borrow.telegramBot": "Telegram Bot",
+    "borrow.needPhone": "请先完成手机号验证",
+    "borrow.needAba": "请先绑定 ABA 信息",
 
     "dev.botTokensMissing": "后端未配置 BOT_TOKENS：请在后端 .env 设置 BOT_TOKENS=... 并重启",
     "dev.devTmaDisabled": "本地调试接口未开启：请在后端设置 DEV_TMA_ENABLED=true 并重启后端",

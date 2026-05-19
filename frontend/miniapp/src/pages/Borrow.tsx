@@ -199,6 +199,16 @@ export default function Borrow() {
         disabled={!canSubmit || loadingCalc || limited}
         onClick={async () => {
           if (!user) return
+          if (!user.phone_verified) {
+            setErr(t("borrow.needPhone"))
+            nav("/setup")
+            return
+          }
+          if (!(user.aba_account || "").trim() || !(user.aba_name || "").trim()) {
+            setErr(t("borrow.needAba"))
+            nav("/setup")
+            return
+          }
           setSubmitting(true)
           setErr(null)
           try {

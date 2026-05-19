@@ -25,6 +25,8 @@ export default function ProfileSetup() {
   const [otpCode, setOtpCode] = useState("")
   const [otpSent, setOtpSent] = useState(false)
   const [otpDevCode, setOtpDevCode] = useState<string | null>(null)
+  const [otpChallengeId, setOtpChallengeId] = useState<string | null>(null)
+  const [otpPhone, setOtpPhone] = useState<string | null>(null)
   const [otpCooldown, setOtpCooldown] = useState(0)
   const [abaAccount, setAbaAccount] = useState(user?.aba_account || "")
   const [abaName, setAbaName] = useState(user?.aba_name || "")
@@ -97,7 +99,13 @@ export default function ProfileSetup() {
         ) : null}
 
         <div className="mt-2">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t("setup.phonePlaceholder")} inputMode="tel" />
+          <Input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder={t("setup.phonePlaceholder")}
+            inputMode="tel"
+            disabled={otpSent && !phoneVerified}
+          />
         </div>
 
         <div className="mt-3 flex gap-2">
@@ -109,9 +117,12 @@ export default function ProfileSetup() {
               setSaving(true)
               setErr(null)
               try {
-                const res = await requestPhoneOtp(phone.trim())
+                const p = phone.trim()
+                const res = await requestPhoneOtp(p)
                 setOtpSent(true)
-                setOtpDevCode(res.dev_code || null)
+                setOtpChallengeId(res.challenge_id)
+                setOtpPhone(p)
+                if (res.dev_code) setOtpDevCode(res.dev_code)
                 setOtpCooldown(60)
               } catch (e: unknown) {
                 setErr(errorMessage(e, t("setup.sendCodeFailed")))
@@ -130,7 +141,8 @@ export default function ProfileSetup() {
               setSaving(true)
               setErr(null)
               try {
-                await verifyPhoneOtp(phone.trim(), otpCode.trim())
+                const p = (otpPhone || phone).trim()
+                await verifyPhoneOtp(p, otpCode.trim(), otpChallengeId || undefined)
               } catch (e: unknown) {
                 setErr(errorMessage(e, t("setup.verifyFailed")))
               } finally {

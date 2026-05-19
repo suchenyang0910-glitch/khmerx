@@ -11,6 +11,8 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app import config
+import uuid
+
 from app.models.phone_otp import PhoneOtpChallenge
 from app.models.user import User
 from app.services.sms import send_sms
@@ -58,6 +60,8 @@ class OtpRequestResult:
 def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResult:
     phone_n = normalize_phone(phone)
 
+    dev_mode = bool(config.OTP_DEV_MODE) or not bool((config.SMS_PROVIDER or "").strip())
+
     now = _utcnow()
     start = now.replace(hour=0, minute=0, second=0, microsecond=0)
     daily = (
@@ -77,7 +81,7 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
         .order_by(PhoneOtpChallenge.sent_at.desc())
         .first()
     )
-    if recent and (now - recent.sent_at).total_seconds() < config.OTP_RESEND_MIN_SECONDS:
+    if recent and (now - recent.sent_at).total_seconds() < config.OTP_RESEND_MIN_SECONDS and not dev_mode:
         return OtpRequestResult(challenge_id=str(recent.id), dev_code=None)
 
     code = _generate_code()
@@ -96,7 +100,6 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
     db.commit()
     db.refresh(row)
 
-    dev_mode = bool(config.OTP_DEV_MODE) or not bool((config.SMS_PROVIDER or "").strip())
     if not dev_mode:
         try:
             send_sms(
@@ -111,21 +114,39 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
     return OtpRequestResult(challenge_id=str(row.id), dev_code=dev_code)
 
 
-def verify_phone_otp(db: Session, *, user: User, phone: str, code: str) -> None:
+def verify_phone_otp(db: Session, *, user: User, phone: str, code: str, challenge_id: str | None = None) -> None:
     phone_n = normalize_phone(phone)
     code_n = (code or "").strip()
     if len(code_n) != 6 or not code_n.isdigit():
         raise HTTPException(status_code=400, detail="Invalid code")
 
     now = _utcnow()
-    row = (
-        db.query(PhoneOtpChallenge)
-        .filter(PhoneOtpChallenge.user_id == user.id)
-        .filter(PhoneOtpChallenge.phone == phone_n)
-        .filter(PhoneOtpChallenge.verified_at.is_(None))
-        .order_by(PhoneOtpChallenge.sent_at.desc())
-        .first()
-    )
+    row = None
+    if challenge_id:
+        try:
+            cid = uuid.UUID(str(challenge_id))
+            row = (
+                db.query(PhoneOtpChallenge)
+                .filter(PhoneOtpChallenge.id == cid)
+                .filter(PhoneOtpChallenge.user_id == user.id)
+                .filter(PhoneOtpChallenge.verified_at.is_(None))
+                .first()
+            )
+        except Exception:
+            row = None
+
+    if row is None:
+        row = (
+            db.query(PhoneOtpChallenge)
+            .filter(PhoneOtpChallenge.user_id == user.id)
+            .filter(PhoneOtpChallenge.phone == phone_n)
+            .filter(PhoneOtpChallenge.verified_at.is_(None))
+            .order_by(PhoneOtpChallenge.sent_at.desc())
+            .first()
+        )
+
+    if row is not None and row.phone != phone_n:
+        raise HTTPException(status_code=400, detail="Phone mismatch")
     if not row:
         raise HTTPException(status_code=400, detail="OTP not found")
     if row.expires_at < now:

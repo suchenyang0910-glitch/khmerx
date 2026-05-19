@@ -76,6 +76,7 @@ class OtpVerifyRequest(BaseModel):
     user_id: str = Field(..., description="User UUID")
     phone: str = Field(..., min_length=8, max_length=20, description="手机号")
     code: str = Field(..., min_length=4, max_length=10, description="OTP code")
+    challenge_id: str | None = Field(default=None, description="challenge_id（可选，用于更精确验证）")
 
 
 class KycVerifyRequest(BaseModel):
@@ -217,7 +218,7 @@ async def verify_otp(
     db: Session = Depends(get_db),
 ):
     user = _get_user(db, req.user_id)
-    verify_phone_otp(db, user=user, phone=req.phone, code=req.code)
+    verify_phone_otp(db, user=user, phone=req.phone, code=req.code, challenge_id=req.challenge_id)
     return {"status": "ok", "verification_level": user.verification_level, "phone": user.phone or ""}
 
 
