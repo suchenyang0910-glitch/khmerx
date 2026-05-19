@@ -79,7 +79,9 @@ default_origins = [
 
 allow_origin_regex = r"^https?://(localhost|127\\.0\\.0\\.1)(:\\d+)?$|^https://([a-z0-9-]+\\.)*khmerx\\.org$"
 origins = CORS_ORIGINS
-if not origins:
+if origins:
+    origins = sorted(set(default_origins + origins))
+else:
     origins = default_origins
 
 app.add_middleware(
