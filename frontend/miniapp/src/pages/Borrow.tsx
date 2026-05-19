@@ -201,12 +201,12 @@ export default function Borrow() {
           if (!user) return
           if (!user.phone_verified) {
             setErr(t("borrow.needPhone"))
-            nav("/setup")
+            nav(`/setup?next=${encodeURIComponent("/borrow")}&require=phone`)
             return
           }
           if (!(user.aba_account || "").trim() || !(user.aba_name || "").trim()) {
             setErr(t("borrow.needAba"))
-            nav("/setup")
+            nav(`/setup?next=${encodeURIComponent("/borrow")}&require=aba`)
             return
           }
           setSubmitting(true)

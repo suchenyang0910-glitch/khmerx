@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
@@ -13,6 +13,7 @@ import { useI18n } from "@/i18n"
 
 export default function ProfileSetup() {
   const nav = useNavigate()
+  const { search } = useLocation()
   const { tg } = useTelegram()
   const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
@@ -32,6 +33,15 @@ export default function ProfileSetup() {
   const [abaName, setAbaName] = useState(user?.aba_name || "")
   const [saving, setSaving] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+
+  const { nextPath, requireField } = useMemo(() => {
+    const sp = new URLSearchParams(search)
+    const next = (sp.get("next") || "").trim()
+    const req = (sp.get("require") || "").trim()
+    const safeNext = next.startsWith("/") ? next : ""
+    const safeReq = req === "phone" || req === "aba" ? req : ""
+    return { nextPath: safeNext, requireField: safeReq }
+  }, [search])
 
   const phoneOk = useMemo(() => phone.trim().length >= 8, [phone])
   const phoneVerified = Boolean(user?.phone_verified)
@@ -182,16 +192,32 @@ export default function ProfileSetup() {
       <div className="mt-4 space-y-2">
         <Button
           className="w-full"
-          disabled={!phoneVerified || saving}
+          disabled={!phoneVerified || saving || (requireField === "aba" && !abaOk)}
           onClick={async () => {
             if (!user) return
             setSaving(true)
             setErr(null)
             try {
+              if (requireField === "aba" && !abaOk) {
+                setErr(t("borrow.needAba"))
+                return
+              }
               if (abaOk) {
                 await updateAba(abaAccount.trim(), abaName.trim())
+              } else {
+                await refreshMe()
               }
-              nav("/", { replace: true })
+
+              const me = useAuthStore.getState().user
+              if (requireField === "aba") {
+                const hasAba = Boolean((me?.aba_account || "").trim()) && Boolean((me?.aba_name || "").trim())
+                if (!hasAba) {
+                  setErr(t("borrow.needAba"))
+                  return
+                }
+              }
+
+              nav(nextPath || "/", { replace: true })
             } catch (e: unknown) {
               if (axios.isAxiosError(e) && !e.response) {
                 const origin = window.location.origin

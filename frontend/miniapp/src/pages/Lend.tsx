@@ -200,13 +200,13 @@ export default function Lend() {
                   if (!me.phone_verified) {
                     setErr(t("borrow.needPhone"))
                     setOpen(false)
-                    nav("/setup")
+                    nav(`/setup?next=${encodeURIComponent("/lend")}&require=phone`)
                     return
                   }
                   if (!(me.aba_account || "").trim() || !(me.aba_name || "").trim()) {
                     setErr(t("borrow.needAba"))
                     setOpen(false)
-                    nav("/setup")
+                    nav(`/setup?next=${encodeURIComponent("/lend")}&require=aba`)
                     return
                   }
                   setConfirming(true)
