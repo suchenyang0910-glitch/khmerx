@@ -64,15 +64,11 @@ OTP_DAILY_LIMIT = int(os.getenv("OTP_DAILY_LIMIT", "10"))
 
 
 def validate_runtime_config() -> None:
-    secret = (OTP_SECRET or "").strip()
     if OTP_DEV_MODE:
         return
-    if not secret:
-        raise RuntimeError("OTP_SECRET is required when OTP_DEV_MODE=false")
-    if secret.lower() in {"change_me", "changeme", "dev-otp-secret"}:
-        raise RuntimeError("OTP_SECRET must be a strong random secret")
-    if len(secret) < 16:
-        raise RuntimeError("OTP_SECRET must be at least 16 characters")
+    if (SMS_PROVIDER or "").strip().lower() == "twilio":
+        if not (TWILIO_ACCOUNT_SID or "").strip() or not (TWILIO_AUTH_TOKEN or "").strip() or not (SMS_FROM or "").strip():
+            raise RuntimeError("Twilio is required when OTP_DEV_MODE=false and SMS_PROVIDER=twilio")
 
 SMS_PROVIDER = os.getenv("SMS_PROVIDER", "")
 SMS_FROM = os.getenv("SMS_FROM", "")

@@ -30,19 +30,19 @@ def normalize_phone(phone: str) -> str:
     return p
 
 
-def _require_secret() -> bytes:
+def _pepper_bytes() -> bytes:
     secret = (config.OTP_SECRET or "").strip()
-    if secret:
-        return secret.encode()
-    if config.OTP_DEV_MODE:
-        return b"dev-otp-secret"
-    logger.error("OTP is misconfigured: missing OTP_SECRET")
-    raise HTTPException(status_code=503, detail="OTP 服务暂不可用，请联系管理员")
+    if not secret:
+        return b""
+    return secret.encode()
 
 
-def _hash_code(secret_key: bytes, salt_hex: str, code: str) -> str:
-    msg = f"{salt_hex}:{code}".encode()
-    return hmac.new(secret_key, msg, hashlib.sha256).hexdigest()
+def _hash_code(*, salt_hex: str, code: str) -> str:
+    salt = bytes.fromhex(salt_hex)
+    pepper = _pepper_bytes()
+    data = code.encode() if not pepper else (code + ":").encode() + pepper
+    digest = hashlib.pbkdf2_hmac("sha256", data, salt, 120_000)
+    return digest.hex()
 
 
 def _generate_code() -> str:
@@ -82,8 +82,7 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
 
     code = _generate_code()
     salt_hex = secrets.token_hex(16)
-    secret_key = _require_secret()
-    code_hash = _hash_code(secret_key, salt_hex, code)
+    code_hash = _hash_code(salt_hex=salt_hex, code=code)
     row = PhoneOtpChallenge(
         user_id=user.id,
         phone=phone_n,
@@ -97,12 +96,16 @@ def request_phone_otp(db: Session, *, user: User, phone: str) -> OtpRequestResul
     db.commit()
     db.refresh(row)
 
-    dev_mode = bool(config.OTP_DEV_MODE)
+    dev_mode = bool(config.OTP_DEV_MODE) or not bool((config.SMS_PROVIDER or "").strip())
     if not dev_mode:
-        send_sms(
-            to=phone_n,
-            body=f"KhmerX 验证码：{code}（{config.OTP_CODE_TTL_SECONDS // 60}分钟内有效）",
-        )
+        try:
+            send_sms(
+                to=phone_n,
+                body=f"KhmerX 验证码：{code}（{config.OTP_CODE_TTL_SECONDS // 60}分钟内有效）",
+            )
+        except Exception:
+            logger.exception("OTP SMS send failed")
+            raise HTTPException(status_code=503, detail="OTP 短信发送失败，请稍后重试")
 
     dev_code = code if dev_mode else None
     return OtpRequestResult(challenge_id=str(row.id), dev_code=dev_code)
@@ -130,8 +133,7 @@ def verify_phone_otp(db: Session, *, user: User, phone: str, code: str) -> None:
     if row.attempts >= config.OTP_MAX_VERIFY_ATTEMPTS:
         raise HTTPException(status_code=429, detail="Too many attempts")
 
-    secret_key = _require_secret()
-    expected = _hash_code(secret_key, row.salt, code_n)
+    expected = _hash_code(salt_hex=row.salt, code=code_n)
     ok = hmac.compare_digest(expected, row.code_hash)
     row.attempts = int(row.attempts or 0) + 1
     if not ok:
