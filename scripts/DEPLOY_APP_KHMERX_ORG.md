@@ -40,6 +40,7 @@ powershell -ExecutionPolicy Bypass -File scripts/deploy-miniapp-build.ps1
 ## 4) 上线后验证
 
 - 打开 `https://app.khmerx.org/`
-- Console 执行 `localStorage.getItem('khx_lang')`，首次应为 `km`
+- 首次进入应先看到语言选择页；选择后再继续进入业务页
+- Console 执行 `localStorage.getItem('khx_lang')`，应为你选择的语言（`km/en/cn`）
+- Console 执行 `localStorage.getItem('khx_lang_selected_v1')`，应为 `1`
 - Network 任意 API 请求 Headers 应包含 `X-Lang: km`
-
