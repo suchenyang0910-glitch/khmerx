@@ -17,7 +17,7 @@ function applyUserLang(next: unknown) {
 }
 
 function hasPickedLang() {
-  return localStorage.getItem("khx_lang_selected_v1") === "1"
+  return localStorage.getItem("khx_lang_selected_v2") === "1"
 }
 
 type AuthState = {

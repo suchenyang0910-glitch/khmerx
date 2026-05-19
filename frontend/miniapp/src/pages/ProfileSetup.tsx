@@ -170,13 +170,15 @@ export default function ProfileSetup() {
       <div className="mt-4 space-y-2">
         <Button
           className="w-full"
-          disabled={!phoneVerified || !abaOk || saving}
+          disabled={!phoneVerified || saving}
           onClick={async () => {
             if (!user) return
             setSaving(true)
             setErr(null)
             try {
-              await updateAba(abaAccount.trim(), abaName.trim())
+              if (abaOk) {
+                await updateAba(abaAccount.trim(), abaName.trim())
+              }
               nav("/", { replace: true })
             } catch (e: unknown) {
               if (axios.isAxiosError(e) && !e.response) {

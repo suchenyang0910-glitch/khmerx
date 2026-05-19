@@ -11,8 +11,7 @@ import { useI18n } from "@/i18n"
 
 function needsProfile(user: AppUser | null) {
   const phoneOk = Boolean((user?.phone || "").trim()) && Boolean(user?.phone_verified)
-  const abaOk = Boolean((user?.aba_account || "").trim()) && Boolean((user?.aba_name || "").trim())
-  return !(phoneOk && abaOk)
+  return !phoneOk
 }
 
 export default function AppShell() {
@@ -27,9 +26,8 @@ export default function AppShell() {
   const bootstrap = useAuthStore((s) => s.bootstrap)
   const storedInitData = useAuthStore((s) => s.initData)
 
-  const langSelected = useMemo(() => {
-    return localStorage.getItem("khx_lang_selected_v1") === "1"
-  }, [])
+  const langSelected = localStorage.getItem("khx_lang_selected_v2") === "1"
+  const hasLang = Boolean(localStorage.getItem("khx_lang"))
 
   const [devBooting, setDevBooting] = useState(false)
   const [devError, setDevError] = useState<string | null>(null)
@@ -108,7 +106,7 @@ export default function AppShell() {
     bootstrap(data)
   }, [bootstrap, initData, storedInitData, user, booting, error, canDevBoot, autoDevAttempted])
 
-  if (!langSelected) {
+  if (!langSelected || !hasLang) {
     return <Navigate to="/lang" replace />
   }
 

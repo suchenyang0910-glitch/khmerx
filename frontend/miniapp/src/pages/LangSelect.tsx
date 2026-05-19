@@ -37,7 +37,7 @@ export default function LangSelect() {
           <Button
             className="w-full"
             onClick={() => {
-              localStorage.setItem("khx_lang_selected_v1", "1")
+              localStorage.setItem("khx_lang_selected_v2", "1")
               nav("/", { replace: true })
             }}
           >
@@ -48,4 +48,3 @@ export default function LangSelect() {
     </div>
   )
 }
-

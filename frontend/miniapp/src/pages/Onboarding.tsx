@@ -9,7 +9,7 @@ import { updatePreferredLanguage } from "@/api/v1"
 
 export default function Onboarding() {
   const { lang, setLang, t } = useI18n()
-  const langSelected = localStorage.getItem("khx_lang_selected_v1") === "1"
+  const langSelected = localStorage.getItem("khx_lang_selected_v2") === "1"
   const [i, setI] = useState(0)
   const setOnboardingDone = useAuthStore((s) => s.setOnboardingDone)
   const user = useAuthStore((s) => s.user)
@@ -38,7 +38,7 @@ export default function Onboarding() {
             <Button
               className="w-full"
               onClick={async () => {
-                localStorage.setItem("khx_lang_selected_v1", "1")
+                localStorage.setItem("khx_lang_selected_v2", "1")
                 setLangPicked(true)
                 if (!user) return
                 try {
