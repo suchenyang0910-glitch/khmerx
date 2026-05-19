@@ -34,7 +34,11 @@ def verify_telegram_init_data(init_data: str, bot_tokens: Sequence[str]) -> Opti
             logger.error("TG auth: no bot tokens configured")
             return None
 
-        parsed = dict(parse_qsl(init_data, keep_blank_values=True))
+        raw = (init_data or "").strip()
+        if ("hash=" not in raw) and ("%3D" in raw or "%26" in raw):
+            raw = unquote(raw)
+
+        parsed = dict(parse_qsl(raw, keep_blank_values=True))
         data_dict = {k: v for k, v in parsed.items()}
 
         # 提取 hash

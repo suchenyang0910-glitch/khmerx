@@ -136,7 +136,12 @@ async def telegram_login(
 
     tg_user = verify_telegram_init_data(req.init_data, tokens)
     if not tg_user:
-        raise HTTPException(status_code=401, detail="Invalid Telegram init data")
+        raw = (req.init_data or "").strip()
+        if ("hash=" not in raw) and ("%3D" in raw or "%26" in raw):
+            raise HTTPException(status_code=401, detail="Invalid Telegram init data (maybe URL-encoded twice)")
+        if "hash=" not in raw:
+            raise HTTPException(status_code=401, detail="Invalid Telegram init data (missing hash; open via Telegram WebApp)")
+        raise HTTPException(status_code=401, detail="Invalid Telegram init data (hash mismatch; check BOT_TOKEN)")
 
     user = login_or_register(db, tg_user)
     lang = getattr(request.state, "lang", "km")
