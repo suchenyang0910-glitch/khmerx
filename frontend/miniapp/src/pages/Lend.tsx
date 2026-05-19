@@ -197,6 +197,18 @@ export default function Lend() {
                 disabled={!me || confirming}
                 onClick={async () => {
                   if (!me) return
+                  if (!me.phone_verified) {
+                    setErr(t("borrow.needPhone"))
+                    setOpen(false)
+                    nav("/setup")
+                    return
+                  }
+                  if (!(me.aba_account || "").trim() || !(me.aba_name || "").trim()) {
+                    setErr(t("borrow.needAba"))
+                    setOpen(false)
+                    nav("/setup")
+                    return
+                  }
                   setConfirming(true)
                   setErr(null)
                   try {
