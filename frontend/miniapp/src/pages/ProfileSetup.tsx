@@ -192,12 +192,16 @@ export default function ProfileSetup() {
       <div className="mt-4 space-y-2">
         <Button
           className="w-full"
-          disabled={!phoneVerified || saving || (requireField === "aba" && !abaOk)}
+          disabled={saving}
           onClick={async () => {
             if (!user) return
             setSaving(true)
             setErr(null)
             try {
+              if (!phoneVerified) {
+                setErr(t("setup.verifyPhoneFirst"))
+                return
+              }
               if (requireField === "aba" && !abaOk) {
                 setErr(t("borrow.needAba"))
                 return

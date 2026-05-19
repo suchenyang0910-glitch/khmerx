@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { Shield, Clock, FileText, Send } from 'lucide-react';
+import { Shield, Clock, FileText, Send, Smartphone, ShoppingCart, HandCoins } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 
 export default function Home() {
@@ -144,6 +144,49 @@ export default function Home() {
                 <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-3">{feat.icon}</div>
                 <h3 className="text-lg font-semibold text-slate-900">{t(feat.title)}</h3>
                 <p className="mt-2 text-sm text-slate-600">{t(feat.desc)}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-slate-50 px-5">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-slate-900">{t('home.solutions_title')}</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-slate-600">{t('home.solutions_desc')}</p>
+          </div>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[{
+              icon: <Smartphone className="h-6 w-6 text-blue-600" />,
+              title: 'home.solution_rent_title',
+              desc: 'home.solution_rent_desc',
+            }, {
+              icon: <ShoppingCart className="h-6 w-6 text-blue-600" />,
+              title: 'home.solution_install_title',
+              desc: 'home.solution_install_desc',
+            }, {
+              icon: <HandCoins className="h-6 w-6 text-blue-600" />,
+              title: 'home.solution_pledge_title',
+              desc: 'home.solution_pledge_desc',
+            }].map((x, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -4 }}
+                className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+              >
+                <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-3">{x.icon}</div>
+                <div className="text-lg font-semibold text-slate-900">{t(x.title)}</div>
+                <div className="mt-2 text-sm text-slate-600">{t(x.desc)}</div>
+                <div className="mt-4">
+                  <Link
+                    to={`/${lang}/apply`}
+                    className="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+                  >
+                    {t('home.solution_apply_cta')}
+                  </Link>
+                </div>
               </motion.div>
             ))}
           </div>

@@ -195,7 +195,19 @@ export default function AppShell() {
   }
 
   if (user && needsProfile(user) && pathname !== "/setup") {
-    return <Navigate to="/setup" replace />
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] p-4">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="text-sm font-semibold text-zinc-900">{t("setup.title")}</div>
+          <div className="mt-2 text-sm text-zinc-600">{t("setup.desc")}</div>
+          <div className="mt-4">
+            <Button onClick={() => window.location.assign("/setup")} className="w-full">
+              {t("common.saveContinue")}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const blocked = risk?.risk_level && ["blocked", "restricted"].includes(risk.risk_level)
