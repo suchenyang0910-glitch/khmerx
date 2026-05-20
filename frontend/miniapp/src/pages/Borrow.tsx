@@ -30,6 +30,12 @@ export default function Borrow() {
   const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
+  const refreshMe = useAuthStore((s) => s.refreshMe)
+
+  useEffect(() => {
+    if (!user) return
+    refreshMe().catch(() => {})
+  }, [user, refreshMe])
 
   const MAX_BORROW_CAP = 800
   const NEW_USER_BORROW_CAP = 500

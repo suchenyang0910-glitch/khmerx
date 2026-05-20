@@ -51,9 +51,15 @@ export default function Services() {
             </div>
 
             <div className="mt-3">
-              <Link to={`/apply/${s.bizType}`}>
-                <Button className="w-full">{t("services.apply")}</Button>
-              </Link>
+              {s.bizType === "lease" || s.bizType === "installment" ? (
+                <Link to={`/catalog/${s.bizType}`}>
+                  <Button className="w-full">{t("services.choose")}</Button>
+                </Link>
+              ) : (
+                <Link to={`/apply/${s.bizType}`}>
+                  <Button className="w-full">{t("services.apply")}</Button>
+                </Link>
+              )}
             </div>
           </Card>
         ))}
@@ -61,4 +67,3 @@ export default function Services() {
     </div>
   )
 }
-

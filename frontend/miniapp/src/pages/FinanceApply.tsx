@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { useEffect, useMemo, useState } from "react"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
@@ -7,7 +7,8 @@ import { useAuthStore } from "@/stores/authStore"
 import { useI18n } from "@/i18n"
 import { createFinanceApplication } from "@/api/v1"
 import { errorMessage } from "@/utils/errors"
-import type { FinanceBizType } from "@/api/types"
+import { api } from "@/api/client"
+import type { FinanceBizType, Product } from "@/api/types"
 
 function normalizeBizType(v: string | undefined): FinanceBizType | null {
   if (v === "lease" || v === "installment" || v === "pledge") return v
@@ -17,8 +18,15 @@ function normalizeBizType(v: string | undefined): FinanceBizType | null {
 export default function FinanceApply() {
   const { t } = useI18n()
   const nav = useNavigate()
+  const { search } = useLocation()
   const { bizType: rawBizType } = useParams()
   const bizType = normalizeBizType(rawBizType)
+
+  const productId = useMemo(() => {
+    const sp = new URLSearchParams(search)
+    const v = (sp.get("product_id") || "").trim()
+    return v || null
+  }, [search])
 
   const user = useAuthStore((s) => s.user)
 
@@ -35,6 +43,41 @@ export default function FinanceApply() {
   const [notes, setNotes] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+
+  const [product, setProduct] = useState<Product | null>(null)
+  const [loadingProduct, setLoadingProduct] = useState(false)
+
+  useEffect(() => {
+    if (bizType === "lease" || bizType === "installment") {
+      if (product && Number(product.price) > 0) {
+        setAmount(String(Number(product.price)))
+      }
+    }
+  }, [bizType, product])
+
+  useEffect(() => {
+    if (!productId) {
+      setProduct(null)
+      return
+    }
+    if (bizType !== "lease" && bizType !== "installment") return
+    let cancelled = false
+    setLoadingProduct(true)
+    api
+      .get<Product>(`/products/${productId}`)
+      .then((res) => {
+        if (!cancelled) setProduct(res.data)
+      })
+      .catch(() => {
+        if (!cancelled) setProduct(null)
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingProduct(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [bizType, productId])
 
   const bizLabel = useMemo(() => {
     if (bizType === "lease") return t("services.lease.title")
@@ -78,6 +121,37 @@ export default function FinanceApply() {
         </Card>
       ) : null}
 
+      {(bizType === "lease" || bizType === "installment") && !productId ? (
+        <Card className="p-4">
+          <div className="text-sm font-semibold text-zinc-900">{t("apply.needPickProduct")}</div>
+          <div className="mt-2 text-sm text-zinc-600">{t("apply.pickProductDesc")}</div>
+          <div className="mt-3">
+            <Link to={`/catalog/${bizType}`}>
+              <Button className="w-full">{t("services.choose")}</Button>
+            </Link>
+          </div>
+        </Card>
+      ) : null}
+
+      {(bizType === "lease" || bizType === "installment") && productId ? (
+        <Card className="p-4">
+          <div className="text-sm font-semibold text-zinc-900">{t("apply.product")}</div>
+          {loadingProduct ? (
+            <div className="mt-2 h-10 animate-pulse rounded-2xl bg-zinc-50" />
+          ) : product ? (
+            <div className="mt-2 flex items-start justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-zinc-900">{product.title}</div>
+                <div className="mt-1 text-xs text-zinc-500">{t("apply.productId", { id: product.id })}</div>
+              </div>
+              <div className="text-sm font-bold text-zinc-900">${Number(product.price).toFixed(0)}</div>
+            </div>
+          ) : (
+            <div className="mt-2 text-sm text-amber-700">{t("apply.productLoadFailed")}</div>
+          )}
+        </Card>
+      ) : null}
+
       <Card className="p-4">
         <div className="grid gap-3">
           <div>
@@ -93,10 +167,12 @@ export default function FinanceApply() {
             <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder={t("apply.field.city")} />
           </div>
 
-          <div>
-            <div className="text-xs text-zinc-500">{t("apply.field.deviceModel")}</div>
-            <Input value={deviceModel} onChange={(e) => setDeviceModel(e.target.value)} placeholder={t("apply.field.deviceModel")} />
-          </div>
+          {bizType === "pledge" ? (
+            <div>
+              <div className="text-xs text-zinc-500">{t("apply.field.deviceModel")}</div>
+              <Input value={deviceModel} onChange={(e) => setDeviceModel(e.target.value)} placeholder={t("apply.field.deviceModel")} />
+            </div>
+          ) : null}
 
           {bizType === "installment" ? (
             <div>
@@ -142,7 +218,13 @@ export default function FinanceApply() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <div className="text-xs text-zinc-500">{t("apply.field.amount")}</div>
-              <Input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="USD" inputMode="decimal" />
+              <Input
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="USD"
+                inputMode="decimal"
+                readOnly={(bizType === "lease" || bizType === "installment") && Boolean(product)}
+              />
             </div>
             <div>
               <div className="text-xs text-zinc-500">
@@ -197,14 +279,20 @@ export default function FinanceApply() {
             setErr(t("apply.needProfile"))
             return
           }
+          if ((bizType === "lease" || bizType === "installment") && !productId) {
+            setErr(t("apply.needPickProduct"))
+            return
+          }
           setSubmitting(true)
           try {
             const payload = {
               full_name: fullName.trim(),
               phone,
               city: city.trim(),
-              device_model: deviceModel.trim(),
-              amount: amount.trim(),
+              product_id: (bizType === "lease" || bizType === "installment") ? productId : null,
+              product_title: (bizType === "lease" || bizType === "installment") ? (product?.title || null) : null,
+              device_model: bizType === "pledge" ? deviceModel.trim() : null,
+              amount: (bizType === "lease" || bizType === "installment") ? String(Number(product?.price || 0) || "") : amount.trim(),
               term_months: bizType === "pledge" ? null : termMonths,
               term_days: bizType === "pledge" ? termDays : null,
               down_payment: bizType === "installment" ? downPayment.trim() : null,
@@ -227,4 +315,3 @@ export default function FinanceApply() {
     </div>
   )
 }
-

@@ -11,6 +11,8 @@ import TradeDetail from "@/pages/TradeDetail";
 import Me from "@/pages/Me";
 import Notifications from "@/pages/Notifications";
 import Services from "@/pages/Services";
+import Catalog from "@/pages/Catalog";
+import ProductDetail from "@/pages/ProductDetail";
 import FinanceApply from "@/pages/FinanceApply";
 import MyApplications from "@/pages/MyApplications";
 import ApplicationDetail from "@/pages/ApplicationDetail";
@@ -26,6 +28,8 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/catalog/:bizType" element={<Catalog />} />
+          <Route path="/catalog/:bizType/:productId" element={<ProductDetail />} />
           <Route path="/apply/:bizType" element={<FinanceApply />} />
           <Route path="/applications" element={<MyApplications />} />
           <Route path="/applications/:applicationId" element={<ApplicationDetail />} />

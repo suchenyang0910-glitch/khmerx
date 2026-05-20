@@ -141,6 +141,22 @@ export interface FinanceApplication {
   updated_at?: string | null
 }
 
+export interface Product {
+  id: string
+  title: string
+  description: string
+  price: number
+  status: string
+  owner_id: string
+  source: string
+  is_verified: boolean
+  images: string
+  video_url: string
+  contact_info: string
+  category: string
+  created_at: string
+}
+
 export interface Notification {
   id: string
   type: string
