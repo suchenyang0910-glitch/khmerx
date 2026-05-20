@@ -17,6 +17,7 @@ export default function ProfileSetup() {
   const { tg } = useTelegram()
   const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
+  const bootstrap = useAuthStore((s) => s.bootstrap)
   const requestPhoneOtp = useAuthStore((s) => s.requestPhoneOtp)
   const verifyPhoneOtp = useAuthStore((s) => s.verifyPhoneOtp)
   const updateAba = useAuthStore((s) => s.updateAba)
@@ -64,6 +65,45 @@ export default function ProfileSetup() {
     if (otpCode.trim()) return
     setOtpCode(otpDevCode)
   }, [otpDevCode, otpCode])
+
+  const canLocalDevLogin = import.meta.env.DEV
+
+  const generateLocalAccount = async () => {
+    setSaving(true)
+    setErr(null)
+    try {
+      const tgId = 90000000 + Math.floor(Math.random() * 1000000)
+      const res = await api.get<{ ok: boolean; data: { init_data: string } }>("/auth/dev-tma", {
+        params: { tg_id: tgId },
+      })
+      const init = res.data?.data?.init_data || ""
+      if (!init) throw new Error(t("dev.backendUnreachable"))
+      await bootstrap(init)
+    } catch (e: unknown) {
+      setErr(errorMessage(e, t("dev.localLoginFailed")))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!user) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
+        <div className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="text-sm font-semibold text-zinc-900">{t("auth.loginFailed")}</div>
+          <div className="mt-2 text-sm text-zinc-600">{t("auth.openInTelegram")}</div>
+          {canLocalDevLogin ? (
+            <div className="mt-4">
+              <Button className="w-full" disabled={saving} onClick={generateLocalAccount}>
+                {saving ? t("dev.generatingAccount") : t("dev.generateAccount")}
+              </Button>
+            </div>
+          ) : null}
+          {err ? <div className="mt-3 rounded-2xl bg-red-50 p-3 text-sm text-red-700">{err}</div> : null}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
@@ -137,7 +177,6 @@ export default function ProfileSetup() {
             className="flex-1"
             disabled={!phoneOk || saving || otpCooldown > 0}
             onClick={async () => {
-              if (!user) return
               setSaving(true)
               setErr(null)
               try {
@@ -161,7 +200,6 @@ export default function ProfileSetup() {
             className="flex-1"
             disabled={!phoneOk || !otpSent || !otpCodeOk || saving}
             onClick={async () => {
-              if (!user) return
               setSaving(true)
               setErr(null)
               try {
@@ -208,7 +246,6 @@ export default function ProfileSetup() {
           className="w-full"
           disabled={saving}
           onClick={async () => {
-            if (!user) return
             setSaving(true)
             setErr(null)
             try {
