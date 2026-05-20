@@ -64,3 +64,18 @@ class CreditDetail(BaseModel):
     max_borrow_amount: float
     reasons: List[str] = []
     logs: List[Dict[str, Any]] = []
+
+
+class CreateFinanceApplicationRequest(BaseModel):
+    biz_type: Literal["lease", "installment", "pledge"]
+    payload: Dict[str, Any] = Field(default_factory=dict)
+
+
+class FinanceApplicationOut(BaseModel):
+    id: str
+    user_id: str
+    biz_type: str
+    status: str
+    payload: Dict[str, Any]
+    created_at: str | None = None
+    updated_at: str | None = None

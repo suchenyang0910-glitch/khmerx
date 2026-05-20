@@ -17,6 +17,15 @@ export default function Onboarding() {
 
   const [langPicked, setLangPicked] = useState(() => langSelected)
 
+  const steps = useMemo(() => {
+    return [
+      { title: t("onboarding.s1.title"), desc: t("onboarding.s1.desc"), icon: ShieldCheck },
+      { title: t("onboarding.s2.title"), desc: t("onboarding.s2.desc"), icon: HandCoins },
+      { title: t("onboarding.s3.title"), desc: t("onboarding.s3.desc"), icon: Users },
+    ]
+  }, [t])
+  const step = useMemo(() => steps[i], [i, steps])
+
   if (!langPicked) {
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
@@ -44,6 +53,7 @@ export default function Onboarding() {
                 try {
                   await updatePreferredLanguage(lang)
                 } catch {
+                  void 0
                 }
               }}
             >
@@ -54,14 +64,6 @@ export default function Onboarding() {
       </div>
     )
   }
-  const steps = useMemo(() => {
-    return [
-      { title: t("onboarding.s1.title"), desc: t("onboarding.s1.desc"), icon: ShieldCheck },
-      { title: t("onboarding.s2.title"), desc: t("onboarding.s2.desc"), icon: HandCoins },
-      { title: t("onboarding.s3.title"), desc: t("onboarding.s3.desc"), icon: Users },
-    ]
-  }, [t])
-  const step = useMemo(() => steps[i], [i, steps])
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">

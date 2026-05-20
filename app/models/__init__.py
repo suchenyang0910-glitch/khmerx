@@ -15,6 +15,7 @@ from app.models.app_config import AppConfig
 from app.models.phone_otp import PhoneOtpChallenge
 from app.models.admin_audit_log import AdminAuditLog
 from app.models.integration_request import IntegrationRequest
+from app.models.finance_application import FinanceApplication
 
 __all__ = [
     "User", "Product", "Order", "Inspection",
@@ -28,4 +29,5 @@ __all__ = [
     "PhoneOtpChallenge",
     "AdminAuditLog",
     "IntegrationRequest",
+    "FinanceApplication",
 ]

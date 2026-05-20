@@ -1,5 +1,5 @@
 import { apiV1 } from "@/api/client"
-import type { Announcement, Notification } from "@/api/types"
+import type { Announcement, FinanceApplication, FinanceBizType, Notification } from "@/api/types"
 
 export async function updatePreferredLanguage(lang: "km" | "cn" | "en") {
   const res = await apiV1.patch<{ ok: boolean; data: { profile_completed: boolean } }>("/me/profile", { language: lang })
@@ -33,5 +33,20 @@ export async function fetchNotificationSettings() {
 
 export async function updateNotificationSettings(input: Partial<NotificationSettings>) {
   const res = await apiV1.put<{ ok: boolean; data: NotificationSettings }>("/notifications/settings", input)
+  return res.data.data
+}
+
+export async function createFinanceApplication(input: { biz_type: FinanceBizType; payload: Record<string, unknown> }) {
+  const res = await apiV1.post<{ ok: boolean; data: FinanceApplication }>("/applications", input)
+  return res.data.data
+}
+
+export async function fetchMyApplications(params?: { biz_type?: string; status?: string; limit?: number; offset?: number }) {
+  const res = await apiV1.get<{ ok: boolean; data: FinanceApplication[] }>("/applications", { params })
+  return res.data.data
+}
+
+export async function fetchApplicationDetail(applicationId: string) {
+  const res = await apiV1.get<{ ok: boolean; data: FinanceApplication }>(`/applications/${applicationId}`)
   return res.data.data
 }

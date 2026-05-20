@@ -10,6 +10,10 @@ import Trades from "@/pages/Trades";
 import TradeDetail from "@/pages/TradeDetail";
 import Me from "@/pages/Me";
 import Notifications from "@/pages/Notifications";
+import Services from "@/pages/Services";
+import FinanceApply from "@/pages/FinanceApply";
+import MyApplications from "@/pages/MyApplications";
+import ApplicationDetail from "@/pages/ApplicationDetail";
 
 export default function App() {
   return (
@@ -21,6 +25,10 @@ export default function App() {
 
         <Route element={<AppShell />}>
           <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/apply/:bizType" element={<FinanceApply />} />
+          <Route path="/applications" element={<MyApplications />} />
+          <Route path="/applications/:applicationId" element={<ApplicationDetail />} />
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/lend" element={<Lend />} />
           <Route path="/trades" element={<Trades />} />

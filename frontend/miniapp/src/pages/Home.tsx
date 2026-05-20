@@ -4,7 +4,7 @@ import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { useAuthStore } from "@/stores/authStore";
-import { ArrowRight, Megaphone, ShieldCheck } from "lucide-react";
+import { ArrowRight, HandCoins, Megaphone, ShieldCheck, ShoppingCart, Smartphone } from "lucide-react";
 import { fetchAnnouncements } from "@/api/v1";
 import type { Announcement } from "@/api/types";
 import { useI18n } from "@/i18n";
@@ -124,6 +124,38 @@ export default function Home() {
           </div>
           <Link to="/borrow" className="text-sm text-blue-600">
             {t("home.goCreate")} <ArrowRight className="inline h-4 w-4" />
+          </Link>
+        </div>
+      </Card>
+
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-semibold text-zinc-900">{t("home.services")}</div>
+            <div className="mt-1 text-sm text-zinc-600">{t("home.servicesDesc")}</div>
+          </div>
+          <Link to="/services" className="text-sm text-blue-600">
+            {t("home.viewDetail")} <ArrowRight className="inline h-4 w-4" />
+          </Link>
+        </div>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          <Link to="/apply/lease" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <Smartphone className="h-5 w-5" />
+            </div>
+            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.lease.title")}</div>
+          </Link>
+          <Link to="/apply/installment" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <ShoppingCart className="h-5 w-5" />
+            </div>
+            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.installment.title")}</div>
+          </Link>
+          <Link to="/apply/pledge" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <HandCoins className="h-5 w-5" />
+            </div>
+            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.pledge.title")}</div>
           </Link>
         </div>
       </Card>

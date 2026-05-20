@@ -23,6 +23,7 @@ from app.api_v1.schemas import (
     PatchProfileRequest,
     VerifyTelegramContactRequest,
     RepayRequest,
+    CreateFinanceApplicationRequest,
 )
 from app.config import BOT_TOKENS
 from app.database import get_db
@@ -30,6 +31,7 @@ from app.models.p2p_offer import P2POffer
 from app.models.p2p_trade import P2PTrade
 from app.models.repayment_schedule import RepaymentSchedule
 from app.models.user import User
+from app.models.finance_application import FinanceApplication
 from app.risk.models import RiskLog
 from app.services.interest_calculator import InterestCalculator
 from app.risk.engine import RiskEngine
@@ -46,6 +48,27 @@ from app.risk.models import Dispute
 from app.services.notifications import get_or_create_notification_settings
 from app.services.auth import verify_telegram_contact_response
 from app.services.bot_accounts import get_active_bot_tokens
+
+
+def _iso(dt: datetime | None) -> str | None:
+    if not dt:
+        return None
+    try:
+        return dt.isoformat()
+    except Exception:
+        return None
+
+
+def _app_out(a: FinanceApplication) -> dict:
+    return {
+        "id": str(a.id),
+        "user_id": str(a.user_id),
+        "biz_type": a.biz_type,
+        "status": a.status,
+        "payload": a.payload or {},
+        "created_at": _iso(getattr(a, "created_at", None)),
+        "updated_at": _iso(getattr(a, "updated_at", None)),
+    }
 
 
 router = APIRouter(prefix="/api/v1", tags=["v1"])
@@ -223,6 +246,69 @@ def me_credit(
             "logs": logs_out,
         }
     )
+
+
+@router.post("/applications")
+def create_finance_application(
+    payload: CreateFinanceApplicationRequest,
+    user: User = Depends(get_current_user_tma),
+    db: Session = Depends(get_db),
+):
+    ensure_profile_completed(user)
+    profile = RiskService(db).get_or_create_profile(user.id)
+    if profile.is_blocked:
+        raise ApiError(code="USER_BLOCKED", message="账号受限，暂无法提交申请", status_code=403)
+
+    app = FinanceApplication(
+        user_id=user.id,
+        biz_type=payload.biz_type,
+        status="submitted",
+        payload=payload.payload or {},
+    )
+    db.add(app)
+    db.commit()
+    db.refresh(app)
+    return ok(_app_out(app))
+
+
+@router.get("/applications")
+def list_finance_applications(
+    biz_type: str | None = None,
+    status: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
+    user: User = Depends(get_current_user_tma),
+    db: Session = Depends(get_db),
+):
+    query = db.query(FinanceApplication).filter(FinanceApplication.user_id == user.id)
+    if biz_type:
+        query = query.filter(FinanceApplication.biz_type == biz_type)
+    if status:
+        query = query.filter(FinanceApplication.status == status)
+    rows = (
+        query.order_by(FinanceApplication.created_at.desc())
+        .offset(max(0, offset))
+        .limit(min(100, max(1, limit)))
+        .all()
+    )
+    return ok([_app_out(a) for a in rows])
+
+
+@router.get("/applications/{application_id}")
+def get_finance_application(
+    application_id: str,
+    user: User = Depends(get_current_user_tma),
+    db: Session = Depends(get_db),
+):
+    try:
+        aid = uuid.UUID(application_id)
+    except Exception:
+        raise ApiError(code="INVALID_ID", message="参数不合法", status_code=400)
+
+    app = db.query(FinanceApplication).filter(FinanceApplication.id == aid).first()
+    if not app or app.user_id != user.id:
+        raise ApiError(code="NOT_FOUND", message="未找到申请", status_code=404)
+    return ok(_app_out(app))
 
 
 @router.post("/p2p/calculate")

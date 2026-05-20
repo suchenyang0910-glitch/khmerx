@@ -5,7 +5,7 @@ import Badge from "@/components/ui/Badge"
 import Button from "@/components/ui/Button"
 import { useAuthStore } from "@/stores/authStore"
 import { scoreToLevel } from "@/utils/credit"
-import { Bell } from "lucide-react"
+import { Bell, FileText } from "lucide-react"
 import { fetchNotificationSettings, updateNotificationSettings, updatePreferredLanguage, type NotificationSettings } from "@/api/v1"
 import { SUPPORTED_LANGS, useI18n } from "@/i18n"
 
@@ -76,6 +76,7 @@ export default function Me() {
                 try {
                   await updatePreferredLanguage(l)
                 } catch {
+                  void 0
                 }
               }}
             >
@@ -133,6 +134,21 @@ export default function Me() {
             </Button>
           </div>
         ) : null}
+      </Card>
+
+      <Card className="p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-zinc-900">{t("applications.title")}</div>
+              <div className="mt-1 text-xs text-zinc-500">{t("home.servicesDesc")}</div>
+            </div>
+          </div>
+          <Link to="/applications" className="text-sm text-blue-600">{t("me.view")}</Link>
+        </div>
       </Card>
 
       <Card className="p-4">

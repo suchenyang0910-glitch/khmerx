@@ -120,6 +120,27 @@ export interface Dispute {
   created_at: string
 }
 
+export type FinanceBizType = "lease" | "installment" | "pledge"
+
+export type FinanceApplicationStatus =
+  | "draft"
+  | "submitted"
+  | "under_review"
+  | "need_more_info"
+  | "approved"
+  | "rejected"
+  | "canceled"
+
+export interface FinanceApplication {
+  id: string
+  user_id: string
+  biz_type: FinanceBizType
+  status: FinanceApplicationStatus | string
+  payload: Record<string, unknown>
+  created_at?: string | null
+  updated_at?: string | null
+}
+
 export interface Notification {
   id: string
   type: string

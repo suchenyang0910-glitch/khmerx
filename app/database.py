@@ -1,10 +1,12 @@
 """KhmerX 数据库引擎 & Session"""
+import sys
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import create_engine, event, String
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.types import TypeDecorator, TEXT, CHAR
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from sqlalchemy.pool import StaticPool
 
 from app.config import DATABASE_URL
 
@@ -47,14 +49,27 @@ _engine = None
 _SessionLocal = None
 
 
+def _current_module():
+    mod = sys.modules.get("app.database")
+    return mod if mod is not None else sys.modules[__name__]
+
+
 def get_engine():
-    global _engine
-    if _engine is not None:
-        return _engine
+    mod = _current_module()
+    if getattr(mod, "_engine", None) is not None:
+        return mod._engine
 
     is_sqlite = "sqlite" in DATABASE_URL
     connect_args = {"check_same_thread": False} if is_sqlite else {}
-    engine = create_engine(DATABASE_URL, connect_args=connect_args)
+    use_static_pool = is_sqlite and ":memory:" in DATABASE_URL
+    if use_static_pool:
+        engine = create_engine(
+            DATABASE_URL,
+            connect_args=connect_args,
+            poolclass=StaticPool,
+        )
+    else:
+        engine = create_engine(DATABASE_URL, connect_args=connect_args)
 
     if is_sqlite:
         @event.listens_for(engine, "connect")
@@ -64,15 +79,15 @@ def get_engine():
             cursor.execute("PRAGMA foreign_keys=ON")
             cursor.close()
 
-    _engine = engine
-    return _engine
+    mod._engine = engine
+    return mod._engine
 
 
 def get_session_local():
-    global _SessionLocal
-    if _SessionLocal is None:
-        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
-    return _SessionLocal
+    mod = _current_module()
+    if getattr(mod, "_SessionLocal", None) is None:
+        mod._SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=get_engine())
+    return mod._SessionLocal
 
 
 def get_db():
@@ -88,11 +103,18 @@ def get_db():
 def init_db():
     """Create all tables."""
     import app.models
+    from app.models.user import User
+    from app.models.interest_rate import InterestRateMatrix
     import app.risk.models
+    from app.risk.models import UserRiskProfile
     import app.ops.models
-    Base.metadata.create_all(bind=get_engine())
+    from app.ops.models import AgentCommission
 
     engine = get_engine()
+    User.metadata.create_all(bind=engine)
+    UserRiskProfile.metadata.create_all(bind=engine)
+    AgentCommission.metadata.create_all(bind=engine)
+
     if "sqlite" in str(engine.url):
         from sqlalchemy import inspect, text
 
@@ -103,7 +125,11 @@ def init_db():
                 with engine.begin() as conn:
                     conn.execute(text("ALTER TABLE users ADD COLUMN phone_verified_at DATETIME"))
 
-    from app.models.interest_rate import InterestRateMatrix
+    from sqlalchemy import inspect
+
+    if "interest_rate_matrix" not in set(inspect(engine).get_table_names()):
+        return
+
     SessionLocal = get_session_local()
     db = SessionLocal()
     try:

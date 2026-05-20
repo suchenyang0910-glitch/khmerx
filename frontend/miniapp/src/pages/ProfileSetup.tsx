@@ -46,7 +46,11 @@ export default function ProfileSetup() {
   const phoneOk = useMemo(() => phone.trim().length >= 8, [phone])
   const phoneVerified = Boolean(user?.phone_verified)
   const abaOk = useMemo(() => abaAccount.trim().length >= 6 && abaName.trim().length >= 1, [abaAccount, abaName])
-  const canTelegramContact = Boolean((tg as any)?.requestContact)
+
+  type TgContactApi = {
+    requestContact?: (cb: (ok: boolean, info: unknown) => void) => void
+  }
+  const canTelegramContact = Boolean((tg as unknown as TgContactApi | null)?.requestContact)
   const otpCodeOk = useMemo(() => /^\d{6}$/.test(otpCode.trim()), [otpCode])
 
   useEffect(() => {
@@ -78,17 +82,18 @@ export default function ProfileSetup() {
                 setSaving(true)
                 setErr(null)
                 try {
-                  const contactRes = await new Promise<any>((resolve, reject) => {
-                    ;(tg as any).requestContact((ok: boolean, info: any) => {
+                  const contactRes = await new Promise<{ response: string }>((resolve, reject) => {
+                    ;(tg as unknown as TgContactApi).requestContact?.((ok: boolean, info: unknown) => {
                       if (!ok) {
                         reject(new Error(t("setup.phoneAuthCanceled")))
                         return
                       }
-                      if (!info || info.status !== "sent" || !info.response) {
+                      const r = (info || {}) as Record<string, unknown>
+                      if (r.status !== "sent" || typeof r.response !== "string" || !r.response) {
                         reject(new Error(t("setup.phoneAuthMissing")))
                         return
                       }
-                      resolve(info)
+                      resolve({ response: r.response })
                     })
                   })
 
