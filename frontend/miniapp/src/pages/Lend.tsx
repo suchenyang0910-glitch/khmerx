@@ -10,6 +10,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { errorMessage } from "@/utils/errors"
 import { Shield, TrendingUp } from "lucide-react"
 import { useI18n } from "@/i18n"
+import axios from "axios"
 
 type Tab = "steady" | "recommended" | "high"
 
@@ -216,6 +217,25 @@ export default function Lend() {
                     setOpen(false)
                     nav(`/trade/${res.data.data.trade_id}`)
                   } catch (e: unknown) {
+                    if (axios.isAxiosError(e)) {
+                      const data = e.response?.data as any
+                      if (data && typeof data === "object" && typeof data.code === "string") {
+                        if (data.code === "ABA_REQUIRED") {
+                          setErr(t("borrow.needAba"))
+                          setOpen(false)
+                          nav(`/setup?next=${encodeURIComponent("/lend")}&require=aba`)
+                          return
+                        }
+                        if (data.code === "PROFILE_INCOMPLETE") {
+                          const details = data.details as any
+                          const phoneRequired = Boolean(details?.phone_required)
+                          setErr(phoneRequired ? t("borrow.needPhone") : t("borrow.needAba"))
+                          setOpen(false)
+                          nav(`/setup?next=${encodeURIComponent("/lend")}&require=${phoneRequired ? "phone" : "aba"}`)
+                          return
+                        }
+                      }
+                    }
                     setErr(errorMessage(e, t("lend.matchFailed")))
                   } finally {
                     setConfirming(false)

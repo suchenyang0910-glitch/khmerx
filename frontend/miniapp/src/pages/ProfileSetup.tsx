@@ -59,6 +59,12 @@ export default function ProfileSetup() {
     return () => window.clearInterval(t)
   }, [otpCooldown])
 
+  useEffect(() => {
+    if (!otpDevCode) return
+    if (otpCode.trim()) return
+    setOtpCode(otpDevCode)
+  }, [otpDevCode, otpCode])
+
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
       <div className="rounded-2xl bg-white p-4 shadow-sm">
@@ -203,19 +209,15 @@ export default function ProfileSetup() {
             setSaving(true)
             setErr(null)
             try {
-              if (!phoneVerified) {
-                setErr(t("setup.verifyPhoneFirst"))
-                return
-              }
               if (requireField === "aba" && !abaOk) {
                 setErr(t("borrow.needAba"))
                 return
               }
+
               if (abaOk) {
                 await updateAba(abaAccount.trim(), abaName.trim())
-              } else {
-                await refreshMe()
               }
+              await refreshMe()
 
               const me = useAuthStore.getState().user
               if (requireField === "aba") {
@@ -224,6 +226,11 @@ export default function ProfileSetup() {
                   setErr(t("borrow.needAba"))
                   return
                 }
+              }
+
+              if (requireField === "phone" && !Boolean(me?.phone_verified)) {
+                setErr(t("setup.verifyPhoneFirst"))
+                return
               }
 
               nav(nextPath || "/", { replace: true })
@@ -240,7 +247,7 @@ export default function ProfileSetup() {
             }
           }}
         >
-          {saving ? t("common.saving") : phoneVerified ? t("common.saveContinue") : t("setup.verifyPhoneFirst")}
+          {saving ? t("common.saving") : requireField === "phone" && !phoneVerified ? t("setup.verifyPhoneFirst") : t("common.saveContinue")}
         </Button>
         <div className="text-xs text-zinc-500">
           {t("setup.securityNote")}

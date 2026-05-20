@@ -224,9 +224,11 @@ export default function Borrow() {
                   nav(`/setup?next=${encodeURIComponent("/borrow")}&require=aba`)
                   return
                 }
-                if (data.code === "PHONE_REQUIRED") {
-                  setErr(t("borrow.needPhone"))
-                  nav(`/setup?next=${encodeURIComponent("/borrow")}&require=phone`)
+                if (data.code === "PROFILE_INCOMPLETE") {
+                  const details = data.details as any
+                  const phoneRequired = Boolean(details?.phone_required)
+                  setErr(phoneRequired ? t("borrow.needPhone") : t("borrow.needAba"))
+                  nav(`/setup?next=${encodeURIComponent("/borrow")}&require=${phoneRequired ? "phone" : "aba"}`)
                   return
                 }
               }
