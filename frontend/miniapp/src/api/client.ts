@@ -8,11 +8,23 @@ function resolveApiBaseURL() {
 
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("khx_dev_api_base")
-    if (stored && /^https?:\/\//.test(stored)) return stored
 
     if (import.meta.env.DEV) {
+      if (stored && /^https?:\/\//.test(stored)) {
+        try {
+          const u = new URL(stored)
+          const h = window.location.hostname
+          const isLocal = (x: string) => x === "localhost" || x === "127.0.0.1"
+          if (u.hostname === h || (isLocal(u.hostname) && isLocal(h))) {
+            return stored
+          }
+        } catch {
+        }
+      }
       return ""
     }
+
+    if (stored && /^https?:\/\//.test(stored)) return stored
 
     const host = window.location.hostname
     const isProdDomain = host === "api.khmerx.org" || host.endsWith(".khmerx.org")

@@ -9,6 +9,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { scoreToLevel } from "@/utils/credit"
 import { errorMessage } from "@/utils/errors"
 import { useI18n } from "@/i18n"
+import axios from "axios"
 
 type CalcResultV1 = {
   amount: number
@@ -215,6 +216,21 @@ export default function Borrow() {
             await apiV1.post("/offers", { amount, term_days: term, note: "" })
             nav("/trades")
           } catch (e: unknown) {
+            if (axios.isAxiosError(e)) {
+              const data = e.response?.data as any
+              if (data && typeof data === "object" && typeof data.code === "string") {
+                if (data.code === "ABA_REQUIRED") {
+                  setErr(t("borrow.needAba"))
+                  nav(`/setup?next=${encodeURIComponent("/borrow")}&require=aba`)
+                  return
+                }
+                if (data.code === "PHONE_REQUIRED") {
+                  setErr(t("borrow.needPhone"))
+                  nav(`/setup?next=${encodeURIComponent("/borrow")}&require=phone`)
+                  return
+                }
+              }
+            }
             setErr(errorMessage(e, t("borrow.createFailed")))
           } finally {
             setSubmitting(false)

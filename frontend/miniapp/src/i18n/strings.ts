@@ -154,6 +154,7 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "dev.localLoginFailed": "ចូលប្រើ local បរាជ័យ",
     "dev.switchTo3040": "ប្ដូរទៅ 3040",
     "dev.switchTo3030": "ប្ដូរទៅ 3030",
+    "dev.useProxy": "ប្រើ Proxy",
     "dev.generatingAccount": "កំពុងបង្កើតគណនីសាកល្បងក្នុង local…",
     "dev.generateAccount": "Local Debug៖ បង្កើតគណនីសាកល្បង",
 
@@ -476,6 +477,7 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "dev.localLoginFailed": "Local login failed",
     "dev.switchTo3040": "Switch to 3040",
     "dev.switchTo3030": "Switch to 3030",
+    "dev.useProxy": "Use proxy",
     "dev.generatingAccount": "Generating local test account…",
     "dev.generateAccount": "Local debug: generate test account",
 
@@ -798,6 +800,7 @@ export const STRINGS: Record<Lang, Record<string, string>> = {
     "dev.localLoginFailed": "本地登录失败",
     "dev.switchTo3040": "切到 3040",
     "dev.switchTo3030": "切到 3030",
+    "dev.useProxy": "使用代理",
     "dev.generatingAccount": "正在生成本地测试账号…",
     "dev.generateAccount": "本地调试：生成测试账号",
 

@@ -137,6 +137,7 @@ export default function AppShell() {
   }
 
   if (error) {
+    const devHostBase = `${window.location.protocol === "https:" ? "https" : "http"}://${window.location.hostname}`
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] p-4">
         <div className="rounded-2xl bg-white p-4 shadow-sm">
@@ -151,7 +152,16 @@ export default function AppShell() {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  localStorage.setItem("khx_dev_api_base", "http://127.0.0.1:3040")
+                  localStorage.removeItem("khx_dev_api_base")
+                  window.location.reload()
+                }}
+              >
+                {t("dev.useProxy")}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  localStorage.setItem("khx_dev_api_base", `${devHostBase}:3040`)
                   window.location.reload()
                 }}
               >
@@ -160,7 +170,7 @@ export default function AppShell() {
               <Button
                 variant="secondary"
                 onClick={() => {
-                  localStorage.setItem("khx_dev_api_base", "http://127.0.0.1:3030")
+                  localStorage.setItem("khx_dev_api_base", `${devHostBase}:3030`)
                   window.location.reload()
                 }}
               >
