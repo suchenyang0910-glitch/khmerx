@@ -10,6 +10,10 @@ function resolveApiBaseURL() {
     const stored = localStorage.getItem("khx_dev_api_base")
     if (stored && /^https?:\/\//.test(stored)) return stored
 
+    if (import.meta.env.DEV) {
+      return ""
+    }
+
     const host = window.location.hostname
     const isProdDomain = host === "api.khmerx.org" || host.endsWith(".khmerx.org")
     if (!isProdDomain) {
