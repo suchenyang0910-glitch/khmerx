@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore"
 import type { AppUser } from "@/api/types"
 import { api } from "@/api/client"
 import axios from "axios"
+import type { AxiosError } from "axios"
 import { useI18n } from "@/i18n"
 
 function needsProfile(user: AppUser | null) {
@@ -34,7 +35,7 @@ export default function AppShell() {
   const [autoDevAttempted, setAutoDevAttempted] = useState(false)
   const canDevBoot = useMemo(() => {
     const host = window.location.hostname
-    return host === "127.0.0.1" || host === "localhost"
+    return !(host === "api.khmerx.org" || host.endsWith(".khmerx.org"))
   }, [])
 
   useEffect(() => {
@@ -49,10 +50,12 @@ export default function AppShell() {
         params: { tg_id: tgId },
       })
       return res.data?.data?.init_data || ""
-    } catch (e: any) {
-      const status = e?.response?.status
+    } catch (e: unknown) {
+      const ae = e as AxiosError<unknown>
+      const status = ae.response?.status
       if (status === 500) {
-        const detail = e?.response?.data?.detail
+        const data = ae.response?.data
+        const detail = data && typeof data === "object" ? (data as Record<string, unknown>).detail : undefined
         if (typeof detail === "string" && detail.toLowerCase().includes("bot token")) {
           throw new Error(t("dev.botTokensMissing"))
         }
@@ -78,6 +81,7 @@ export default function AppShell() {
             return init
           }
         } catch {
+          continue
         }
       }
 

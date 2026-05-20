@@ -1,5 +1,6 @@
 import axios from "axios"
 import { ensureDefaultLang } from "@/i18n"
+import type { AxiosRequestHeaders } from "axios"
 
 function resolveApiBaseURL() {
   const envBase = (import.meta.env.VITE_API_BASE_URL as string | undefined) || ""
@@ -10,8 +11,13 @@ function resolveApiBaseURL() {
     if (stored && /^https?:\/\//.test(stored)) return stored
 
     const host = window.location.hostname
-    if (host === "localhost" || host === "127.0.0.1") {
-      return "http://127.0.0.1:3040"
+    const isProdDomain = host === "api.khmerx.org" || host.endsWith(".khmerx.org")
+    if (!isProdDomain) {
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://127.0.0.1:3040"
+      }
+      const protocol = window.location.protocol === "https:" ? "https:" : "http:"
+      return `${protocol}//${host}:3040`
     }
   }
 
@@ -33,10 +39,11 @@ export const apiV1 = axios.create({
 
 api.interceptors.request.use((config) => {
   const lang = ensureDefaultLang()
-  config.headers = {
-    ...(config.headers as any),
+  const next = {
+    ...((config.headers ?? {}) as Record<string, string>),
     "X-Lang": lang,
-  } as any
+  } as unknown as AxiosRequestHeaders
+  config.headers = next
   return config
 })
 
@@ -44,16 +51,18 @@ apiV1.interceptors.request.use((config) => {
   const lang = ensureDefaultLang()
   const initData = localStorage.getItem("khx_tma_init_data")
   if (initData) {
-    config.headers = {
-      ...(config.headers as any),
+    const next = {
+      ...((config.headers ?? {}) as Record<string, string>),
       Authorization: `TMA ${initData}`,
       "X-Lang": lang,
-    } as any
+    } as unknown as AxiosRequestHeaders
+    config.headers = next
   } else {
-    config.headers = {
-      ...(config.headers as any),
+    const next = {
+      ...((config.headers ?? {}) as Record<string, string>),
       "X-Lang": lang,
-    } as any
+    } as unknown as AxiosRequestHeaders
+    config.headers = next
   }
   return config
 })
