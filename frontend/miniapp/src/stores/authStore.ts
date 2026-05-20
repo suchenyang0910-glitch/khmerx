@@ -94,20 +94,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       try {
         const me = await apiV1.get<{ ok: boolean; data: AppUser }>("/me")
-        const serverLang = (me.data as any)?.data?.language
+        const serverLang = me.data.data.language
         const localLang = readStoredLang()
         if (hasPickedLang() && (localLang === "km" || localLang === "cn" || localLang === "en") && localLang !== serverLang) {
           try {
             await apiV1.patch("/me/profile", { language: localLang })
-            set({ user: { ...user, ...(me.data as any).data, language: localLang } })
+            set({ user: { ...user, ...me.data.data, language: localLang } })
           } catch {
-            set({ user: { ...user, ...(me.data as any).data } })
+            set({ user: { ...user, ...me.data.data } })
           }
         } else {
           applyUserLang(serverLang)
-          set({ user: { ...user, ...(me.data as any).data } })
+          set({ user: { ...user, ...me.data.data } })
         }
       } catch {
+        void 0
       }
 
       try {
@@ -141,7 +142,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!user) return
 
     const me = await apiV1.get<{ ok: boolean; data: AppUser }>("/me")
-    const serverLang = (me.data as any)?.data?.language
+    const serverLang = me.data.data.language
     const localLang = readStoredLang()
     if (!(hasPickedLang() && (localLang === "km" || localLang === "cn" || localLang === "en") && localLang !== serverLang)) {
       applyUserLang(serverLang)
