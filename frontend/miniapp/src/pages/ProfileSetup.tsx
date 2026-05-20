@@ -127,6 +127,9 @@ export default function ProfileSetup() {
             inputMode="tel"
             disabled={otpSent && !phoneVerified}
           />
+          {!phoneOk && phone.trim() ? (
+            <div className="mt-2 text-xs text-amber-700">{t("setup.phoneMinLen")}</div>
+          ) : null}
         </div>
 
         <div className="mt-3 flex gap-2">

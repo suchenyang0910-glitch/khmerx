@@ -173,9 +173,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   updateAba: async (aba_account: string, aba_name: string) => {
     const user = get().user
     if (!user) return
-    await api.post(
-      "/auth/aba/bind",
-      { user_id: user.id, aba_account, aba_name },
+    await apiV1.patch(
+      "/me/profile",
+      { aba_account, aba_name },
     )
     await get().refreshMe()
   },
