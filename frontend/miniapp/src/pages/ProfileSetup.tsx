@@ -45,7 +45,7 @@ export default function ProfileSetup() {
 
   const phoneOk = useMemo(() => phone.trim().length >= 8, [phone])
   const phoneVerified = Boolean(user?.phone_verified)
-  const abaOk = useMemo(() => abaAccount.trim().length >= 6 && abaName.trim().length >= 1, [abaAccount, abaName])
+  const abaOk = useMemo(() => abaAccount.trim().length >= 1 && abaName.trim().length >= 1, [abaAccount, abaName])
 
   type TgContactApi = {
     requestContact?: (cb: (ok: boolean, info: unknown) => void) => void
