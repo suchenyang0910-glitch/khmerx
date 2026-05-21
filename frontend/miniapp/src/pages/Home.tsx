@@ -1,13 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
-import { useAuthStore } from "@/stores/authStore";
-import { ArrowRight, HandCoins, Megaphone, ShieldCheck, ShoppingCart, Smartphone } from "lucide-react";
-import { fetchAnnouncements } from "@/api/v1";
-import type { Announcement } from "@/api/types";
-import { useI18n } from "@/i18n";
+import { useEffect, useMemo, useState } from "react"
+import { Link } from "react-router-dom"
+import Card from "@/components/ui/Card"
+import Badge from "@/components/ui/Badge"
+import { useAuthStore } from "@/stores/authStore"
+import { ArrowRight, HandCoins, Lock, Megaphone, ShoppingCart, Smartphone } from "lucide-react"
+import { fetchAnnouncements } from "@/api/v1"
+import type { Announcement } from "@/api/types"
+import { useI18n } from "@/i18n"
 
 function scoreToLevel(score: number) {
   if (score >= 800) return "A"
@@ -51,7 +50,7 @@ export default function Home() {
             <div>
               <div className="text-sm font-semibold text-zinc-900">{t("home.announcement")}</div>
               <div className="mt-1 text-sm text-zinc-700">{ann[0].title}</div>
-              <div className="mt-1 text-xs text-zinc-500 line-clamp-2">{ann[0].body}</div>
+              <div className="mt-1 line-clamp-2 text-xs text-zinc-500">{ann[0].body}</div>
               {ann[0].link_url ? (
                 <a className="mt-2 inline-block text-sm text-blue-600" href={ann[0].link_url} target="_blank" rel="noreferrer">
                   {t("home.viewDetail")} <ArrowRight className="inline h-4 w-4" />
@@ -64,101 +63,76 @@ export default function Home() {
           </div>
         </Card>
       ) : null}
+
       <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white shadow-sm">
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-xs opacity-90">{t("home.creditLevel")}</div>
-            <div className="mt-1 text-2xl font-bold">{creditLevel}</div>
+            <div className="text-xs opacity-90">{t("home.creditScore")}</div>
+            <div className="mt-1 text-2xl font-bold tabular-nums">{user?.credit_score ?? 650}</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Badge tone="zinc">{t("home.creditLevel")} {creditLevel}</Badge>
+              <Badge tone="zinc">{t("home.risk")} {risk?.risk_level || user?.risk_level || "normal"}</Badge>
+            </div>
           </div>
           <div className="text-right">
-            <div className="text-xs opacity-90">{t("home.creditScore")}</div>
-            <div className="mt-1 text-2xl font-bold">{user?.credit_score ?? 650}</div>
+            <div className="text-xs opacity-90">{t("home.borrowLimit")}</div>
+            <div className="mt-1 text-2xl font-bold tabular-nums">${Math.round(maxBorrow)}</div>
+            <div className="mt-2 text-xs text-white/90">{t("home.activeLoans", { count: user?.active_loans || 0 })}</div>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between rounded-2xl bg-white/15 px-3 py-2">
-          <div className="text-sm">{t("home.borrowLimit")}</div>
-          <div className="text-lg font-semibold">${Math.round(maxBorrow)}</div>
-        </div>
-        <div className="mt-2 text-xs text-white/90">
+        <div className="mt-3 text-xs text-white/90">
           {t("borrow.platformCap", { cap: MAX_BORROW_CAP })}
-          {isNewUser ? ` ${t("borrow.newUserCap", { cap: NEW_USER_BORROW_CAP })}` : ""} {t("borrow.largeAmountContact")}{" "}
-          <a className="underline" href="https://t.me/KhmerXBot" target="_blank" rel="noreferrer">
-            {t("borrow.telegramBot")}
-          </a>
+          {isNewUser ? ` ${t("borrow.newUserCap", { cap: NEW_USER_BORROW_CAP })}` : ""}
+        </div>
+        <div className="mt-2">
+          <Link to="/credit" className="text-sm text-white underline">
+            {t("home.viewCredit")} <ArrowRight className="inline h-4 w-4" />
+          </Link>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Link to="/borrow">
-          <Button className="w-full">{t("home.borrowNow")}</Button>
+        <Link to="/borrow" className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <HandCoins className="h-5 w-5" />
+          </div>
+          <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.loan.title")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("home.fastToAccount")}</div>
         </Link>
-        <Link to="/lend">
-          <Button variant="secondary" className="w-full">{t("home.lendNow")}</Button>
+        <Link to="/catalog/lease" className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Smartphone className="h-5 w-5" />
+          </div>
+          <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.lease.title")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("home.rentalDesc")}</div>
+        </Link>
+        <Link to="/catalog/installment" className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <ShoppingCart className="h-5 w-5" />
+          </div>
+          <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.installment.title")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("home.installmentDesc")}</div>
+        </Link>
+        <Link to="/apply/pledge" className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
+            <Lock className="h-5 w-5" />
+          </div>
+          <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.pledge.title")}</div>
+          <div className="mt-1 text-xs text-zinc-500">{t("home.pawnDesc")}</div>
         </Link>
       </div>
 
       <Card className="p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="text-sm font-semibold text-zinc-900">{t("home.whyCanBorrow")}</div>
-            <div className="mt-1 text-sm text-zinc-600">{t("home.whyDesc")}</div>
-          </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {isNewUser ? <Badge tone="blue">{t("home.newUserSuggest")}</Badge> : <Badge tone="green">{t("home.oldUserMore")}</Badge>}
-          <Badge tone="zinc">{t("home.onTimeImprove")}</Badge>
-          <Badge tone={(risk?.risk_level && ["flagged", "restricted", "blocked"].includes(risk.risk_level)) ? "yellow" : "green"}>
-            {t("home.risk")}：{risk?.risk_level || user?.risk_level || "normal"}
-          </Badge>
-        </div>
-      </Card>
-
-      <Card className="p-4">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-semibold text-zinc-900">{t("home.successTips")}</div>
-            <div className="mt-1 text-sm text-zinc-600">{t("home.successDesc")}</div>
+            <div className="text-sm font-semibold text-zinc-900">{t("home.myOrders")}</div>
+            <div className="mt-1 text-sm text-zinc-600">{t("home.myOrdersDesc")}</div>
           </div>
-          <Link to="/borrow" className="text-sm text-blue-600">
-            {t("home.goCreate")} <ArrowRight className="inline h-4 w-4" />
-          </Link>
-        </div>
-      </Card>
-
-      <Card className="p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-semibold text-zinc-900">{t("home.services")}</div>
-            <div className="mt-1 text-sm text-zinc-600">{t("home.servicesDesc")}</div>
-          </div>
-          <Link to="/services" className="text-sm text-blue-600">
+          <Link to="/orders" className="text-sm text-blue-600">
             {t("home.viewDetail")} <ArrowRight className="inline h-4 w-4" />
-          </Link>
-        </div>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <Link to="/apply/lease" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-              <Smartphone className="h-5 w-5" />
-            </div>
-            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.lease.title")}</div>
-          </Link>
-          <Link to="/apply/installment" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-              <ShoppingCart className="h-5 w-5" />
-            </div>
-            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.installment.title")}</div>
-          </Link>
-          <Link to="/apply/pledge" className="rounded-2xl border border-zinc-100 bg-zinc-50 p-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
-              <HandCoins className="h-5 w-5" />
-            </div>
-            <div className="mt-2 text-xs font-semibold text-zinc-900">{t("services.pledge.title")}</div>
           </Link>
         </div>
       </Card>
     </div>
-  );
+  )
 }

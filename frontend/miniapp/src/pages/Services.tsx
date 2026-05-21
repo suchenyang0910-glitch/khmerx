@@ -2,9 +2,15 @@ import { Link } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import { useI18n } from "@/i18n"
-import { HandCoins, Smartphone, ShoppingCart } from "lucide-react"
+import { HandCoins, Smartphone, ShoppingCart, Lock } from "lucide-react"
 
 const services = [
+  {
+    bizType: "loan" as const,
+    icon: HandCoins,
+    titleKey: "services.loan.title",
+    descKey: "services.loan.desc",
+  },
   {
     bizType: "lease" as const,
     icon: Smartphone,
@@ -19,7 +25,7 @@ const services = [
   },
   {
     bizType: "pledge" as const,
-    icon: HandCoins,
+    icon: Lock,
     titleKey: "services.pledge.title",
     descKey: "services.pledge.desc",
   },
@@ -51,7 +57,11 @@ export default function Services() {
             </div>
 
             <div className="mt-3">
-              {s.bizType === "lease" || s.bizType === "installment" ? (
+              {s.bizType === "loan" ? (
+                <Link to="/borrow">
+                  <Button className="w-full">{t("services.apply")}</Button>
+                </Link>
+              ) : s.bizType === "lease" || s.bizType === "installment" ? (
                 <Link to={`/catalog/${s.bizType}`}>
                   <Button className="w-full">{t("services.choose")}</Button>
                 </Link>

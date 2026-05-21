@@ -10,7 +10,10 @@ export default function Segmented<T extends string>({
   onChange: (v: T) => void
 }) {
   return (
-    <div className="grid grid-cols-3 gap-2 rounded-2xl bg-zinc-100 p-1">
+    <div
+      className="grid gap-2 rounded-2xl bg-zinc-100 p-1"
+      style={{ gridTemplateColumns: `repeat(${Math.max(1, options.length)}, minmax(0, 1fr))` }}
+    >
       {options.map((o) => (
         <button
           key={o.value}

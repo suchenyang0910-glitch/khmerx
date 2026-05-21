@@ -6,6 +6,7 @@ import { api } from "@/api/client"
 import type { Product, FinanceBizType } from "@/api/types"
 import { useI18n } from "@/i18n"
 import { errorMessage } from "@/utils/errors"
+import { useTmaBackButton } from "@/hooks/useTmaBackButton"
 
 function normalizeBizType(v: string | undefined): FinanceBizType | null {
   if (v === "lease" || v === "installment" || v === "pledge") return v
@@ -27,6 +28,8 @@ export default function ProductDetail() {
   const nav = useNavigate()
   const { bizType: rawBizType, productId } = useParams()
   const bizType = normalizeBizType(rawBizType)
+
+  useTmaBackButton(true, () => nav(-1))
 
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -113,4 +116,3 @@ export default function ProductDetail() {
     </div>
   )
 }
-

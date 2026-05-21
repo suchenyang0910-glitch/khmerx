@@ -141,6 +141,42 @@ export interface FinanceApplication {
   updated_at?: string | null
 }
 
+export type BusinessType = "loan" | "rental" | "installment" | "pawn"
+
+export type UnifiedOrderSourceType = "p2p_offer" | "p2p_trade" | "finance_application"
+
+export interface UnifiedOrder {
+  id: string
+  business_type: BusinessType
+  source_type: UnifiedOrderSourceType
+  source_id: string
+  status: string
+  principal: number
+  interest: number
+  total_due: number
+  due_at?: string | null
+  created_at?: string | null
+}
+
+export interface CreditDetail {
+  credit_score: number
+  credit_level: string
+  risk_level: string
+  max_borrow_amount: number
+  reasons: string[]
+  logs: Array<{
+    event_type: string
+    risk_action: string
+    score_change: number
+    old_score: number
+    new_score: number
+    old_risk_level: string
+    new_risk_level: string
+    reason: string
+    created_at?: string | null
+  }>
+}
+
 export interface Product {
   id: string
   title: string

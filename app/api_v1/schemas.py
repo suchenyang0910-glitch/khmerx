@@ -79,3 +79,16 @@ class FinanceApplicationOut(BaseModel):
     payload: Dict[str, Any]
     created_at: str | None = None
     updated_at: str | None = None
+
+
+class UnifiedOrderOut(BaseModel):
+    id: str
+    business_type: Literal["loan", "rental", "installment", "pawn"]
+    source_type: Literal["p2p_offer", "p2p_trade", "finance_application"]
+    source_id: str
+    status: str
+    principal: float = 0
+    interest: float = 0
+    total_due: float = 0
+    due_at: str | None = None
+    created_at: str | None = None

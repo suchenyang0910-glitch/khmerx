@@ -46,60 +46,42 @@ GEO/AI 可理解性要求（每页正文必须回答）
 - 平台不承诺放款成功，不承诺收益，不吸收存款，不提供担保。
 - 所有交易请用户自行确认风险。
 
-## 1. 视觉规范（基于 Logo：金融 + 本地信任 + 现代科技）
+## 1. Telegram Mini App（TMA）用户端统一设计规范（替代原“桌面优先”规范）
 
-品牌关键词
-- 可信 / 本地 / 金融 / 简洁 / 稳定 / 科技
+### 1.1 信息架构（IA）
+- 入口：Telegram Bot 会话内打开 Mini App。
+- 首次进入：Onboarding（可选）→ ProfileSetup（强制）→ 主应用（底部导航 5 Tab）。
+- 一级页面：Home / Borrow / Lend / Trade / Me。
+- 二级页面：详情页/表单页/设置页，统一用“push 进入 + Telegram BackButton 返回”，避免多层嵌套菜单。
 
-颜色
-- 主色渐变：`#0A5BFF → #00AEEF`
-- 背景：`#F5F7FA`
-- 成功：`#22C55E`
-- 风险：`#EF4444`
-- 警告：`#F59E0B`
+### 1.2 底部导航（Tab Bar，自绘）
+- 固定 5 个以内（图标+短标签），与路由一一对应；点击只切换一级页面，不在 Tab 内再做二级堆叠。
+- 安全区：必须考虑 iOS 底部 Safe Area（TabBar padding-bottom = safe-area-inset-bottom）。
+- 主题：颜色来自 Telegram `themeParams`（优先使用 `button_color`/`text_color`/`hint_color`）。
 
-组件语言
-- 大卡片 + 圆角（12–16px）+ 轻阴影
-- 线性图标
-- 微动效（200ms ease-out）
+### 1.3 组件规范（与 Telegram WebApp 能力对齐）
+- 主题与 Token：全局用 CSS 变量映射 `themeParams`（bg/text/hint/link/button/secondary_bg），并监听 themeChanged 实时更新。
+- 主操作：关键一步提交优先使用 Telegram `MainButton`（随校验状态显示/禁用/更新文案）。
+- 返回：二级页统一启用 Telegram `BackButton`；关键流程可加 `enableClosingConfirmation` 防误关。
+- 弹窗/确认：优先用 Telegram Popup 能力（或保持样式一致的自定义 Modal）。
+- 列表与卡片：信息以“卡片 + 列表项”呈现，避免密集表格；金额/状态行可复制（订单号等）。
 
-## 2. 全局交互规则
+### 1.4 交互与动效
+- 动效节制：仅使用 120–200ms 的淡入/位移过渡；避免大面积复杂动画。
+- 加载态：骨架屏（Skeleton）优先；按钮 loading 必须可见。
+- 触感反馈：成功/警告/失败等关键反馈可触发 Telegram Haptic（若可用）。
 
-必须规则
-- 关键操作二次确认：发布借款 / 确认出借 / 确认收款 / 确认还款 / 发起争议
-- 金额四件套同屏：借款金额 / 平台费或利息 / 实际到账 / 到期应还
-- 所有状态必须有“下一步提示”：当前在第几步 + 下一步做什么
-- 风控限制必须解释原因：不可只写“不可操作”
+### 1.5 错误、空态与离线
+- 全局错误条：顶部 ErrorBanner 展示可读文案 + 可复制错误码（如有）+ 重试。
+- 离线：检测网络不可用时显示 OfflineBar，并禁用提交类 MainButton；表单草稿本地暂存（恢复网络后可继续）。
 
-身份与鉴权
-- 每次请求带：`Authorization: tma <telegram_init_data>`
-- 用户唯一识别：`tg_id`（不认 bot_id）
+### 1.6 权限与授权（手机号/联系人）
+- 手机号：未绑定时在 ProfileSetup/关键页触发“授权手机号”（调用 Telegram phone 授权能力）；失败则允许手动输入并二次校验。
+- 联系人：需要紧急联系人时优先“从 Telegram 授权联系人”，并提供手动录入兜底；清晰说明用途与最小化采集。
 
----
-
-## 2.1 统一弹窗与提示组件规范（前端必须复用）
-
-二次确认弹窗（ConfirmModal）
-- 标题：动作名（发布借款/确认出借/确认收款/确认还款/发起争议）
-- 内容：必须包含“金额四件套”与风险提示（如适用）
-- 操作：取消/确认
-
-错误提示条（ErrorBanner）
-- 展示 `error.message`
-- 可选展示 `error.code`
-- 提供“重试”按钮（可选）
-
-Toast
-- 成功：绿色
-- 警告：黄色
-- 失败：红色
-
-风险确认（RiskConfirmCheckbox）
-- 文案：我已确认风险并同意继续
-- 未勾选：关键按钮禁用
-
-## 3. 底部 Tab（固定）
-- 首页 / 借款 / 出借 / 交易 / 我的
+### 1.7 多语言与低端机性能
+- 多语言：默认跟随 Telegram 语言（initData.user.language_code），允许在 Me 内切换；语言包按需懒加载。
+- 低端机：列表虚拟化/分页；图片压缩与懒加载；避免重型图表与大依赖；路由级代码分割，优先保证首屏与下单/提交链路流畅。
 
 ---
 

@@ -223,16 +223,20 @@ export default function Borrow() {
             nav("/trades")
           } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
-              const data = e.response?.data as any
-              if (data && typeof data === "object" && typeof data.code === "string") {
-                if (data.code === "ABA_REQUIRED") {
+              const data = e.response?.data
+              if (data && typeof data === "object") {
+                const obj = data as Record<string, unknown>
+                const code = obj.code
+                if (code === "ABA_REQUIRED") {
                   setErr(t("borrow.needAba"))
                   nav(`/setup?next=${encodeURIComponent("/borrow")}&require=aba`)
                   return
                 }
-                if (data.code === "PROFILE_INCOMPLETE") {
-                  const details = data.details as any
-                  const phoneRequired = Boolean(details?.phone_required)
+                if (code === "PROFILE_INCOMPLETE") {
+                  const details = obj.details
+                  const phoneRequired = Boolean(
+                    details && typeof details === "object" && (details as Record<string, unknown>).phone_required,
+                  )
                   setErr(phoneRequired ? t("borrow.needPhone") : t("borrow.needAba"))
                   nav(`/setup?next=${encodeURIComponent("/borrow")}&require=${phoneRequired ? "phone" : "aba"}`)
                   return

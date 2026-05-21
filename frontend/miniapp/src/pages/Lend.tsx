@@ -218,17 +218,21 @@ export default function Lend() {
                     nav(`/trade/${res.data.data.trade_id}`)
                   } catch (e: unknown) {
                     if (axios.isAxiosError(e)) {
-                      const data = e.response?.data as any
-                      if (data && typeof data === "object" && typeof data.code === "string") {
-                        if (data.code === "ABA_REQUIRED") {
+                      const data = e.response?.data
+                      if (data && typeof data === "object") {
+                        const obj = data as Record<string, unknown>
+                        const code = obj.code
+                        if (code === "ABA_REQUIRED") {
                           setErr(t("borrow.needAba"))
                           setOpen(false)
                           nav(`/setup?next=${encodeURIComponent("/lend")}&require=aba`)
                           return
                         }
-                        if (data.code === "PROFILE_INCOMPLETE") {
-                          const details = data.details as any
-                          const phoneRequired = Boolean(details?.phone_required)
+                        if (code === "PROFILE_INCOMPLETE") {
+                          const details = obj.details
+                          const phoneRequired = Boolean(
+                            details && typeof details === "object" && (details as Record<string, unknown>).phone_required,
+                          )
                           setErr(phoneRequired ? t("borrow.needPhone") : t("borrow.needAba"))
                           setOpen(false)
                           nav(`/setup?next=${encodeURIComponent("/lend")}&require=${phoneRequired ? "phone" : "aba"}`)

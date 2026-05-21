@@ -24,6 +24,7 @@ from app.api_v1.schemas import (
     VerifyTelegramContactRequest,
     RepayRequest,
     CreateFinanceApplicationRequest,
+    UnifiedOrderOut,
 )
 from app.config import BOT_TOKENS
 from app.database import get_db
@@ -69,6 +70,86 @@ def _app_out(a: FinanceApplication) -> dict:
         "created_at": _iso(getattr(a, "created_at", None)),
         "updated_at": _iso(getattr(a, "updated_at", None)),
     }
+
+
+def _order_out_from_application(a: FinanceApplication) -> UnifiedOrderOut:
+    bt = "loan"
+    if a.biz_type == "lease":
+        bt = "rental"
+    elif a.biz_type == "installment":
+        bt = "installment"
+    elif a.biz_type == "pledge":
+        bt = "pawn"
+
+    payload = a.payload or {}
+    principal = 0.0
+    try:
+        v = payload.get("amount")
+        if v is not None:
+            principal = float(v)
+    except Exception:
+        principal = 0.0
+
+    return UnifiedOrderOut(
+        id=f"finance_application:{a.id}",
+        business_type=bt,
+        source_type="finance_application",
+        source_id=str(a.id),
+        status=a.status,
+        principal=principal,
+        interest=0.0,
+        total_due=0.0,
+        due_at=None,
+        created_at=_iso(getattr(a, "created_at", None)),
+    )
+
+
+def _order_out_from_offer(o: P2POffer) -> UnifiedOrderOut:
+    principal = float(o.amount or 0)
+    total_due = float(o.total_amount or 0)
+    interest = max(0.0, total_due - principal)
+    return UnifiedOrderOut(
+        id=f"p2p_offer:{o.id}",
+        business_type="loan",
+        source_type="p2p_offer",
+        source_id=str(o.id),
+        status=o.status,
+        principal=principal,
+        interest=interest,
+        total_due=total_due,
+        due_at=None,
+        created_at=_iso(getattr(o, "created_at", None)),
+    )
+
+
+def _order_out_from_trade(db: Session, t: P2PTrade) -> UnifiedOrderOut:
+    principal = float(t.amount or 0)
+    total_due = float(t.total_repayable or 0)
+    interest = max(0.0, total_due - principal)
+    due_at = None
+    try:
+        last = (
+            db.query(RepaymentSchedule)
+            .filter(RepaymentSchedule.trade_id == t.id)
+            .order_by(RepaymentSchedule.due_at.desc())
+            .first()
+        )
+        if last and last.due_at:
+            due_at = _iso(last.due_at)
+    except Exception:
+        due_at = None
+    return UnifiedOrderOut(
+        id=f"p2p_trade:{t.id}",
+        business_type="loan",
+        source_type="p2p_trade",
+        source_id=str(t.id),
+        status=t.status,
+        principal=principal,
+        interest=interest,
+        total_due=total_due,
+        due_at=due_at,
+        created_at=_iso(getattr(t, "created_at", None)),
+    )
 
 
 router = APIRouter(prefix="/api/v1", tags=["v1"])
@@ -309,6 +390,56 @@ def get_finance_application(
     if not app or app.user_id != user.id:
         raise ApiError(code="NOT_FOUND", message="未找到申请", status_code=404)
     return ok(_app_out(app))
+
+
+@router.get("/orders")
+def list_unified_orders(
+    business_type: str | None = None,
+    status: str | None = None,
+    limit: int = 20,
+    offset: int = 0,
+    user: User = Depends(get_current_user_tma),
+    db: Session = Depends(get_db),
+):
+    bt = (business_type or "").strip().lower() or None
+    st = (status or "").strip().lower() or None
+    take = min(100, max(1, limit))
+    skip = max(0, offset)
+
+    items: list[UnifiedOrderOut] = []
+
+    if bt in (None, "loan"):
+        q_offer = db.query(P2POffer).filter(P2POffer.borrower_id == user.id)
+        if st:
+            q_offer = q_offer.filter(P2POffer.status == st)
+        offers = q_offer.order_by(P2POffer.created_at.desc()).offset(skip).limit(take).all()
+        for o in offers:
+            items.append(_order_out_from_offer(o))
+
+        q_trade = db.query(P2PTrade).filter(P2PTrade.borrower_id == user.id)
+        if st:
+            q_trade = q_trade.filter(P2PTrade.status == st)
+        trades = q_trade.order_by(P2PTrade.created_at.desc()).offset(skip).limit(take).all()
+        for t in trades:
+            items.append(_order_out_from_trade(db, t))
+
+    if bt in (None, "rental", "installment", "pawn"):
+        q_app = db.query(FinanceApplication).filter(FinanceApplication.user_id == user.id)
+        if bt == "rental":
+            q_app = q_app.filter(FinanceApplication.biz_type == "lease")
+        elif bt == "installment":
+            q_app = q_app.filter(FinanceApplication.biz_type == "installment")
+        elif bt == "pawn":
+            q_app = q_app.filter(FinanceApplication.biz_type == "pledge")
+
+        if st:
+            q_app = q_app.filter(FinanceApplication.status == st)
+        apps = q_app.order_by(FinanceApplication.created_at.desc()).offset(skip).limit(take).all()
+        for a in apps:
+            items.append(_order_out_from_application(a))
+
+    items.sort(key=lambda x: (x.created_at or ""), reverse=True)
+    return ok(items)
 
 
 @router.post("/p2p/calculate")

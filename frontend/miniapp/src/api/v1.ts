@@ -1,5 +1,5 @@
 import { apiV1 } from "@/api/client"
-import type { Announcement, FinanceApplication, FinanceBizType, Notification } from "@/api/types"
+import type { Announcement, CreditDetail, FinanceApplication, FinanceBizType, Notification, UnifiedOrder } from "@/api/types"
 
 export async function updatePreferredLanguage(lang: "km" | "cn" | "en") {
   const res = await apiV1.patch<{ ok: boolean; data: { profile_completed: boolean } }>("/me/profile", { language: lang })
@@ -48,5 +48,15 @@ export async function fetchMyApplications(params?: { biz_type?: string; status?:
 
 export async function fetchApplicationDetail(applicationId: string) {
   const res = await apiV1.get<{ ok: boolean; data: FinanceApplication }>(`/applications/${applicationId}`)
+  return res.data.data
+}
+
+export async function fetchMyOrders(params?: { business_type?: string; status?: string; limit?: number; offset?: number }) {
+  const res = await apiV1.get<{ ok: boolean; data: UnifiedOrder[] }>("/orders", { params })
+  return res.data.data
+}
+
+export async function fetchMyCredit() {
+  const res = await apiV1.get<{ ok: boolean; data: CreditDetail }>("/me/credit")
   return res.data.data
 }

@@ -4,6 +4,8 @@ import LangSelect from "@/pages/LangSelect";
 import Onboarding from "@/pages/Onboarding";
 import ProfileSetup from "@/pages/ProfileSetup";
 import Home from "@/pages/Home";
+import Orders from "@/pages/Orders";
+import Credit from "@/pages/Credit";
 import Borrow from "@/pages/Borrow";
 import Lend from "@/pages/Lend";
 import Trades from "@/pages/Trades";
@@ -28,6 +30,8 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/credit" element={<Credit />} />
           <Route path="/catalog/:bizType" element={<Catalog />} />
           <Route path="/catalog/:bizType/:productId" element={<ProductDetail />} />
           <Route path="/apply/:bizType" element={<FinanceApply />} />

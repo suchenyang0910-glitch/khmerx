@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Badge from "@/components/ui/Badge"
 import Button from "@/components/ui/Button"
@@ -7,12 +7,16 @@ import { useI18n } from "@/i18n"
 import { fetchApplicationDetail } from "@/api/v1"
 import type { FinanceApplication } from "@/api/types"
 import { errorMessage } from "@/utils/errors"
+import { useTmaBackButton } from "@/hooks/useTmaBackButton"
 
 export default function ApplicationDetail() {
   const { t } = useI18n()
+  const nav = useNavigate()
   const { applicationId } = useParams()
   const [item, setItem] = useState<FinanceApplication | null>(null)
   const [err, setErr] = useState<string | null>(null)
+
+  useTmaBackButton(true, () => nav(-1))
 
   useEffect(() => {
     if (!applicationId) return

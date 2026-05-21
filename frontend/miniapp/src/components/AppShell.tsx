@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom"
 import TabBar from "@/components/TabBar"
 import Button from "@/components/ui/Button"
 import { useTelegram } from "@/hooks/useTelegram"
+import { useTmaTheme } from "@/hooks/useTmaTheme"
 import { useAuthStore } from "@/stores/authStore"
 import type { AppUser } from "@/api/types"
 import { api } from "@/api/client"
@@ -12,10 +13,12 @@ import { useI18n } from "@/i18n"
 
 function needsProfile(user: AppUser | null) {
   const phoneOk = Boolean((user?.phone || "").trim()) && Boolean(user?.phone_verified)
-  return !phoneOk
+  const abaOk = Boolean((user?.aba_account || "").trim()) && Boolean((user?.aba_name || "").trim())
+  return !(phoneOk && abaOk)
 }
 
 export default function AppShell() {
+  useTmaTheme()
   const { initData, tg } = useTelegram()
   const { t } = useI18n()
   const { pathname } = useLocation()

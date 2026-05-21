@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
@@ -7,6 +7,7 @@ import { api } from "@/api/client"
 import type { Product, FinanceBizType } from "@/api/types"
 import { useI18n } from "@/i18n"
 import { errorMessage } from "@/utils/errors"
+import { useTmaBackButton } from "@/hooks/useTmaBackButton"
 
 function normalizeBizType(v: string | undefined): FinanceBizType | null {
   if (v === "lease" || v === "installment" || v === "pledge") return v
@@ -15,8 +16,11 @@ function normalizeBizType(v: string | undefined): FinanceBizType | null {
 
 export default function Catalog() {
   const { t } = useI18n()
+  const nav = useNavigate()
   const { bizType: rawBizType } = useParams()
   const bizType = normalizeBizType(rawBizType)
+
+  useTmaBackButton(true, () => nav(-1))
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const [q, setQ] = useState("")
@@ -120,4 +124,3 @@ export default function Catalog() {
     </div>
   )
 }
-

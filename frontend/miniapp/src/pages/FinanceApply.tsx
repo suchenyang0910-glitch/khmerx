@@ -9,6 +9,7 @@ import { createFinanceApplication } from "@/api/v1"
 import { errorMessage } from "@/utils/errors"
 import { api } from "@/api/client"
 import type { FinanceBizType, Product } from "@/api/types"
+import { useTmaBackButton } from "@/hooks/useTmaBackButton"
 
 function normalizeBizType(v: string | undefined): FinanceBizType | null {
   if (v === "lease" || v === "installment" || v === "pledge") return v
@@ -21,6 +22,8 @@ export default function FinanceApply() {
   const { search } = useLocation()
   const { bizType: rawBizType } = useParams()
   const bizType = normalizeBizType(rawBizType)
+
+  useTmaBackButton(true, () => nav(-1))
 
   const productId = useMemo(() => {
     const sp = new URLSearchParams(search)

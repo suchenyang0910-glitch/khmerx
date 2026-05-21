@@ -10,8 +10,10 @@ import { useTelegram } from "@/hooks/useTelegram"
 import axios from "axios"
 import { api, apiV1 } from "@/api/client"
 import { useI18n } from "@/i18n"
+import { useTmaTheme } from "@/hooks/useTmaTheme"
 
 export default function ProfileSetup() {
+  useTmaTheme()
   const nav = useNavigate()
   const { search } = useLocation()
   const { tg } = useTelegram()
@@ -268,7 +270,7 @@ export default function ProfileSetup() {
                 }
               }
 
-              if (requireField === "phone" && !Boolean(me?.phone_verified)) {
+              if (requireField === "phone" && !me?.phone_verified) {
                 setErr(t("setup.verifyPhoneFirst"))
                 return
               }

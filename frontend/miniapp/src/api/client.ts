@@ -19,6 +19,7 @@ function resolveApiBaseURL() {
             return stored
           }
         } catch {
+          return ""
         }
       }
       return ""

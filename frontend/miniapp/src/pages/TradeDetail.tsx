@@ -15,6 +15,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { ArrowLeft } from "lucide-react"
 import { errorMessage } from "@/utils/errors"
 import { useI18n } from "@/i18n"
+import { useTmaBackButton } from "@/hooks/useTmaBackButton"
 
 type ScheduleV1 = {
   id: string
@@ -52,6 +53,8 @@ export default function TradeDetail() {
   const { tradeId } = useParams()
   const nav = useNavigate()
   const { t } = useI18n()
+
+  useTmaBackButton(true, () => nav(-1))
   const user = useAuthStore((s) => s.user)
   const [trade, setTrade] = useState<TradeV1 | null>(null)
   const [schedules, setSchedules] = useState<ScheduleV1[]>([])
