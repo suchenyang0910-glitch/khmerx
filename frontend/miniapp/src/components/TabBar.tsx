@@ -13,12 +13,13 @@ export default function TabBar() {
     { to: "/me", label: t("nav.me"), icon: User },
   ]
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md border-t border-zinc-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+    <nav data-testid="tabbar" className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md border-t border-zinc-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <div className="grid grid-cols-5 px-2 py-2">
         {items.map((it) => (
           <NavLink
             key={it.to}
             to={it.to}
+            data-testid={`tab-${it.to === "/" ? "home" : it.to.replace("/", "")}`}
             className={({ isActive }) =>
               cn(
                 "flex flex-col items-center justify-center gap-1 rounded-xl py-2 text-xs",
@@ -27,7 +28,7 @@ export default function TabBar() {
             }
           >
             <it.icon className="h-5 w-5" />
-            <span>{it.label}</span>
+            <span data-testid="tab-label">{it.label}</span>
           </NavLink>
         ))}
       </div>

@@ -66,9 +66,11 @@ export default function Orders() {
   }, [filter, t])
 
   return (
-    <div className="space-y-4">
+    <div data-testid="page-orders" className="space-y-4">
       <div className="text-base font-semibold text-zinc-900">{t("orders.title")}</div>
-      <Segmented<Filter> value={filter} options={options} onChange={(v) => setFilter(v)} />
+      <div data-testid="orders-filter">
+        <Segmented<Filter> value={filter} options={options} onChange={(v) => setFilter(v)} />
+      </div>
 
       {loading ? (
         <div className="space-y-3">
@@ -89,10 +91,10 @@ export default function Orders() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div data-testid="orders-list" className="space-y-3">
           {items.map((o) => (
             <Link key={o.id} to={targetLink(o)}>
-              <Card className="p-4">
+              <Card data-testid="order-card" className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className="text-sm font-semibold text-zinc-900">{btLabel(o.business_type, t)}</div>

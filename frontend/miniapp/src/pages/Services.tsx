@@ -35,7 +35,7 @@ export default function Services() {
   const { t } = useI18n()
 
   return (
-    <div className="space-y-4">
+    <div data-testid="page-services" className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="text-base font-semibold text-zinc-900">{t("services.title")}</div>
         <Link to="/applications" className="text-sm text-blue-600">
@@ -43,9 +43,9 @@ export default function Services() {
         </Link>
       </div>
 
-      <div className="grid gap-3">
+      <div data-testid="services-list" className="grid gap-3">
         {services.map((s) => (
-          <Card key={s.bizType} className="p-4">
+          <Card key={s.bizType} data-testid={`service-${s.bizType}`} className="p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-sm font-semibold text-zinc-900">{t(s.titleKey)}</div>
@@ -59,15 +59,15 @@ export default function Services() {
             <div className="mt-3">
               {s.bizType === "loan" ? (
                 <Link to="/borrow">
-                  <Button className="w-full">{t("services.apply")}</Button>
+                  <Button data-testid="service-cta" className="w-full">{t("services.apply")}</Button>
                 </Link>
               ) : s.bizType === "lease" || s.bizType === "installment" ? (
                 <Link to={`/catalog/${s.bizType}`}>
-                  <Button className="w-full">{t("services.choose")}</Button>
+                  <Button data-testid="service-cta" className="w-full">{t("services.choose")}</Button>
                 </Link>
               ) : (
                 <Link to={`/apply/${s.bizType}`}>
-                  <Button className="w-full">{t("services.apply")}</Button>
+                  <Button data-testid="service-cta" className="w-full">{t("services.apply")}</Button>
                 </Link>
               )}
             </div>

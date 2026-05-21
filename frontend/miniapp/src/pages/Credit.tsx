@@ -31,7 +31,7 @@ export default function Credit() {
   }, [t])
 
   return (
-    <div className="space-y-4">
+    <div data-testid="page-credit" className="space-y-4">
       <div className="text-base font-semibold text-zinc-900">{t("credit.title")}</div>
 
       {loading ? (
@@ -50,7 +50,7 @@ export default function Credit() {
         </Card>
       ) : (
         <>
-          <Card className="p-4">
+          <Card data-testid="credit-summary" className="p-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <div className="text-xs text-zinc-500">{t("credit.score")}</div>
@@ -71,7 +71,7 @@ export default function Credit() {
             </div>
           </Card>
 
-          <Card className="p-4">
+          <Card data-testid="credit-reasons" className="p-4">
             <div className="text-sm font-semibold text-zinc-900">{t("credit.why")}</div>
             <div className="mt-2 space-y-2">
               {(data.reasons || []).slice(0, 3).map((r, idx) => (
@@ -82,7 +82,7 @@ export default function Credit() {
             </div>
           </Card>
 
-          <Card className="p-4">
+          <Card data-testid="credit-logs" className="p-4">
             <div className="text-sm font-semibold text-zinc-900">{t("credit.logs")}</div>
             {(data.logs || []).length === 0 ? (
               <div className="mt-2 text-sm text-zinc-600">{t("credit.noLogs")}</div>
@@ -105,4 +105,3 @@ export default function Credit() {
     </div>
   )
 }
-

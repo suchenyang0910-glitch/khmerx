@@ -36,8 +36,8 @@ export default function Me() {
   if (!reasons.length) reasons.push(t("me.noNeg"))
 
   return (
-    <div className="space-y-4">
-      <Card className="p-4">
+    <div data-testid="page-me" className="space-y-4">
+      <Card data-testid="me-profile" className="p-4">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold text-zinc-900">{user?.name || ""}</div>
@@ -136,7 +136,7 @@ export default function Me() {
         ) : null}
       </Card>
 
-      <Card className="p-4">
+      <Card data-testid="me-language" className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">

@@ -43,7 +43,7 @@ export default function Home() {
   const isNewUser = (user?.total_borrowed || 0) <= 0
 
   return (
-    <div className="space-y-4">
+    <div data-testid="page-home" className="space-y-4">
       {ann.length ? (
         <Card className="p-4">
           <div className="flex items-start justify-between gap-3">
@@ -64,7 +64,7 @@ export default function Home() {
         </Card>
       ) : null}
 
-      <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white shadow-sm">
+      <div data-testid="credit-card" className="rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 p-4 text-white shadow-sm">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-xs opacity-90">{t("home.creditScore")}</div>
@@ -91,29 +91,29 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Link to="/borrow" className="rounded-2xl bg-white p-4 shadow-sm">
+      <div data-testid="home-grid" className="grid grid-cols-2 gap-3">
+        <Link data-testid="entry-loan" to="/borrow" className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
             <HandCoins className="h-5 w-5" />
           </div>
           <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.loan.title")}</div>
           <div className="mt-1 text-xs text-zinc-500">{t("home.fastToAccount")}</div>
         </Link>
-        <Link to="/catalog/lease" className="rounded-2xl bg-white p-4 shadow-sm">
+        <Link data-testid="entry-lease" to="/catalog/lease" className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
             <Smartphone className="h-5 w-5" />
           </div>
           <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.lease.title")}</div>
           <div className="mt-1 text-xs text-zinc-500">{t("home.rentalDesc")}</div>
         </Link>
-        <Link to="/catalog/installment" className="rounded-2xl bg-white p-4 shadow-sm">
+        <Link data-testid="entry-installment" to="/catalog/installment" className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
             <ShoppingCart className="h-5 w-5" />
           </div>
           <div className="mt-3 text-sm font-semibold text-zinc-900">{t("services.installment.title")}</div>
           <div className="mt-1 text-xs text-zinc-500">{t("home.installmentDesc")}</div>
         </Link>
-        <Link to="/apply/pledge" className="rounded-2xl bg-white p-4 shadow-sm">
+        <Link data-testid="entry-pledge" to="/apply/pledge" className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700">
             <Lock className="h-5 w-5" />
           </div>
