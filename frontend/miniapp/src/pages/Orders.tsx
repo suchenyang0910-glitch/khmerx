@@ -12,6 +12,7 @@ type Filter = "all" | BusinessType
 function btLabel(bt: Filter, t: (k: string, vars?: Record<string, string | number>) => string) {
   if (bt === "all") return t("orders.all")
   if (bt === "loan") return t("orders.loan")
+  if (bt === "salary") return t("orders.salary")
   if (bt === "rental") return t("orders.rental")
   if (bt === "installment") return t("orders.installment")
   if (bt === "pawn") return t("orders.pawn")
@@ -26,6 +27,7 @@ function amount(n: number) {
 function targetLink(o: UnifiedOrder) {
   if (o.source_type === "finance_application") return `/applications/${o.source_id}`
   if (o.source_type === "p2p_trade") return `/trade/${o.source_id}`
+  if (o.source_type === "salary_loan") return `/salary-loan/order/${o.source_id}`
   return "/trades"
 }
 
@@ -38,7 +40,7 @@ export default function Orders() {
 
   const options = useMemo(
     () =>
-      (["all", "loan", "rental", "installment", "pawn"] as const).map((v) => ({
+      (["all", "loan", "salary", "rental", "installment", "pawn"] as const).map((v) => ({
         value: v,
         label: btLabel(v, t),
       })),

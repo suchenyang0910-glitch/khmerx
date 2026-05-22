@@ -1,5 +1,16 @@
 import { apiV1 } from "@/api/client"
-import type { Announcement, CreditDetail, FinanceApplication, FinanceBizType, Notification, UnifiedOrder } from "@/api/types"
+import type {
+  Announcement,
+  CreditDetail,
+  FinanceApplication,
+  FinanceBizType,
+  Notification,
+  SalaryFactory,
+  SalaryLoanOrder,
+  SalaryLoanOrderDetail,
+  SalaryLoanUploadProofResult,
+  UnifiedOrder,
+} from "@/api/types"
 
 export async function updatePreferredLanguage(lang: "km" | "cn" | "en") {
   const res = await apiV1.patch<{ ok: boolean; data: { profile_completed: boolean } }>("/me/profile", { language: lang })
@@ -53,6 +64,50 @@ export async function fetchApplicationDetail(applicationId: string) {
 
 export async function fetchMyOrders(params?: { business_type?: string; status?: string; limit?: number; offset?: number }) {
   const res = await apiV1.get<{ ok: boolean; data: UnifiedOrder[] }>("/orders", { params })
+  return res.data.data
+}
+
+export async function fetchSalaryFactories() {
+  const res = await apiV1.get<{ ok: boolean; data: SalaryFactory[] }>("/salary-loan/factories")
+  return res.data.data
+}
+
+export async function createSalaryEmployment(input: {
+  factory_id: string
+  employee_no?: string
+  department?: string
+  position?: string
+  join_date?: string | null
+  salary_amount?: number | null
+  salary_pay_day?: number | null
+  pay_cycle: "monthly" | "biweekly" | "daily"
+  pay_method: "transfer" | "cash"
+}) {
+  const res = await apiV1.post<{ ok: boolean; data: { id: string } }>("/salary-loan/employment", input)
+  return res.data.data
+}
+
+export async function createSalaryLoanOrder(input: { employment_id: string; principal: number; tenor_days: number; note?: string }) {
+  const res = await apiV1.post<{ ok: boolean; data: SalaryLoanOrder }>("/salary-loan/orders", input)
+  return res.data.data
+}
+
+export async function fetchSalaryLoanOrderDetail(orderId: string) {
+  const res = await apiV1.get<{ ok: boolean; data: SalaryLoanOrderDetail }>(`/salary-loan/orders/${orderId}`)
+  return res.data.data
+}
+
+export async function uploadSalaryLoanRepaymentProof(orderId: string, input: { amount: number; note?: string; file: File }) {
+  const form = new FormData()
+  form.append("file", input.file)
+  const res = await apiV1.post<{ ok: boolean; data: SalaryLoanUploadProofResult }>(
+    `/salary-loan/orders/${orderId}/repayment-proof`,
+    form,
+    {
+      params: { amount: input.amount, note: input.note || "" },
+      headers: { "Content-Type": "multipart/form-data" },
+    },
+  )
   return res.data.data
 }
 

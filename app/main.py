@@ -16,6 +16,8 @@ from app.risk.router import router as risk_router
 from app.disputes.router import router as disputes_router
 from app.ops.router import router as ops_router
 from app.admin.router import router as admin_router
+from app.salary_loan.router import router as salary_loan_router
+from app.salary_loan.admin_router import router as salary_loan_admin_router
 from app.openclaw.router import router as openclaw_router
 from fastapi import Request
 
@@ -124,6 +126,8 @@ app.include_router(risk_router)
 app.include_router(disputes_router)
 app.include_router(ops_router)
 app.include_router(admin_router)
+app.include_router(salary_loan_router)
+app.include_router(salary_loan_admin_router)
 app.include_router(api_v1_router)
 app.include_router(openclaw_router)
 app.include_router(integration_requests.router)

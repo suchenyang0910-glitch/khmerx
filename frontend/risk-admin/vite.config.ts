@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const authTarget = env.VITE_AUTH_BASE_URL || 'http://localhost:8081'
   const riskTarget = env.VITE_RISK_BASE_URL || 'http://localhost:8082'
+  const coreTarget = env.VITE_CORE_BASE_URL || 'http://localhost:3040'
 
   return {
   build: {
@@ -24,6 +25,10 @@ export default defineConfig(({ mode }) => {
         target: riskTarget,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api-risk/, ''),
+      },
+      '/api/admin': {
+        target: coreTarget,
+        changeOrigin: true,
       },
     },
   },

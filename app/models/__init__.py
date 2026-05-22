@@ -16,6 +16,16 @@ from app.models.phone_otp import PhoneOtpChallenge
 from app.models.admin_audit_log import AdminAuditLog
 from app.models.integration_request import IntegrationRequest
 from app.models.finance_application import FinanceApplication
+from app.models.salary_factory import SalaryFactory
+from app.models.salary_employment import SalaryEmployment
+from app.models.salary_loan_order import SalaryLoanOrder
+from app.models.salary_loan_repayment import (
+    SalaryLoanRepaymentSchedule,
+    SalaryLoanLedgerEntry,
+    SalaryLoanRepaymentProof,
+    SalaryLoanCollectionCase,
+    SalaryLoanCollectionEvent,
+)
 
 __all__ = [
     "User", "Product", "Order", "Inspection",
@@ -30,4 +40,12 @@ __all__ = [
     "AdminAuditLog",
     "IntegrationRequest",
     "FinanceApplication",
+    "SalaryFactory",
+    "SalaryEmployment",
+    "SalaryLoanOrder",
+    "SalaryLoanRepaymentSchedule",
+    "SalaryLoanLedgerEntry",
+    "SalaryLoanRepaymentProof",
+    "SalaryLoanCollectionCase",
+    "SalaryLoanCollectionEvent",
 ]

@@ -2,9 +2,15 @@ import { Link } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import { useI18n } from "@/i18n"
-import { HandCoins, Smartphone, ShoppingCart, Lock } from "lucide-react"
+import { BadgeDollarSign, HandCoins, Smartphone, ShoppingCart, Lock } from "lucide-react"
 
 const services = [
+  {
+    bizType: "salary_loan" as const,
+    icon: BadgeDollarSign,
+    titleKey: "services.salary.title",
+    descKey: "services.salary.desc",
+  },
   {
     bizType: "loan" as const,
     icon: HandCoins,
@@ -57,7 +63,11 @@ export default function Services() {
             </div>
 
             <div className="mt-3">
-              {s.bizType === "loan" ? (
+              {s.bizType === "salary_loan" ? (
+                <Link to="/salary-loan/apply">
+                  <Button data-testid="service-cta" className="w-full">{t("services.apply")}</Button>
+                </Link>
+              ) : s.bizType === "loan" ? (
                 <Link to="/borrow">
                   <Button data-testid="service-cta" className="w-full">{t("services.apply")}</Button>
                 </Link>

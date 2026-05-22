@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Login from '@/pages/Login'
+import OpsLogin from '@/pages/OpsLogin'
 import Dashboard from '@/pages/Dashboard'
 import Rules from '@/pages/Rules'
 import Cases from '@/pages/Cases'
 import System from '@/pages/System'
+import SalaryLoan from '@/pages/SalaryLoan'
 import NotFound from '@/pages/NotFound'
 import Forbidden from '@/pages/Forbidden'
 import AppShell from '@/components/AppShell'
@@ -15,10 +17,12 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/ops-login" element={<OpsLogin />} />
         <Route path="/forbidden" element={<Forbidden />} />
         <Route element={<RequireAuth />}>
           <Route element={<AppShell />}>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/salary-loan" element={<SalaryLoan />} />
             <Route element={<RequirePermission permKey="rules.read" />}>
               <Route path="/rules" element={<Rules />} />
             </Route>

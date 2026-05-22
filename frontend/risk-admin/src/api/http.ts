@@ -31,10 +31,12 @@ export async function requestJson<T>(input: string, init?: RequestInit): Promise
     ...init,
     headers,
   }).catch((e: unknown) => {
-    const err: ApiError = {
-      message: (e && typeof e === 'object' && 'message' in e && typeof (e as any).message === 'string') ? (e as any).message : 'network_error',
-      url: input,
+    let message = 'network_error'
+    if (e && typeof e === 'object' && 'message' in e) {
+      const m = (e as { message?: unknown }).message
+      if (typeof m === 'string' && m) message = m
     }
+    const err: ApiError = { message, url: input }
     throw err
   })
 
@@ -47,13 +49,16 @@ export async function requestJson<T>(input: string, init?: RequestInit): Promise
     const contentType = resp.headers.get('content-type') || ''
     let message = ''
     if (contentType.includes('application/json')) {
+      let data: unknown = null
       try {
-        const data = (await resp.json()) as any
-        if (data && typeof data === 'object') {
-          if (typeof data.message === 'string') message = data.message
-          else if (typeof data.code === 'string') message = data.code
-        }
+        data = (await resp.json()) as unknown
       } catch {
+        data = null
+      }
+      if (data && typeof data === 'object') {
+        const obj = data as Record<string, unknown>
+        if (typeof obj.message === 'string') message = obj.message
+        else if (typeof obj.code === 'string') message = obj.code
       }
     }
     if (!message) {

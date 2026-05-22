@@ -18,6 +18,8 @@ import ProductDetail from "@/pages/ProductDetail";
 import FinanceApply from "@/pages/FinanceApply";
 import MyApplications from "@/pages/MyApplications";
 import ApplicationDetail from "@/pages/ApplicationDetail";
+import SalaryLoanApply from "@/pages/SalaryLoanApply";
+import SalaryLoanOrderDetail from "@/pages/SalaryLoanOrderDetail";
 
 export default function App() {
   return (
@@ -37,6 +39,8 @@ export default function App() {
           <Route path="/apply/:bizType" element={<FinanceApply />} />
           <Route path="/applications" element={<MyApplications />} />
           <Route path="/applications/:applicationId" element={<ApplicationDetail />} />
+          <Route path="/salary-loan/apply" element={<SalaryLoanApply />} />
+          <Route path="/salary-loan/order/:orderId" element={<SalaryLoanOrderDetail />} />
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/lend" element={<Lend />} />
           <Route path="/trades" element={<Trades />} />

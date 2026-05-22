@@ -102,6 +102,35 @@ class TestApiV1UnifiedOrders(unittest.TestCase):
         )
         self.assertEqual(created_app.status_code, 200)
 
+        import app.database
+        from app.models.salary_factory import SalaryFactory
+
+        SessionLocal = app.database.get_session_local()
+        db = SessionLocal()
+        try:
+            f = SalaryFactory(name="Test Factory", location="PP", risk_level="B", is_active=True)
+            db.add(f)
+            db.commit()
+            factory_id = str(f.id)
+        finally:
+            db.close()
+
+        created_emp = client.post(
+            "/api/v1/salary-loan/employment",
+            headers=headers,
+            json={"factory_id": factory_id, "employee_no": "E001", "pay_cycle": "monthly", "pay_method": "transfer"},
+        )
+        self.assertEqual(created_emp.status_code, 200)
+        employment_id = created_emp.json().get("data", {}).get("id")
+        self.assertTrue(employment_id)
+
+        created_sl = client.post(
+            "/api/v1/salary-loan/orders",
+            headers=headers,
+            json={"employment_id": employment_id, "principal": 80, "tenor_days": 14, "note": ""},
+        )
+        self.assertEqual(created_sl.status_code, 200)
+
         res = client.get("/api/v1/orders", headers=headers)
         self.assertEqual(res.status_code, 200)
         data = res.json().get("data")
@@ -109,4 +138,4 @@ class TestApiV1UnifiedOrders(unittest.TestCase):
         source_types = {x.get("source_type") for x in data}
         self.assertIn("p2p_offer", source_types)
         self.assertIn("finance_application", source_types)
-
+        self.assertIn("salary_loan", source_types)

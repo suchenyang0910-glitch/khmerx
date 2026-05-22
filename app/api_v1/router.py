@@ -33,6 +33,7 @@ from app.models.p2p_trade import P2PTrade
 from app.models.repayment_schedule import RepaymentSchedule
 from app.models.user import User
 from app.models.finance_application import FinanceApplication
+from app.models.salary_loan_order import SalaryLoanOrder
 from app.risk.models import RiskLog
 from app.services.interest_calculator import InterestCalculator
 from app.risk.engine import RiskEngine
@@ -149,6 +150,25 @@ def _order_out_from_trade(db: Session, t: P2PTrade) -> UnifiedOrderOut:
         total_due=total_due,
         due_at=due_at,
         created_at=_iso(getattr(t, "created_at", None)),
+    )
+
+
+def _order_out_from_salary_loan(o: SalaryLoanOrder) -> UnifiedOrderOut:
+    principal = float(o.principal or 0)
+    total_due = float(o.principal or 0) + float(o.fee or 0) + float(o.interest or 0)
+    interest = max(0.0, total_due - principal)
+    due_at = o.due_date.isoformat() if getattr(o, "due_date", None) else None
+    return UnifiedOrderOut(
+        id=f"salary_loan:{o.id}",
+        business_type="salary",
+        source_type="salary_loan",
+        source_id=str(o.id),
+        status=o.status,
+        principal=principal,
+        interest=interest,
+        total_due=total_due,
+        due_at=due_at,
+        created_at=_iso(getattr(o, "created_at", None)),
     )
 
 
@@ -437,6 +457,14 @@ def list_unified_orders(
         apps = q_app.order_by(FinanceApplication.created_at.desc()).offset(skip).limit(take).all()
         for a in apps:
             items.append(_order_out_from_application(a))
+
+    if bt in (None, "salary"):
+        q_sl = db.query(SalaryLoanOrder).filter(SalaryLoanOrder.user_id == user.id)
+        if st:
+            q_sl = q_sl.filter(SalaryLoanOrder.status == st)
+        rows = q_sl.order_by(SalaryLoanOrder.created_at.desc()).offset(skip).limit(take).all()
+        for o in rows:
+            items.append(_order_out_from_salary_loan(o))
 
     items.sort(key=lambda x: (x.created_at or ""), reverse=True)
     return ok(items)

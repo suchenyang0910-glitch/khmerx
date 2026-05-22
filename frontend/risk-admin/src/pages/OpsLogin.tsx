@@ -1,15 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Link } from 'react-router-dom'
-import { getErrorMessage, requestJson } from '@/api/http'
-import type { MeResponse, TokenResponse } from '@/api/types'
+import { requestJson, getErrorMessage } from '@/api/http'
 import { useAuthStore } from '@/stores/authStore'
 import { useRbacStore } from '@/stores/rbacStore'
 import { KeyRound } from 'lucide-react'
 
-export default function Login() {
-  const [merchantId, setMerchantId] = useState('m_demo')
-  const [apiKey, setApiKey] = useState('demo_key')
+type AdminLoginResp = {
+  token: string
+  expires_in: number
+  username: string
+}
+
+export default function OpsLogin() {
+  const [username, setUsername] = useState('admin')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,28 +22,19 @@ export default function Login() {
   const clear = useRbacStore((s) => s.clear)
   const navigate = useNavigate()
 
-  const authHint = useMemo(() => {
-    if (import.meta.env.PROD) {
-      return `${window.location.origin}/api-auth → auth-service`
-    }
-    const base = import.meta.env.VITE_AUTH_BASE_URL || 'http://localhost:8081'
-    return `${base} (dev proxy: /api-auth)`
-  }, [])
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     setLoading(true)
     try {
-      const resp = await requestJson<TokenResponse>('/api-auth/auth/token', {
+      const resp = await requestJson<AdminLoginResp>('/api/admin/login', {
         method: 'POST',
-        body: JSON.stringify({ merchantId, apiKey }),
+        body: JSON.stringify({ username, password }),
       })
-      setSession(resp.accessToken, merchantId)
+      setSession(resp.token, 'ops')
       clear()
-      const me = await requestJson<MeResponse>('/api-risk/system/me')
-      setMe(me)
-      navigate('/')
+      setMe({ actorId: resp.username, roles: ['ops_admin'], permissions: [] })
+      navigate('/salary-loan')
     } catch (err: unknown) {
       setError(getErrorMessage(err))
     } finally {
@@ -56,30 +51,29 @@ export default function Login() {
               <KeyRound className="h-5 w-5" />
             </div>
             <div className="min-w-0">
-              <div className="truncate text-base font-semibold">风控平台管理后台</div>
-              <div className="truncate text-xs text-zinc-500">Auth: {authHint}</div>
+              <div className="truncate text-base font-semibold">运营后台（薪资贷）</div>
+              <div className="truncate text-xs text-zinc-500">API: /api/admin</div>
             </div>
           </div>
 
           <form className="mt-6 space-y-4" onSubmit={onSubmit}>
             <div>
-              <label className="block text-sm font-medium text-zinc-700">商户 ID</label>
+              <label className="block text-sm font-medium text-zinc-700">用户名</label>
               <input
-                value={merchantId}
-                onChange={(e) => setMerchantId(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-0 transition focus:border-zinc-400"
-                placeholder="例如：m_demo"
                 autoComplete="username"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700">API Key</label>
+              <label className="block text-sm font-medium text-zinc-700">密码</label>
               <input
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none ring-0 transition focus:border-zinc-400"
-                placeholder="例如：demo_key"
                 autoComplete="current-password"
               />
             </div>
@@ -90,21 +84,15 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading || !merchantId || !apiKey}
+              disabled={loading || !username || !password}
               className="inline-flex w-full items-center justify-center rounded-lg bg-zinc-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? '登录中…' : '登录'}
             </button>
           </form>
-
-          <div className="mt-4 text-xs text-zinc-500">
-            本版本使用商户 API Key 获取 JWT。后续可替换为管理员账号/SSO。
-          </div>
-          <div className="mt-3 text-xs">
-            <Link className="text-zinc-700 underline" to="/ops-login">运营后台（薪资贷）登录</Link>
-          </div>
         </div>
       </div>
     </div>
   )
 }
+

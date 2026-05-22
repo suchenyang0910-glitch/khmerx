@@ -141,9 +141,9 @@ export interface FinanceApplication {
   updated_at?: string | null
 }
 
-export type BusinessType = "loan" | "rental" | "installment" | "pawn"
+export type BusinessType = "loan" | "salary" | "rental" | "installment" | "pawn"
 
-export type UnifiedOrderSourceType = "p2p_offer" | "p2p_trade" | "finance_application"
+export type UnifiedOrderSourceType = "p2p_offer" | "p2p_trade" | "finance_application" | "salary_loan"
 
 export interface UnifiedOrder {
   id: string
@@ -156,6 +156,77 @@ export interface UnifiedOrder {
   total_due: number
   due_at?: string | null
   created_at?: string | null
+}
+
+export type SalaryFactory = {
+  id: string
+  name: string
+  industry: string
+  location: string
+  owner_type: string
+  salary_cycle: string
+  risk_level: string
+  default_rate: number
+}
+
+export type SalaryEmployment = {
+  id: string
+  user_id: string
+  factory_id: string
+  employee_no: string
+  department: string
+  position: string
+  join_date: string | null
+  salary_amount: number | null
+  salary_pay_day: number | null
+  pay_cycle: "monthly" | "biweekly" | "daily"
+  pay_method: "transfer" | "cash"
+  verify_status: string
+  verify_notes: string
+  verified_at: string | null
+  created_at: string | null
+}
+
+export type SalaryLoanOrder = {
+  id: string
+  user_id: string
+  employment_id: string
+  status: string
+  currency: string
+  principal: number
+  fee: number
+  interest: number
+  disbursement_amount: number
+  tenor_days: number
+  due_date: string | null
+  risk_score: number | null
+  decision: string
+  decision_notes: string
+  created_at: string | null
+  updated_at: string | null
+}
+
+export type SalaryLoanRepaymentSchedule = {
+  id: string
+  order_id: string
+  installment_no: number
+  due_date: string
+  due_amount: number
+  paid_amount: number
+  status: string
+  paid_at: string | null
+}
+
+export type SalaryLoanOrderDetail = {
+  order: SalaryLoanOrder
+  employment: SalaryEmployment
+  factory: SalaryFactory | null
+  schedules: SalaryLoanRepaymentSchedule[]
+}
+
+export type SalaryLoanUploadProofResult = {
+  proof_id: string
+  url: string
 }
 
 export interface CreditDetail {

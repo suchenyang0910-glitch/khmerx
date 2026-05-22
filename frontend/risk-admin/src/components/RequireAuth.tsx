@@ -7,6 +7,7 @@ import type { MeResponse } from '@/api/types'
 
 export default function RequireAuth() {
   const token = useAuthStore((s) => s.token)
+  const merchantId = useAuthStore((s) => s.merchantId)
   const location = useLocation()
   const hydrated = useRbacStore((s) => s.hydrated)
   const setMe = useRbacStore((s) => s.setMe)
@@ -22,6 +23,12 @@ export default function RequireAuth() {
         return
       }
       if (hydrated) return
+
+      if (merchantId === 'ops') {
+        setMe({ actorId: 'ops', roles: ['ops_admin'], permissions: [] })
+        return
+      }
+
       setLoading(true)
       setError(null)
       try {
@@ -38,7 +45,7 @@ export default function RequireAuth() {
     return () => {
       mounted = false
     }
-  }, [clear, hydrated, setMe, token])
+  }, [clear, hydrated, merchantId, setMe, token])
 
   if (!token) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />

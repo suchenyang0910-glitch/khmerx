@@ -1,7 +1,8 @@
 # KhmerX 端到端验收脚本（本地）
 
 ## 目标
-- 验证运营后台：登录、报表总览与趋势、运营配置、CSV 导出
+- 验证 Mini App：薪资贷入口、申请、订单详情与还款凭证上传
+- 验证 运营后台（薪资贷）：工厂管理、在职验证、审核、放款、还款凭证核销
 
 ## 前置条件
 - 安装 Python 以及依赖（项目现有测试可运行）
@@ -21,43 +22,42 @@ python -m app.main
 
 默认监听 `http://localhost:3030`。
 
-## 2. 启动运营后台
+## 2. 启动运营后台（薪资贷）
 
 ```powershell
-pnpm -C frontend/admin install
-pnpm -C frontend/admin dev
+pnpm -C frontend/risk-admin install
+$env:VITE_CORE_BASE_URL = "http://localhost:3030"
+pnpm -C frontend/risk-admin dev
 ```
 
-浏览器打开输出的地址，使用 `ADMIN_USERNAME/ADMIN_PASSWORD` 登录。
+浏览器打开输出的地址，访问 `/#/ops-login`，使用 `ADMIN_USERNAME/ADMIN_PASSWORD` 登录。
 
 验收点：
-- 左侧出现：`报表`、`配置`、`风控事件`、`争议`、`公告`
-- `报表`页面能展示区间指标与 5 条趋势折线（sparklines）
-- `CSV 导出`三个按钮可下载文件
-- `配置`页面可保存 JSON，并刷新后仍能读取
+- 左侧仅显示：`薪资贷审核`
+- `工厂库`可新增工厂
+- `订单审核`可打开订单抽屉，完成：在职验证 → 审核通过（填写 fee/interest）→ 放款（填写流水号）
+- 在抽屉里可对还款凭证执行：通过 / 驳回
 
-## 3. 一键 E2E（脚本）
-
-确保后端已启动后，执行：
+## 3. 启动 Mini App（薪资贷）
 
 ```powershell
-$env:KHX_BASE_URL = "http://localhost:3030"
-$env:ADMIN_USERNAME = "admin"
-$env:ADMIN_PASSWORD = "pass"
-pwsh ./scripts/e2e-admin.ps1
+pnpm -C frontend/miniapp install
+pnpm -C frontend/miniapp dev
 ```
 
-产物：
-- `./artifacts/users.csv`
-- `./artifacts/orders.csv`
-- `./artifacts/risk_events.csv`
+验收流程：
+- 进入 `Services`，点击 `Salary advance / 工资预支`
+- 填写就业信息与借款金额，提交后进入订单详情页
+- 订单放款后，在订单详情页上传还款凭证
+- 回到运营后台抽屉里审核凭证通过，订单状态进入 `repaying/completed`
 
 ## 4. 自动化测试与类型检查
 
 ```powershell
 python -m pytest -q
-pnpm -C frontend/admin run check
+pnpm -C frontend/risk-admin run check
+pnpm -C frontend/risk-admin run lint
 pnpm -C frontend/miniapp run check
+pnpm -C frontend/miniapp run e2e
 pnpm -C frontend/website run check
 ```
-

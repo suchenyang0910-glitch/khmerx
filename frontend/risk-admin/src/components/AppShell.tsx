@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, ShieldAlert, SlidersHorizontal, LogOut, Settings } from 'lucide-react'
+import { LayoutDashboard, ShieldAlert, SlidersHorizontal, LogOut, Settings, BadgeDollarSign } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useRbacStore } from '@/stores/rbacStore'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/', label: '控制台', icon: LayoutDashboard, perm: null },
+  { to: '/salary-loan', label: '薪资贷审核', icon: BadgeDollarSign, perm: null },
   { to: '/rules', label: '规则管理', icon: SlidersHorizontal, perm: 'rules.read' },
   { to: '/cases', label: '命中处置', icon: ShieldAlert, perm: 'cases.read' },
   { to: '/system', label: '系统管理', icon: Settings, perm: 'system.read' },
@@ -34,7 +35,7 @@ export default function AppShell() {
           </div>
           <nav className="px-2 pb-4">
             {navItems
-              .filter((item) => !item.perm || permissions.includes(item.perm))
+              .filter((item) => merchantId === 'ops' ? (item.to === '/salary-loan') : (!item.perm || permissions.includes(item.perm)))
               .map((item) => {
               const Icon = item.icon
               return (
@@ -64,6 +65,7 @@ export default function AppShell() {
             <div className="min-w-0">
               <div className="truncate text-sm font-medium text-zinc-900">
                 {location.pathname === '/' ? '控制台' : null}
+                {location.pathname.startsWith('/salary-loan') ? '薪资贷审核' : null}
                 {location.pathname === '/rules' ? '规则管理' : null}
                 {location.pathname === '/cases' ? '命中处置' : null}
                 {location.pathname === '/system' ? '系统管理' : null}
