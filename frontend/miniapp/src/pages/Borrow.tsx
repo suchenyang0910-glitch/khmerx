@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
@@ -55,14 +55,18 @@ export default function Borrow() {
   }, [maxBorrow])
 
   const [amount, setAmount] = useState<number>(suggested)
+  const [amountTouched, setAmountTouched] = useState(false)
   const [term, setTerm] = useState<7 | 14 | 30>(7)
   const [calc, setCalc] = useState<CalcResultV1 | null>(null)
   const [loadingCalc, setLoadingCalc] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const isNewUser = (user?.total_borrowed || 0) <= 0
+  const abortRef = useRef<AbortController | null>(null)
+  const requestSeq = useRef(0)
 
   useEffect(() => {
+    if (amountTouched) return
     setAmount(suggested)
   }, [suggested])
 
@@ -70,18 +74,31 @@ export default function Borrow() {
     let cancelled = false
     const run = async () => {
       if (!userId) return
-      setLoadingCalc(true)
+      const seq = ++requestSeq.current
+
+      abortRef.current?.abort()
+      const controller = new AbortController()
+      abortRef.current = controller
+
+      const showLoading = window.setTimeout(() => {
+        if (cancelled) return
+        if (seq !== requestSeq.current) return
+        setLoadingCalc(true)
+      }, 200)
+
       setErr(null)
       try {
-        const res = await apiV1.post<{ ok: boolean; data: CalcResultV1 }>("/p2p/calculate", {
-          amount,
-          term_days: term,
-        })
-        if (!cancelled) setCalc(res.data.data)
+        const res = await apiV1.post<{ ok: boolean; data: CalcResultV1 }>(
+          "/p2p/calculate",
+          { amount, term_days: term },
+          { signal: controller.signal },
+        )
+        if (!cancelled && seq === requestSeq.current) setCalc(res.data.data)
       } catch (e: unknown) {
-        if (!cancelled) setErr(errorMessage(e, t("borrow.calcFailed")))
+        if (!cancelled && seq === requestSeq.current) setErr(errorMessage(e, t("borrow.calcFailed")))
       } finally {
-        if (!cancelled) setLoadingCalc(false)
+        window.clearTimeout(showLoading)
+        if (!cancelled && seq === requestSeq.current) setLoadingCalc(false)
       }
     }
     run()
@@ -96,6 +113,7 @@ export default function Borrow() {
 
   const canSubmit = Boolean(user) && !submitting && amount > 0 && amount <= maxBorrow && Boolean(calc)
   const limited = amount > maxBorrow
+  const disableSubmit = !canSubmit || limited || (loadingCalc && !calc)
 
   return (
     <div className="space-y-4" data-testid="page-borrow">
@@ -139,7 +157,10 @@ export default function Borrow() {
             max={Math.max(10, Math.floor(maxBorrow))}
             step={10}
             value={clamp(amount, 10, Math.floor(maxBorrow))}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            onChange={(e) => {
+              setAmountTouched(true)
+              setAmount(Number(e.target.value))
+            }}
             className="w-full"
           />
         </div>
@@ -148,7 +169,10 @@ export default function Borrow() {
           <Input
             type="number"
             value={amount}
-            onChange={(e) => setAmount(Number(e.target.value || 0))}
+            onChange={(e) => {
+              setAmountTouched(true)
+              setAmount(Number(e.target.value || 0))
+            }}
             placeholder={t("borrow.enterAmount")}
             min={0}
           />
@@ -205,7 +229,7 @@ export default function Borrow() {
       <Button
         className="w-full"
         data-testid="borrow-submit"
-        disabled={!canSubmit || loadingCalc || limited}
+        disabled={disableSubmit}
         onClick={async () => {
           if (!user) return
           if (!user.phone_verified) {
