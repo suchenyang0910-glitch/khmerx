@@ -42,6 +42,7 @@ export default function AppShell() {
   }, [])
 
   useEffect(() => {
+    tg?.ready?.()
     tg?.expand()
     tg?.enableClosingConfirmation()
   }, [tg])
