@@ -31,11 +31,12 @@ export default function Borrow() {
   const user = useAuthStore((s) => s.user)
   const risk = useAuthStore((s) => s.risk)
   const refreshMe = useAuthStore((s) => s.refreshMe)
+  const userId = user?.id || ""
 
   useEffect(() => {
-    if (!user) return
+    if (!userId) return
     refreshMe().catch(() => {})
-  }, [user, refreshMe])
+  }, [userId, refreshMe])
 
   const MAX_BORROW_CAP = 800
   const NEW_USER_BORROW_CAP = 500
@@ -68,7 +69,7 @@ export default function Borrow() {
   useEffect(() => {
     let cancelled = false
     const run = async () => {
-      if (!user) return
+      if (!userId) return
       setLoadingCalc(true)
       setErr(null)
       try {
@@ -87,7 +88,7 @@ export default function Borrow() {
     return () => {
       cancelled = true
     }
-  }, [amount, creditLevel, term, user])
+  }, [amount, term, userId, t])
 
   const receive = calc?.received_amount ?? 0
   const repay = calc?.repay_amount ?? 0
@@ -97,7 +98,7 @@ export default function Borrow() {
   const limited = amount > maxBorrow
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="page-borrow">
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <div>
@@ -203,6 +204,7 @@ export default function Borrow() {
 
       <Button
         className="w-full"
+        data-testid="borrow-submit"
         disabled={!canSubmit || loadingCalc || limited}
         onClick={async () => {
           if (!user) return
