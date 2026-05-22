@@ -8,9 +8,11 @@ from app.scheduler.jobs import (
     auto_unblock_users,
     check_lender_payment_timeout,
     check_repayment_overdue,
+    check_salary_loan_overdue,
     generate_daily_risk_summary,
     generate_repayment_due_reminders,
     push_pending_risk_events_to_openclaw,
+    update_salary_factory_ratings,
 )
 
 
@@ -56,6 +58,14 @@ def start_scheduler():
     )
 
     scheduler.add_job(
+        lambda: run_job(check_salary_loan_overdue),
+        "interval",
+        minutes=30,
+        id="check_salary_loan_overdue",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
         lambda: run_job(generate_repayment_due_reminders),
         "interval",
         minutes=30,
@@ -77,6 +87,15 @@ def start_scheduler():
         hour=23,
         minute=55,
         id="generate_daily_risk_summary",
+        replace_existing=True,
+    )
+
+    scheduler.add_job(
+        lambda: run_job(update_salary_factory_ratings),
+        "cron",
+        hour=23,
+        minute=50,
+        id="update_salary_factory_ratings",
         replace_existing=True,
     )
 

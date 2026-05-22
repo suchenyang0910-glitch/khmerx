@@ -25,7 +25,7 @@ from app.database import get_db
 from app.models.salary_employment import SalaryEmployment
 from app.models.salary_factory import SalaryFactory
 from app.models.salary_loan_order import SalaryLoanOrder
-from app.models.salary_loan_repayment import SalaryLoanRepaymentProof, SalaryLoanRepaymentSchedule
+from app.models.salary_loan_repayment import SalaryLoanCollectionCase, SalaryLoanRepaymentProof, SalaryLoanRepaymentSchedule
 from app.models.user import User
 
 
@@ -238,6 +238,26 @@ def create_salary_loan_order(
     factory = db.query(SalaryFactory).filter(SalaryFactory.id == employment.factory_id).first()
 
     risk, reasons = _risk_score(user, employment, factory)
+    completed_count = (
+        db.query(SalaryLoanOrder)
+        .filter(SalaryLoanOrder.user_id == user.id)
+        .filter(SalaryLoanOrder.status == "completed")
+        .count()
+    )
+    if completed_count > 0:
+        risk = min(100, risk + min(20, 5 * int(completed_count)))
+
+    overdue_bad = (
+        db.query(SalaryLoanCollectionCase)
+        .join(SalaryLoanOrder, SalaryLoanOrder.id == SalaryLoanCollectionCase.order_id)
+        .filter(SalaryLoanOrder.user_id == user.id)
+        .filter(SalaryLoanCollectionCase.status == "open")
+        .filter(SalaryLoanCollectionCase.dpd >= 7)
+        .count()
+    )
+    if overdue_bad > 0:
+        risk = max(0, risk - 20)
+        reasons.append("recent_overdue")
     decision = "manual_review"
     status = "submitted"
     if employment.verify_status != "verified":

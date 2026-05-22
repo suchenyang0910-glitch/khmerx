@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,10 @@ from app.models.p2p_trade import P2PTrade
 from app.models.repayment_schedule import RepaymentSchedule
 from app.models.user import User
 from app.models.notification import Notification
+from app.models.salary_employment import SalaryEmployment
+from app.models.salary_factory import SalaryFactory
+from app.models.salary_loan_order import SalaryLoanOrder
+from app.models.salary_loan_repayment import SalaryLoanCollectionCase, SalaryLoanRepaymentSchedule
 from app.ops.service import CollectionService
 from app.risk.engine import RiskEngine
 from app.risk.models import RiskEvent, RiskEventDelivery
@@ -273,4 +277,104 @@ def push_pending_risk_events_to_openclaw(db: Session):
             delivery.attempt_count = int(delivery.attempt_count or 0) + 1
             delivery.last_attempt_at = datetime.now(timezone.utc)
             db.commit()
+
+
+def check_salary_loan_overdue(db: Session):
+    today = datetime.utcnow().date()
+    schedules = (
+        db.query(SalaryLoanRepaymentSchedule)
+        .filter(SalaryLoanRepaymentSchedule.status != "paid")
+        .filter(SalaryLoanRepaymentSchedule.due_date < today)
+        .all()
+    )
+
+    for s in schedules:
+        o = db.query(SalaryLoanOrder).filter(SalaryLoanOrder.id == s.order_id).first()
+        if not o:
+            continue
+        if o.status in ("completed", "rejected"):
+            continue
+
+        dpd = max(0, (today - s.due_date).days)
+        s.status = "overdue"
+
+        stage = "pre"
+        if dpd >= 31:
+            stage = "late"
+        elif dpd >= 8:
+            stage = "mid"
+        elif dpd >= 1:
+            stage = "early"
+
+        case = db.query(SalaryLoanCollectionCase).filter(SalaryLoanCollectionCase.order_id == o.id).first()
+        if not case:
+            case = SalaryLoanCollectionCase(order_id=o.id)
+            db.add(case)
+
+        case.dpd = int(dpd)
+        case.stage = stage
+        if case.status != "closed":
+            case.status = "open"
+
+        if o.status not in ("overdue", "repaying"):
+            o.status = "overdue"
+
+        settings = get_or_create_notification_settings(db, o.user_id)
+        if settings.repayment_reminders:
+            exists = (
+                db.query(Notification)
+                .filter(Notification.user_id == o.user_id)
+                .filter(Notification.type == "salary_loan_overdue")
+                .filter(Notification.target_type == "salary_loan_order")
+                .filter(Notification.target_id == str(o.id))
+                .filter(Notification.created_at >= datetime.utcnow() - timedelta(hours=24))
+                .count()
+            )
+            if not exists:
+                create_notification(
+                    db,
+                    user_id=o.user_id,
+                    type="salary_loan_overdue",
+                    title="薪资贷已逾期",
+                    body=f"你的薪资贷已逾期 {dpd} 天，请尽快还款。",
+                    target_type="salary_loan_order",
+                    target_id=str(o.id),
+                )
+
+    db.commit()
+
+
+def update_salary_factory_ratings(db: Session):
+    since = datetime.utcnow() - timedelta(days=60)
+    factories = db.query(SalaryFactory).filter(SalaryFactory.is_active == True).all()
+    for f in factories:
+        total = (
+            db.query(SalaryLoanOrder)
+            .join(SalaryEmployment, SalaryEmployment.id == SalaryLoanOrder.employment_id)
+            .filter(SalaryEmployment.factory_id == f.id)
+            .filter(SalaryLoanOrder.status.in_(["disbursed", "repaying", "overdue", "completed"]))
+            .filter(SalaryLoanOrder.created_at >= since)
+            .count()
+        )
+        if total < 5:
+            continue
+
+        overdue7 = (
+            db.query(SalaryLoanCollectionCase)
+            .join(SalaryLoanOrder, SalaryLoanOrder.id == SalaryLoanCollectionCase.order_id)
+            .join(SalaryEmployment, SalaryEmployment.id == SalaryLoanOrder.employment_id)
+            .filter(SalaryEmployment.factory_id == f.id)
+            .filter(SalaryLoanCollectionCase.dpd >= 7)
+            .filter(SalaryLoanCollectionCase.status == "open")
+            .count()
+        )
+        ratio = float(overdue7) / float(max(1, total))
+        if ratio <= 0.02:
+            f.risk_level = "A"
+        elif ratio <= 0.05:
+            f.risk_level = "B"
+        else:
+            f.risk_level = "C"
+
+    db.commit()
 

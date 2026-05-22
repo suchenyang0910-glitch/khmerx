@@ -19,6 +19,7 @@ from app.models.salary_loan_repayment import (
     SalaryLoanRepaymentProof,
     SalaryLoanRepaymentSchedule,
 )
+from app.services.salary_loan_payments import apply_repayment
 
 
 router = APIRouter(prefix="/api/admin/salary-loan", tags=["admin-salary-loan"])
@@ -445,33 +446,7 @@ def admin_review_proof(
     p.note = ((p.note or "") + ("\n" + payload.note if payload.note else ""))[:256]
 
     if payload.status == "accepted":
-        amount = float(p.amount)
-        _post_ledger(
-            db,
-            order_id=o.id,
-            event_type="REPAY",
-            lines=[
-                ("cash", amount, 0),
-                ("loan_receivable", 0, amount),
-            ],
-            external_ref=str(p.id),
-        )
-
-        s = (
-            db.query(SalaryLoanRepaymentSchedule)
-            .filter(SalaryLoanRepaymentSchedule.order_id == o.id)
-            .order_by(SalaryLoanRepaymentSchedule.installment_no.asc())
-            .first()
-        )
-        if s:
-            s.paid_amount = float(s.paid_amount) + amount
-            if float(s.paid_amount) >= float(s.due_amount):
-                s.status = "paid"
-                s.paid_at = _utcnow()
-                o.status = "completed"
-            else:
-                o.status = "repaying"
+        apply_repayment(db, order=o, amount=float(p.amount), external_ref=str(p.id))
 
     db.commit()
     return {"id": str(p.id), "status": p.status}
-
