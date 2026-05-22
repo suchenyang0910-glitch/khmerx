@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Input from "@/components/ui/Input"
@@ -16,7 +16,7 @@ export default function ProfileSetup() {
   useTmaTheme()
   const nav = useNavigate()
   const { search } = useLocation()
-  const { tg } = useTelegram()
+  const { tg, initData } = useTelegram()
   const { t } = useI18n()
   const user = useAuthStore((s) => s.user)
   const bootstrap = useAuthStore((s) => s.bootstrap)
@@ -69,6 +69,16 @@ export default function ProfileSetup() {
   }, [otpDevCode, otpCode])
 
   const canLocalDevLogin = import.meta.env.DEV
+  const autoBootstrapTried = useRef(false)
+
+  useEffect(() => {
+    if (user) return
+    if (autoBootstrapTried.current) return
+    const data = (initData || localStorage.getItem("khx_tma_init_data") || "").trim()
+    if (!data) return
+    autoBootstrapTried.current = true
+    bootstrap(data).catch(() => {})
+  }, [bootstrap, initData, user])
 
   const generateLocalAccount = async () => {
     setSaving(true)
@@ -108,7 +118,7 @@ export default function ProfileSetup() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
+    <div data-testid="page-setup" className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] px-4 py-6">
       <div className="rounded-2xl bg-white p-4 shadow-sm">
         <div className="text-sm font-semibold text-zinc-900">{t("setup.title")}</div>
         <div className="mt-1 text-sm text-zinc-600">{t("setup.desc")}</div>

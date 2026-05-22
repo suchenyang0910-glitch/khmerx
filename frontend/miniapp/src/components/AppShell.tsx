@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react"
-import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom"
 import TabBar from "@/components/TabBar"
 import Button from "@/components/ui/Button"
 import { useTelegram } from "@/hooks/useTelegram"
@@ -22,6 +22,7 @@ export default function AppShell() {
   const { initData, tg } = useTelegram()
   const { t } = useI18n()
   const { pathname } = useLocation()
+  const nav = useNavigate()
   const booting = useAuthStore((s) => s.booting)
   const error = useAuthStore((s) => s.error)
   const user = useAuthStore((s) => s.user)
@@ -36,6 +37,8 @@ export default function AppShell() {
   const [devBooting, setDevBooting] = useState(false)
   const [devError, setDevError] = useState<string | null>(null)
   const [autoDevAttempted, setAutoDevAttempted] = useState(false)
+  const initWaitTimer = useRef<number | null>(null)
+  const lastBootstrapInitData = useRef<string>("")
   const canDevBoot = useMemo(() => {
     const host = window.location.hostname
     return !(host === "api.khmerx.org" || host.endsWith(".khmerx.org"))
@@ -95,12 +98,14 @@ export default function AppShell() {
 
   useEffect(() => {
     if (user) return
-    if (!booting || error) return
     const data = initData || storedInitData
+
+    if (data && lastBootstrapInitData.current === data) return
     if (!data && canDevBoot && !autoDevAttempted) {
       setAutoDevAttempted(true)
       setDevBooting(true)
       setDevError(null)
+      getDevInitData()
       getDevInitData()
         .then((devInit) => bootstrap(devInit))
         .catch((e) => {
@@ -111,8 +116,35 @@ export default function AppShell() {
       return
     }
 
+    if (!data) {
+      if (initWaitTimer.current) return
+      initWaitTimer.current = window.setTimeout(() => {
+        initWaitTimer.current = null
+        const s = useAuthStore.getState()
+        if (s.user) return
+        if ((s.initData || "").trim()) return
+        bootstrap("")
+      }, 2500)
+      return
+    }
+
+    if (initWaitTimer.current) {
+      window.clearTimeout(initWaitTimer.current)
+      initWaitTimer.current = null
+    }
+
+    lastBootstrapInitData.current = data
     bootstrap(data)
-  }, [bootstrap, initData, storedInitData, user, booting, error, canDevBoot, autoDevAttempted])
+  }, [bootstrap, initData, storedInitData, user, error, canDevBoot, autoDevAttempted])
+
+  useEffect(() => {
+    return () => {
+      if (initWaitTimer.current) {
+        window.clearTimeout(initWaitTimer.current)
+        initWaitTimer.current = null
+      }
+    }
+  }, [])
 
   if (!langSelected || !hasLang) {
     return <Navigate to="/lang" replace />
@@ -214,12 +246,12 @@ export default function AppShell() {
 
   if (user && needsProfile(user) && pathname !== "/setup") {
     return (
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] p-4">
+      <div data-testid="profile-required" className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-[#F5F7FA] p-4">
         <div className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="text-sm font-semibold text-zinc-900">{t("setup.title")}</div>
           <div className="mt-2 text-sm text-zinc-600">{t("setup.desc")}</div>
           <div className="mt-4">
-            <Button onClick={() => window.location.assign("/setup")} className="w-full">
+            <Button data-testid="profile-required-cta" onClick={() => nav("/setup")} className="w-full">
               {t("common.saveContinue")}
             </Button>
           </div>
