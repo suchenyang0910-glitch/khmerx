@@ -3,8 +3,14 @@ export type Tab = 'orders' | 'factories'
 export type FactoryRow = {
   id: string
   name: string
+  industry?: string
   location: string
+  owner_type?: string
+  salary_cycle?: string
+  worker_count?: number
   risk_level: string
+  default_rate?: number
+  hr_contact?: string
   is_active: boolean
   created_at?: string | null
 }
@@ -83,4 +89,3 @@ export type OrderDetail = {
     status: string
   }>
 }
-

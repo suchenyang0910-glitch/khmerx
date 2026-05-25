@@ -63,6 +63,19 @@ class UpsertFactoryInput(BaseModel):
     is_active: bool = True
 
 
+class UpdateFactoryInput(BaseModel):
+    name: str | None = None
+    industry: str | None = None
+    location: str | None = None
+    owner_type: str | None = None
+    salary_cycle: str | None = None
+    worker_count: int | None = None
+    risk_level: str | None = None
+    default_rate: float | None = None
+    hr_contact: str | None = None
+    is_active: bool | None = None
+
+
 @router.get("/factories")
 def admin_list_factories(_: AdminPrincipal = Depends(get_current_admin), db: Session = Depends(get_db)):
     rows = db.query(SalaryFactory).order_by(SalaryFactory.created_at.desc()).limit(1000).all()
@@ -104,6 +117,44 @@ def admin_create_factory(
         is_active=payload.is_active,
     )
     db.add(f)
+    db.commit()
+    return {"id": str(f.id)}
+
+
+@router.patch("/factories/{factory_id}")
+def admin_update_factory(
+    factory_id: str,
+    payload: UpdateFactoryInput,
+    _: AdminPrincipal = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    fid = _parse_uuid(factory_id)
+    f = db.query(SalaryFactory).filter(SalaryFactory.id == fid).first()
+    if not f:
+        raise ApiError(code="NOT_FOUND", message="未找到工厂", status_code=404)
+
+    data = payload.model_dump(exclude_unset=True)
+    if "name" in data and data["name"] is not None:
+        f.name = str(data["name"]).strip()
+    if "industry" in data and data["industry"] is not None:
+        f.industry = str(data["industry"])[:64]
+    if "location" in data and data["location"] is not None:
+        f.location = str(data["location"])[:128]
+    if "owner_type" in data and data["owner_type"] is not None:
+        f.owner_type = str(data["owner_type"])[:32]
+    if "salary_cycle" in data and data["salary_cycle"] is not None:
+        f.salary_cycle = str(data["salary_cycle"])[:32]
+    if "worker_count" in data and data["worker_count"] is not None:
+        f.worker_count = int(data["worker_count"])
+    if "risk_level" in data and data["risk_level"] is not None:
+        f.risk_level = str(data["risk_level"])[:16]
+    if "default_rate" in data and data["default_rate"] is not None:
+        f.default_rate = float(data["default_rate"])
+    if "hr_contact" in data and data["hr_contact"] is not None:
+        f.hr_contact = str(data["hr_contact"])[:128]
+    if "is_active" in data and data["is_active"] is not None:
+        f.is_active = bool(data["is_active"])
+
     db.commit()
     return {"id": str(f.id)}
 

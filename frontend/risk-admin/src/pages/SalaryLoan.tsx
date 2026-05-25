@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getErrorMessage, requestJson } from '@/api/http'
 import OrdersPanel from '@/components/salaryLoan/OrdersPanel'
 import FactoriesPanel from '@/components/salaryLoan/FactoriesPanel'
+import Drawer from '@/components/Drawer'
 import OrderDrawer from '@/components/salaryLoan/OrderDrawer'
 import type { FactoryRow, OrderDetail, OrderRow, Tab } from '@/components/salaryLoan/types'
 
@@ -25,8 +26,17 @@ export default function SalaryLoan() {
   const [disbRef, setDisbRef] = useState<string>('')
 
   const [newFactoryName, setNewFactoryName] = useState('')
+  const [newFactoryIndustry, setNewFactoryIndustry] = useState('factory')
   const [newFactoryLocation, setNewFactoryLocation] = useState('')
+  const [newFactoryOwnerType, setNewFactoryOwnerType] = useState('unknown')
+  const [newFactorySalaryCycle, setNewFactorySalaryCycle] = useState('monthly')
+  const [newFactoryWorkerCount, setNewFactoryWorkerCount] = useState('0')
   const [newFactoryRisk, setNewFactoryRisk] = useState('C')
+  const [newFactoryDefaultRate, setNewFactoryDefaultRate] = useState('0')
+  const [newFactoryHrContact, setNewFactoryHrContact] = useState('')
+
+  const [selectedFactory, setSelectedFactory] = useState<FactoryRow | null>(null)
+  const [editFactory, setEditFactory] = useState<Partial<FactoryRow> | null>(null)
 
   const tabs = useMemo(
     () => [
@@ -176,14 +186,54 @@ export default function SalaryLoan() {
         method: 'POST',
         body: JSON.stringify({
           name: newFactoryName,
+          industry: newFactoryIndustry,
           location: newFactoryLocation,
+          owner_type: newFactoryOwnerType,
+          salary_cycle: newFactorySalaryCycle,
+          worker_count: Number(newFactoryWorkerCount || '0'),
           risk_level: newFactoryRisk,
+          default_rate: Number(newFactoryDefaultRate || '0'),
+          hr_contact: newFactoryHrContact,
           is_active: true,
         }),
       })
       setNewFactoryName('')
+      setNewFactoryIndustry('factory')
       setNewFactoryLocation('')
+      setNewFactoryOwnerType('unknown')
+      setNewFactorySalaryCycle('monthly')
+      setNewFactoryWorkerCount('0')
       await loadFactories()
+    } catch (e: unknown) {
+      setError(getErrorMessage(e))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function updateFactory() {
+    if (!selectedFactory || !editFactory) return
+    setLoading(true)
+    setError(null)
+    try {
+      await requestJson(`/api/admin/salary-loan/factories/${selectedFactory.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          name: editFactory.name,
+          industry: editFactory.industry,
+          location: editFactory.location,
+          owner_type: editFactory.owner_type,
+          salary_cycle: editFactory.salary_cycle,
+          worker_count: editFactory.worker_count,
+          risk_level: editFactory.risk_level,
+          default_rate: editFactory.default_rate,
+          hr_contact: editFactory.hr_contact,
+          is_active: editFactory.is_active,
+        }),
+      })
+      await loadFactories()
+      setSelectedFactory(null)
+      setEditFactory(null)
     } catch (e: unknown) {
       setError(getErrorMessage(e))
     } finally {
@@ -230,13 +280,165 @@ export default function SalaryLoan() {
           factories={factories}
           newFactoryName={newFactoryName}
           setNewFactoryName={setNewFactoryName}
+          newFactoryIndustry={newFactoryIndustry}
+          setNewFactoryIndustry={setNewFactoryIndustry}
           newFactoryLocation={newFactoryLocation}
           setNewFactoryLocation={setNewFactoryLocation}
+          newFactoryOwnerType={newFactoryOwnerType}
+          setNewFactoryOwnerType={setNewFactoryOwnerType}
+          newFactorySalaryCycle={newFactorySalaryCycle}
+          setNewFactorySalaryCycle={setNewFactorySalaryCycle}
+          newFactoryWorkerCount={newFactoryWorkerCount}
+          setNewFactoryWorkerCount={setNewFactoryWorkerCount}
           newFactoryRisk={newFactoryRisk}
           setNewFactoryRisk={setNewFactoryRisk}
+          newFactoryDefaultRate={newFactoryDefaultRate}
+          setNewFactoryDefaultRate={setNewFactoryDefaultRate}
+          newFactoryHrContact={newFactoryHrContact}
+          setNewFactoryHrContact={setNewFactoryHrContact}
           onCreate={() => void createFactory()}
+          onOpenFactory={(f) => {
+            setSelectedFactory(f)
+            setEditFactory({ ...f })
+          }}
         />
       )}
+
+      <Drawer
+        open={!!selectedFactory && !!editFactory}
+        title={selectedFactory ? `编辑工厂：${selectedFactory.name}` : '编辑工厂'}
+        onClose={() => {
+          setSelectedFactory(null)
+          setEditFactory(null)
+        }}
+      >
+        {editFactory ? (
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div>
+                <div className="text-xs font-medium text-zinc-700">名称</div>
+                <input
+                  value={editFactory.name || ''}
+                  onChange={(e) => setEditFactory({ ...editFactory, name: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">行业</div>
+                <input
+                  value={editFactory.industry || ''}
+                  onChange={(e) => setEditFactory({ ...editFactory, industry: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">地点</div>
+                <input
+                  value={editFactory.location || ''}
+                  onChange={(e) => setEditFactory({ ...editFactory, location: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">所有制</div>
+                <select
+                  value={editFactory.owner_type || 'unknown'}
+                  onChange={(e) => setEditFactory({ ...editFactory, owner_type: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"
+                >
+                  <option value="unknown">unknown</option>
+                  <option value="private">private</option>
+                  <option value="state">state</option>
+                  <option value="foreign">foreign</option>
+                </select>
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">发薪周期</div>
+                <select
+                  value={editFactory.salary_cycle || 'monthly'}
+                  onChange={(e) => setEditFactory({ ...editFactory, salary_cycle: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"
+                >
+                  <option value="monthly">monthly</option>
+                  <option value="biweekly">biweekly</option>
+                  <option value="weekly">weekly</option>
+                  <option value="unknown">unknown</option>
+                </select>
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">工人数</div>
+                <input
+                  type="number"
+                  value={String(editFactory.worker_count ?? 0)}
+                  onChange={(e) => setEditFactory({ ...editFactory, worker_count: Number(e.target.value || '0') })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">风险等级</div>
+                <select
+                  value={editFactory.risk_level || 'C'}
+                  onChange={(e) => setEditFactory({ ...editFactory, risk_level: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 bg-white px-3 text-sm"
+                >
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </div>
+              <div>
+                <div className="text-xs font-medium text-zinc-700">默认费率</div>
+                <input
+                  type="number"
+                  step="0.0001"
+                  value={String(editFactory.default_rate ?? 0)}
+                  onChange={(e) => setEditFactory({ ...editFactory, default_rate: Number(e.target.value || '0') })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <div className="text-xs font-medium text-zinc-700">HR 联系方式</div>
+                <input
+                  value={editFactory.hr_contact || ''}
+                  onChange={(e) => setEditFactory({ ...editFactory, hr_contact: e.target.value })}
+                  className="mt-1 h-9 w-full rounded-lg border border-zinc-200 px-3 text-sm"
+                />
+              </div>
+              <label className="inline-flex items-center gap-2 text-sm text-zinc-700">
+                <input
+                  type="checkbox"
+                  checked={Boolean(editFactory.is_active)}
+                  onChange={(e) => setEditFactory({ ...editFactory, is_active: e.target.checked })}
+                />
+                启用
+              </label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => void updateFactory()}
+                className="inline-flex h-9 items-center justify-center rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white disabled:opacity-50"
+              >
+                保存
+              </button>
+              <button
+                type="button"
+                disabled={loading}
+                onClick={() => {
+                  setSelectedFactory(null)
+                  setEditFactory(null)
+                }}
+                className="inline-flex h-9 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 text-sm text-zinc-700 disabled:opacity-50"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </Drawer>
 
       <OrderDrawer
         open={!!selected}
