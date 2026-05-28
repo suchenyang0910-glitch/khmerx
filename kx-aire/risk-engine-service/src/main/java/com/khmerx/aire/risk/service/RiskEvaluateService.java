@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.expression.spel.support.SimpleEvaluationContext;
-import org.springframework.context.expression.MapAccessor;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -88,11 +87,8 @@ public class RiskEvaluateService {
         root.put("merchantId", merchantId);
         root.put("orderId", request.getOrderId());
 
-        SimpleEvaluationContext context = SimpleEvaluationContext
-                .forReadOnlyDataBinding()
-                .withRootObject(root)
-                .withPropertyAccessors(new MapAccessor())
-                .build();
+        StandardEvaluationContext context = new StandardEvaluationContext(root);
+        context.addPropertyAccessor(new org.springframework.context.expression.MapAccessor());
 
         for (var rule : rules) {
             if (!StringUtils.hasText(rule.getRuleExpression())) {

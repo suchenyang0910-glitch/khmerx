@@ -17,10 +17,10 @@ public interface AuditLogMapper {
             "<script>",
             "select * from api_center.audit_logs",
             "where 1=1",
-            "<if test='actorId != null and actorId != ""'> and actor_id = #{actorId} </if>",
-            "<if test='action != null and action != ""'> and action ilike concat('%', #{action}, '%') </if>",
-            "<if test='objectType != null and objectType != ""'> and object_type = #{objectType} </if>",
-            "<if test='objectId != null and objectId != ""'> and object_id ilike concat('%', #{objectId}, '%') </if>",
+            "<if test='actorId != null and actorId != \"\"'> and actor_id = #{actorId} </if>",
+            "<if test='action != null and action != \"\"'> and action ilike concat('%', #{action}, '%') </if>",
+            "<if test='objectType != null and objectType != \"\"'> and object_type = #{objectType} </if>",
+            "<if test='objectId != null and objectId != \"\"'> and object_id ilike concat('%', #{objectId}, '%') </if>",
             "order by created_at desc",
             "limit #{limit} offset #{offset}",
             "</script>"
@@ -38,10 +38,10 @@ public interface AuditLogMapper {
             "<script>",
             "select count(1) from api_center.audit_logs",
             "where 1=1",
-            "<if test='actorId != null and actorId != ""'> and actor_id = #{actorId} </if>",
-            "<if test='action != null and action != ""'> and action ilike concat('%', #{action}, '%') </if>",
-            "<if test='objectType != null and objectType != ""'> and object_type = #{objectType} </if>",
-            "<if test='objectId != null and objectId != ""'> and object_id ilike concat('%', #{objectId}, '%') </if>",
+            "<if test='actorId != null and actorId != \"\"'> and actor_id = #{actorId} </if>",
+            "<if test='action != null and action != \"\"'> and action ilike concat('%', #{action}, '%') </if>",
+            "<if test='objectType != null and objectType != \"\"'> and object_type = #{objectType} </if>",
+            "<if test='objectId != null and objectId != \"\"'> and object_id ilike concat('%', #{objectId}, '%') </if>",
             "</script>"
     })
     long count(
