@@ -224,6 +224,20 @@ export type SalaryLoanOrderDetail = {
   schedules: SalaryLoanRepaymentSchedule[]
 }
 
+export type SalaryLoanQuote = {
+  principal: number
+  tenor_days: number
+  risk_score: number
+  reasons: string[]
+  fee_rate: number
+  interest_rate: number
+  fee: number
+  interest: number
+  disbursement_amount: number
+  total_due: number
+  note: string
+}
+
 export type SalaryLoanUploadProofResult = {
   proof_id: string
   url: string

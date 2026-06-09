@@ -8,6 +8,7 @@ import type {
   SalaryFactory,
   SalaryLoanOrder,
   SalaryLoanOrderDetail,
+  SalaryLoanQuote,
   SalaryLoanUploadProofResult,
   UnifiedOrder,
 } from "@/api/types"
@@ -89,6 +90,20 @@ export async function createSalaryEmployment(input: {
 
 export async function createSalaryLoanOrder(input: { employment_id: string; principal: number; tenor_days: number; note?: string }) {
   const res = await apiV1.post<{ ok: boolean; data: SalaryLoanOrder }>("/salary-loan/orders", input)
+  return res.data.data
+}
+
+export async function calculateSalaryLoanQuote(input: {
+  factory_id: string
+  principal: number
+  tenor_days: number
+  join_date?: string | null
+  salary_amount?: number | null
+  salary_pay_day?: number | null
+  pay_cycle: "monthly" | "biweekly" | "daily"
+  pay_method: "transfer" | "cash"
+}) {
+  const res = await apiV1.post<{ ok: boolean; data: SalaryLoanQuote }>("/salary-loan/calculate", input)
   return res.data.data
 }
 

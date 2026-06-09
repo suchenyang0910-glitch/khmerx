@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.api_v1.auth import ensure_profile_completed, get_current_user_tma
@@ -119,6 +120,37 @@ def _risk_score(user: User, employment: SalaryEmployment, factory: SalaryFactory
     return score, reasons
 
 
+def _suggest_pricing(*, principal: float, tenor_days: int, risk_score: int, factory: SalaryFactory | None) -> dict:
+    base_fee_rate_map = {7: 0.10, 14: 0.12, 30: 0.15}
+    base_interest_rate_map = {7: 0.0, 14: 0.01, 30: 0.02}
+
+    fee_rate = float(base_fee_rate_map.get(int(tenor_days), 0.12))
+    interest_rate = float(base_interest_rate_map.get(int(tenor_days), 0.01))
+
+    if factory and float(factory.default_rate or 0) > 0:
+        fee_rate = max(fee_rate, float(factory.default_rate or 0))
+
+    if risk_score >= 55:
+        fee_rate = max(0.02, fee_rate - 0.01)
+        interest_rate = max(0.0, interest_rate - 0.005)
+    elif risk_score < 45:
+        fee_rate = min(0.25, fee_rate + 0.015)
+        interest_rate = min(0.08, interest_rate + 0.01)
+
+    fee = round(float(principal) * fee_rate, 2)
+    interest = round(float(principal) * interest_rate, 2)
+    disbursement_amount = round(max(0.0, float(principal) - fee), 2)
+    total_due = round(float(principal) + fee + interest, 2)
+    return {
+        "fee_rate": round(fee_rate, 4),
+        "interest_rate": round(interest_rate, 4),
+        "fee": fee,
+        "interest": interest,
+        "disbursement_amount": disbursement_amount,
+        "total_due": total_due,
+    }
+
+
 def _factory_out(f: SalaryFactory) -> SalaryFactoryOut:
     return SalaryFactoryOut(
         id=str(f.id),
@@ -171,6 +203,17 @@ def _order_out(o: SalaryLoanOrder) -> SalaryLoanOrderOut:
         created_at=_iso(getattr(o, "created_at", None)),
         updated_at=_iso(getattr(o, "updated_at", None)),
     )
+
+
+class CalculateSalaryLoanRequest(BaseModel):
+    factory_id: str
+    principal: float
+    tenor_days: int
+    join_date: str | None = None
+    salary_amount: float | None = None
+    salary_pay_day: int | None = None
+    pay_cycle: str = "monthly"
+    pay_method: str = "transfer"
 
 
 @router.get("/factories")
@@ -285,6 +328,53 @@ def create_salary_loan_order(
     db.add(o)
     db.commit()
     return ok(_order_out(o).dict())
+
+
+@router.post("/calculate")
+def calculate_salary_loan_quote(
+    payload: CalculateSalaryLoanRequest,
+    user: User = Depends(get_current_user_tma),
+    db: Session = Depends(get_db),
+):
+    ensure_profile_completed(user)
+
+    if payload.tenor_days not in (7, 14, 30):
+        raise ApiError(code="INVALID_TERM", message="期限不支持", status_code=400)
+
+    principal = float(payload.principal or 0)
+    if principal < 30 or principal > 5000:
+        raise ApiError(code="INVALID_AMOUNT", message="金额不支持", status_code=400)
+
+    try:
+        fid = uuid.UUID(payload.factory_id)
+    except Exception:
+        raise ApiError(code="INVALID_ID", message="参数不合法", status_code=400)
+
+    factory = db.query(SalaryFactory).filter(SalaryFactory.id == fid).first()
+    if not factory or not factory.is_active:
+        raise ApiError(code="NOT_FOUND", message="未找到工厂", status_code=404)
+
+    employment = SalaryEmployment(
+        user_id=user.id,
+        factory_id=fid,
+        join_date=_parse_ymd(payload.join_date),
+        salary_amount=payload.salary_amount,
+        salary_pay_day=payload.salary_pay_day,
+        pay_cycle=(payload.pay_cycle or "monthly").strip(),
+        pay_method=(payload.pay_method or "transfer").strip(),
+    )
+    risk_score, reasons = _risk_score(user, employment, factory)
+    pricing = _suggest_pricing(principal=principal, tenor_days=int(payload.tenor_days), risk_score=risk_score, factory=factory)
+    return ok(
+        {
+            "principal": principal,
+            "tenor_days": int(payload.tenor_days),
+            "risk_score": risk_score,
+            "reasons": reasons,
+            **pricing,
+            "note": "试算结果仅供参考，最终以审核通过后的费用为准",
+        }
+    )
 
 
 @router.get("/orders/{order_id}")

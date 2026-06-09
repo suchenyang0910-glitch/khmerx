@@ -15,6 +15,7 @@ from app.models.salary_factory import SalaryFactory
 from app.models.salary_loan_order import SalaryLoanOrder
 from app.models.salary_loan_repayment import (
     SalaryLoanCollectionCase,
+    SalaryLoanCollectionEvent,
     SalaryLoanLedgerEntry,
     SalaryLoanRepaymentProof,
     SalaryLoanRepaymentSchedule,
@@ -34,6 +35,29 @@ def _parse_uuid(v: str) -> uuid.UUID:
         return uuid.UUID(v)
     except Exception:
         raise ApiError(code="INVALID_ID", message="参数不合法", status_code=400)
+
+
+def _parse_dt(v: str | None) -> datetime | None:
+    raw = (v or "").strip()
+    if not raw:
+        return None
+    try:
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except Exception:
+        raise ApiError(code="INVALID_DATETIME", message="时间格式不合法", status_code=400)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
+
+
+def _parse_date(v: str | None) -> date | None:
+    raw = (v or "").strip()
+    if not raw:
+        return None
+    try:
+        return date.fromisoformat(raw)
+    except Exception:
+        raise ApiError(code="INVALID_DATE", message="日期格式不合法", status_code=400)
 
 
 def _post_ledger(db: Session, order_id: uuid.UUID, event_type: str, lines: list[tuple[str, float, float]], external_ref: str = ""):
@@ -473,6 +497,17 @@ class ReviewProofInput(BaseModel):
     note: str = ""
 
 
+class CollectionEventInput(BaseModel):
+    channel: str = "call"
+    result: str = ""
+    reason_code: str = ""
+    note: str = ""
+    ptp_date: str | None = None
+    ptp_amount: float = 0
+    next_follow_up_at: str | None = None
+    assignee: str = ""
+
+
 @router.post("/proofs/{proof_id}/review")
 def admin_review_proof(
     proof_id: str,
@@ -501,3 +536,173 @@ def admin_review_proof(
 
     db.commit()
     return {"id": str(p.id), "status": p.status}
+
+
+@router.get("/collections")
+def admin_list_collection_cases(
+    status: str | None = None,
+    stage: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+    _: AdminPrincipal = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    q = db.query(SalaryLoanCollectionCase)
+    if status:
+        q = q.filter(SalaryLoanCollectionCase.status == status)
+    if stage:
+        q = q.filter(SalaryLoanCollectionCase.stage == stage)
+    rows = (
+        q.order_by(SalaryLoanCollectionCase.dpd.desc(), SalaryLoanCollectionCase.updated_at.desc())
+        .offset(max(0, offset))
+        .limit(min(200, max(1, limit)))
+        .all()
+    )
+    items = []
+    for case in rows:
+        order = db.query(SalaryLoanOrder).filter(SalaryLoanOrder.id == case.order_id).first()
+        employment = db.query(SalaryEmployment).filter(SalaryEmployment.id == order.employment_id).first() if order else None
+        factory = db.query(SalaryFactory).filter(SalaryFactory.id == employment.factory_id).first() if employment else None
+        items.append(
+            {
+                "id": str(case.id),
+                "order_id": str(case.order_id),
+                "dpd": int(case.dpd),
+                "stage": case.stage,
+                "status": case.status,
+                "assignee": case.assignee,
+                "last_contact_at": case.last_contact_at.isoformat() if case.last_contact_at else None,
+                "next_follow_up_at": case.next_follow_up_at.isoformat() if case.next_follow_up_at else None,
+                "updated_at": case.updated_at.isoformat() if case.updated_at else None,
+                "principal": float(order.principal) if order else 0.0,
+                "total_due": (float(order.principal) + float(order.fee) + float(order.interest)) if order else 0.0,
+                "due_date": order.due_date.isoformat() if order and order.due_date else None,
+                "order_status": order.status if order else "",
+                "risk_score": order.risk_score if order else None,
+                "factory_name": factory.name if factory else "",
+                "factory_risk_level": factory.risk_level if factory else "",
+                "employee_no": employment.employee_no if employment else "",
+            }
+        )
+    return items
+
+
+@router.get("/collections/{case_id}")
+def admin_get_collection_case(case_id: str, _: AdminPrincipal = Depends(get_current_admin), db: Session = Depends(get_db)):
+    cid = _parse_uuid(case_id)
+    case = db.query(SalaryLoanCollectionCase).filter(SalaryLoanCollectionCase.id == cid).first()
+    if not case:
+        raise ApiError(code="NOT_FOUND", message="未找到催收案件", status_code=404)
+
+    order = db.query(SalaryLoanOrder).filter(SalaryLoanOrder.id == case.order_id).first()
+    employment = db.query(SalaryEmployment).filter(SalaryEmployment.id == order.employment_id).first() if order else None
+    factory = db.query(SalaryFactory).filter(SalaryFactory.id == employment.factory_id).first() if employment else None
+    events = (
+        db.query(SalaryLoanCollectionEvent)
+        .filter(SalaryLoanCollectionEvent.case_id == case.id)
+        .order_by(SalaryLoanCollectionEvent.created_at.desc())
+        .all()
+    )
+    return {
+        "case": {
+            "id": str(case.id),
+            "order_id": str(case.order_id),
+            "dpd": int(case.dpd),
+            "stage": case.stage,
+            "status": case.status,
+            "assignee": case.assignee,
+            "last_contact_at": case.last_contact_at.isoformat() if case.last_contact_at else None,
+            "next_follow_up_at": case.next_follow_up_at.isoformat() if case.next_follow_up_at else None,
+            "updated_at": case.updated_at.isoformat() if case.updated_at else None,
+        },
+        "order": (
+            {
+                "id": str(order.id),
+                "status": order.status,
+                "principal": float(order.principal),
+                "fee": float(order.fee),
+                "interest": float(order.interest),
+                "total_due": float(order.principal) + float(order.fee) + float(order.interest),
+                "disbursement_amount": float(order.disbursement_amount),
+                "due_date": order.due_date.isoformat() if order.due_date else None,
+                "risk_score": order.risk_score,
+            }
+            if order
+            else None
+        ),
+        "employment": (
+            {
+                "id": str(employment.id),
+                "employee_no": employment.employee_no,
+                "department": employment.department,
+                "position": employment.position,
+                "verify_status": employment.verify_status,
+                "salary_amount": float(employment.salary_amount) if employment.salary_amount is not None else None,
+            }
+            if employment
+            else None
+        ),
+        "factory": (
+            {
+                "id": str(factory.id),
+                "name": factory.name,
+                "location": factory.location,
+                "risk_level": factory.risk_level,
+                "hr_contact": factory.hr_contact,
+            }
+            if factory
+            else None
+        ),
+        "events": [
+            {
+                "id": str(event.id),
+                "channel": event.channel,
+                "result": event.result,
+                "reason_code": event.reason_code,
+                "note": event.note,
+                "ptp_date": event.ptp_date.isoformat() if event.ptp_date else None,
+                "ptp_amount": float(event.ptp_amount or 0),
+                "actor": event.actor,
+                "created_at": event.created_at.isoformat() if event.created_at else None,
+            }
+            for event in events
+        ],
+    }
+
+
+@router.post("/collections/{case_id}/events")
+def admin_create_collection_event(
+    case_id: str,
+    payload: CollectionEventInput,
+    admin: AdminPrincipal = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    cid = _parse_uuid(case_id)
+    case = db.query(SalaryLoanCollectionCase).filter(SalaryLoanCollectionCase.id == cid).first()
+    if not case:
+        raise ApiError(code="NOT_FOUND", message="未找到催收案件", status_code=404)
+
+    event = SalaryLoanCollectionEvent(
+        case_id=case.id,
+        channel=(payload.channel or "call")[:16],
+        result=(payload.result or "")[:32],
+        reason_code=(payload.reason_code or "")[:32],
+        note=(payload.note or "")[:512],
+        ptp_date=_parse_date(payload.ptp_date),
+        ptp_amount=max(0.0, float(payload.ptp_amount or 0)),
+        actor=admin.username,
+    )
+    db.add(event)
+    case.last_contact_at = _utcnow()
+    case.next_follow_up_at = _parse_dt(payload.next_follow_up_at)
+    if (payload.assignee or "").strip():
+        case.assignee = (payload.assignee or "").strip()[:64]
+    elif not case.assignee:
+        case.assignee = admin.username
+    db.commit()
+    return {
+        "id": str(event.id),
+        "case_id": str(case.id),
+        "status": case.status,
+        "assignee": case.assignee,
+    }

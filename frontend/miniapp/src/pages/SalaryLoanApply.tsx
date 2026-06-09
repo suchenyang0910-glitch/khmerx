@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom"
 import Card from "@/components/ui/Card"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
+import Modal from "@/components/ui/Modal"
 import { useI18n } from "@/i18n"
-import { createSalaryEmployment, createSalaryLoanOrder, fetchSalaryFactories } from "@/api/v1"
-import type { SalaryFactory } from "@/api/types"
+import { calculateSalaryLoanQuote, createSalaryEmployment, createSalaryLoanOrder, fetchSalaryFactories } from "@/api/v1"
+import type { SalaryFactory, SalaryLoanQuote } from "@/api/types"
 import { errorMessage } from "@/utils/errors"
 
 type PayCycle = "monthly" | "biweekly" | "daily"
@@ -29,6 +30,9 @@ export default function SalaryLoanApply() {
   const [payMethod, setPayMethod] = useState<PayMethod>("transfer")
   const [principal, setPrincipal] = useState<string>("80")
   const [tenorDays, setTenorDays] = useState<string>("14")
+  const [quote, setQuote] = useState<SalaryLoanQuote | null>(null)
+  const [quoteLoading, setQuoteLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -56,7 +60,41 @@ export default function SalaryLoanApply() {
     return f ? f.name : ""
   }, [factories, factoryId])
 
-  async function onSubmit() {
+  useEffect(() => {
+    let cancelled = false
+    async function run() {
+      const p = Number(principal)
+      const term = Number(tenorDays)
+      if (!factoryId || !Number.isFinite(p) || p < 30 || p > 5000 || ![7, 14, 30].includes(term)) {
+        setQuote(null)
+        return
+      }
+      setQuoteLoading(true)
+      try {
+        const data = await calculateSalaryLoanQuote({
+          factory_id: factoryId,
+          principal: p,
+          tenor_days: term,
+          join_date: joinDate || null,
+          salary_amount: salaryAmount ? Number(salaryAmount) : null,
+          salary_pay_day: salaryPayDay ? Number(salaryPayDay) : null,
+          pay_cycle: payCycle,
+          pay_method: payMethod,
+        })
+        if (!cancelled) setQuote(data)
+      } catch {
+        if (!cancelled) setQuote(null)
+      } finally {
+        if (!cancelled) setQuoteLoading(false)
+      }
+    }
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [factoryId, joinDate, payCycle, payMethod, principal, salaryAmount, salaryPayDay, tenorDays])
+
+  async function submitConfirmed() {
     setSubmitting(true)
     setErr(null)
     try {
@@ -81,6 +119,19 @@ export default function SalaryLoanApply() {
       setErr(errorMessage(e, t("common.requestFailed")))
     } finally {
       setSubmitting(false)
+    }
+  }
+
+  async function onSubmit() {
+    try {
+      const p = Number(principal)
+      const term = Number(tenorDays)
+      if (!Number.isFinite(p) || p <= 0) throw new Error(t("salary.apply.invalidAmount"))
+      if (![7, 14, 30].includes(term)) throw new Error(t("salary.apply.invalidTerm"))
+      if (!factoryId) throw new Error(t("salary.apply.factoryRequired"))
+      setConfirmOpen(true)
+    } catch (e: unknown) {
+      setErr(errorMessage(e, t("common.requestFailed")))
     }
   }
 
@@ -198,9 +249,47 @@ export default function SalaryLoanApply() {
                 </div>
               </div>
 
+              <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3">
+                <div className="text-sm font-semibold text-zinc-900">{t("salary.apply.previewTitle")}</div>
+                {quoteLoading ? (
+                  <div className="mt-2 text-sm text-zinc-500">{t("common.loading")}</div>
+                ) : quote ? (
+                  <>
+                    <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                      <div className="rounded-xl bg-white p-3">
+                        <div className="text-xs text-zinc-500">{t("salary.apply.previewFee")}</div>
+                        <div className="mt-1 font-semibold text-zinc-900">${quote.fee.toFixed(2)}</div>
+                      </div>
+                      <div className="rounded-xl bg-white p-3">
+                        <div className="text-xs text-zinc-500">{t("salary.apply.previewInterest")}</div>
+                        <div className="mt-1 font-semibold text-zinc-900">${quote.interest.toFixed(2)}</div>
+                      </div>
+                      <div className="rounded-xl bg-white p-3">
+                        <div className="text-xs text-zinc-500">{t("salary.apply.previewReceive")}</div>
+                        <div className="mt-1 font-semibold text-zinc-900">${quote.disbursement_amount.toFixed(2)}</div>
+                      </div>
+                      <div className="rounded-xl bg-white p-3">
+                        <div className="text-xs text-zinc-500">{t("salary.apply.previewTotalDue")}</div>
+                        <div className="mt-1 font-semibold text-zinc-900">${quote.total_due.toFixed(2)}</div>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-zinc-500">
+                      {t("salary.apply.previewSummary", {
+                        score: quote.risk_score,
+                        feeRate: `${(quote.fee_rate * 100).toFixed(1)}%`,
+                        interestRate: `${(quote.interest_rate * 100).toFixed(1)}%`,
+                      })}
+                    </div>
+                    <div className="mt-1 text-xs text-zinc-500">{quote.note}</div>
+                  </>
+                ) : (
+                  <div className="mt-2 text-sm text-zinc-500">{t("salary.apply.previewEmpty")}</div>
+                )}
+              </div>
+
               <Button
                 data-testid="salary-apply-submit"
-                disabled={submitting || !factoryId}
+                disabled={submitting || !factoryId || !quote}
                 onClick={onSubmit}
                 className="w-full"
               >
@@ -211,7 +300,52 @@ export default function SalaryLoanApply() {
           </Card>
         </>
       )}
+
+      <Modal open={confirmOpen} title={t("salary.apply.confirmTitle")} onClose={() => setConfirmOpen(false)}>
+        <div className="space-y-3">
+          <div className="rounded-2xl bg-zinc-50 p-3 text-sm text-zinc-700">
+            <div>{t("salary.apply.confirmFactory", { factory: factoryLabel || "-" })}</div>
+            <div className="mt-1">{t("salary.apply.confirmPrincipal", { amount: Number(principal || "0").toFixed(2) })}</div>
+            <div className="mt-1">{t("salary.apply.confirmTenor", { days: Number(tenorDays || "0") })}</div>
+          </div>
+          {quote ? (
+            <div className="rounded-2xl border border-zinc-200 p-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">{t("salary.apply.previewFee")}</span>
+                <span className="font-medium text-zinc-900">${quote.fee.toFixed(2)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-zinc-500">{t("salary.apply.previewInterest")}</span>
+                <span className="font-medium text-zinc-900">${quote.interest.toFixed(2)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-zinc-500">{t("salary.apply.previewReceive")}</span>
+                <span className="font-medium text-zinc-900">${quote.disbursement_amount.toFixed(2)}</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-zinc-500">{t("salary.apply.previewTotalDue")}</span>
+                <span className="font-semibold text-zinc-900">${quote.total_due.toFixed(2)}</span>
+              </div>
+            </div>
+          ) : null}
+          <div className="text-xs text-zinc-500">{t("salary.apply.confirmNote")}</div>
+          <div className="flex gap-2">
+            <Button variant="secondary" className="flex-1" onClick={() => setConfirmOpen(false)}>
+              {t("common.retry")}
+            </Button>
+            <Button
+              className="flex-1"
+              disabled={submitting}
+              onClick={() => {
+                setConfirmOpen(false)
+                void submitConfirmed()
+              }}
+            >
+              {submitting ? t("common.loading") : t("salary.apply.confirmSubmit")}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
-

@@ -20,6 +20,11 @@ export default function OrderDrawer(props: {
   onDisburse: () => void
   onReviewProof: (proofId: string, status: 'accepted' | 'rejected') => void
 }) {
+  const ledgerBalances = props.detail?.ledger.reduce<Record<string, number>>((acc, item) => {
+    acc[item.account] = (acc[item.account] || 0) + Number(item.dr_amount || 0) - Number(item.cr_amount || 0)
+    return acc
+  }, {})
+
   return (
     <Drawer
       open={props.open}
@@ -186,9 +191,85 @@ export default function OrderDrawer(props: {
               )}
             </div>
           </div>
+
+          <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold text-zinc-900">账本分录</div>
+              <div className="text-xs text-zinc-500">fee → interest → principal</div>
+            </div>
+            <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div className="rounded-xl bg-zinc-50 p-3 text-sm">
+                <div className="text-xs text-zinc-500">手续费应收余额</div>
+                <div className="mt-1 font-semibold text-zinc-900">${Number(ledgerBalances?.fee_receivable || 0).toFixed(2)}</div>
+              </div>
+              <div className="rounded-xl bg-zinc-50 p-3 text-sm">
+                <div className="text-xs text-zinc-500">利息应收余额</div>
+                <div className="mt-1 font-semibold text-zinc-900">${Number(ledgerBalances?.interest_receivable || 0).toFixed(2)}</div>
+              </div>
+              <div className="rounded-xl bg-zinc-50 p-3 text-sm">
+                <div className="text-xs text-zinc-500">本金应收余额</div>
+                <div className="mt-1 font-semibold text-zinc-900">${Number(ledgerBalances?.loan_receivable || 0).toFixed(2)}</div>
+              </div>
+            </div>
+            <div className="mt-3 overflow-hidden rounded-xl border border-zinc-200">
+              <div className="grid grid-cols-12 gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-600">
+                <div className="col-span-2">事件</div>
+                <div className="col-span-3">科目</div>
+                <div className="col-span-2">借</div>
+                <div className="col-span-2">贷</div>
+                <div className="col-span-3">参考号</div>
+              </div>
+              {props.detail.ledger.length === 0 ? (
+                <div className="p-3 text-sm text-zinc-500">暂无账本分录</div>
+              ) : (
+                props.detail.ledger.map((item) => (
+                  <div key={item.id} className="grid grid-cols-12 gap-2 border-b border-zinc-100 px-3 py-2 text-xs text-zinc-700">
+                    <div className="col-span-2">{item.event_type}</div>
+                    <div className="col-span-3">{item.account}</div>
+                    <div className="col-span-2">${Number(item.dr_amount).toFixed(2)}</div>
+                    <div className="col-span-2">${Number(item.cr_amount).toFixed(2)}</div>
+                    <div className="col-span-3 truncate">{item.external_ref || '-'}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+            <div className="text-sm font-semibold text-zinc-900">催收信息</div>
+            {props.detail.collection ? (
+              <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div className="text-xs text-zinc-500">DPD</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.dpd}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500">阶段</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.stage}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500">状态</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.status}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500">跟进人</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.assignee || '-'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500">最近联系</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.last_contact_at?.replace('T', ' ').slice(0, 16) || '-'}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500">下次跟进</div>
+                  <div className="font-medium text-zinc-900">{props.detail.collection.next_follow_up_at?.replace('T', ' ').slice(0, 16) || '-'}</div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-3 text-sm text-zinc-500">当前无催收案件</div>
+            )}
+          </div>
         </div>
       )}
     </Drawer>
   )
 }
-

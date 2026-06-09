@@ -1,4 +1,4 @@
-export type Tab = 'orders' | 'factories'
+export type Tab = 'orders' | 'factories' | 'collections'
 
 export type FactoryRow = {
   id: string
@@ -87,5 +87,95 @@ export type OrderDetail = {
     due_amount: number
     paid_amount: number
     status: string
+  }>
+  ledger: Array<{
+    id: string
+    event_type: string
+    account: string
+    dr_amount: number
+    cr_amount: number
+    external_ref: string
+    created_at: string | null
+  }>
+  collection: {
+    id: string
+    dpd: number
+    stage: string
+    status: string
+    assignee: string
+    last_contact_at: string | null
+    next_follow_up_at: string | null
+    updated_at: string | null
+  } | null
+}
+
+export type CollectionRow = {
+  id: string
+  order_id: string
+  dpd: number
+  stage: string
+  status: string
+  assignee: string
+  last_contact_at: string | null
+  next_follow_up_at: string | null
+  updated_at: string | null
+  principal: number
+  total_due: number
+  due_date: string | null
+  order_status: string
+  risk_score: number | null
+  factory_name: string
+  factory_risk_level: string
+  employee_no: string
+}
+
+export type CollectionDetail = {
+  case: {
+    id: string
+    order_id: string
+    dpd: number
+    stage: string
+    status: string
+    assignee: string
+    last_contact_at: string | null
+    next_follow_up_at: string | null
+    updated_at: string | null
+  }
+  order: {
+    id: string
+    status: string
+    principal: number
+    fee: number
+    interest: number
+    total_due: number
+    disbursement_amount: number
+    due_date: string | null
+    risk_score: number | null
+  } | null
+  employment: {
+    id: string
+    employee_no: string
+    department: string
+    position: string
+    verify_status: string
+    salary_amount: number | null
+  } | null
+  factory: {
+    id: string
+    name: string
+    location: string
+    risk_level: string
+    hr_contact: string
+  } | null
+  events: Array<{
+    id: string
+    channel: string
+    result: string
+    reason_code: string
+    note: string
+    ptp_date: string | null
+    ptp_amount: number
+    actor: string
+    created_at: string | null
   }>
 }

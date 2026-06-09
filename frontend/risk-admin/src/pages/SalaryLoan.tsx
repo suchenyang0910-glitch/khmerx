@@ -2,9 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getErrorMessage, requestJson } from '@/api/http'
 import OrdersPanel from '@/components/salaryLoan/OrdersPanel'
 import FactoriesPanel from '@/components/salaryLoan/FactoriesPanel'
+import CollectionPanel from '@/components/salaryLoan/CollectionPanel'
+import CollectionDrawer from '@/components/salaryLoan/CollectionDrawer'
 import Drawer from '@/components/Drawer'
 import OrderDrawer from '@/components/salaryLoan/OrderDrawer'
-import type { FactoryRow, OrderDetail, OrderRow, Tab } from '@/components/salaryLoan/types'
+import type { CollectionDetail, CollectionRow, FactoryRow, OrderDetail, OrderRow, Tab } from '@/components/salaryLoan/types'
 
 export default function SalaryLoan() {
   const [tab, setTab] = useState<Tab>('orders')
@@ -20,6 +22,20 @@ export default function SalaryLoan() {
   const [drawerLoading, setDrawerLoading] = useState(false)
   const [drawerError, setDrawerError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const [collectionRows, setCollectionRows] = useState<CollectionRow[]>([])
+  const [collectionStage, setCollectionStage] = useState<string>('')
+  const [collectionStatus, setCollectionStatus] = useState<string>('open')
+  const [selectedCollection, setSelectedCollection] = useState<CollectionRow | null>(null)
+  const [collectionDetail, setCollectionDetail] = useState<CollectionDetail | null>(null)
+  const [collectionLoading, setCollectionLoading] = useState(false)
+  const [collectionError, setCollectionError] = useState<string | null>(null)
+  const [followChannel, setFollowChannel] = useState('call')
+  const [followResult, setFollowResult] = useState('')
+  const [followReasonCode, setFollowReasonCode] = useState('')
+  const [followNote, setFollowNote] = useState('')
+  const [followPtpDate, setFollowPtpDate] = useState('')
+  const [followPtpAmount, setFollowPtpAmount] = useState('')
+  const [nextFollowUpAt, setNextFollowUpAt] = useState('')
 
   const [fee, setFee] = useState<string>('0')
   const [interest, setInterest] = useState<string>('0')
@@ -42,6 +58,7 @@ export default function SalaryLoan() {
     () => [
       { key: 'orders' as const, label: '订单审核' },
       { key: 'factories' as const, label: '工厂库' },
+      { key: 'collections' as const, label: '催收工作台' },
     ],
     [],
   )
@@ -76,10 +93,29 @@ export default function SalaryLoan() {
     }
   }, [])
 
+  const loadCollections = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const qs = new URLSearchParams()
+      if (collectionStage) qs.set('stage', collectionStage)
+      if (collectionStatus) qs.set('status', collectionStatus)
+      qs.set('limit', '100')
+      qs.set('offset', '0')
+      const rows = await requestJson<CollectionRow[]>(`/api/admin/salary-loan/collections?${qs.toString()}`)
+      setCollectionRows(rows)
+    } catch (e: unknown) {
+      setError(getErrorMessage(e))
+    } finally {
+      setLoading(false)
+    }
+  }, [collectionStage, collectionStatus])
+
   useEffect(() => {
     if (tab === 'orders') void loadOrders()
     if (tab === 'factories') void loadFactories()
-  }, [loadFactories, loadOrders, tab])
+    if (tab === 'collections') void loadCollections()
+  }, [loadCollections, loadFactories, loadOrders, tab])
 
   async function openOrder(o: OrderRow) {
     setSelected(o)
@@ -241,6 +277,55 @@ export default function SalaryLoan() {
     }
   }
 
+  async function openCollection(row: CollectionRow) {
+    setSelectedCollection(row)
+    setCollectionDetail(null)
+    setCollectionLoading(true)
+    setCollectionError(null)
+    setFollowChannel('call')
+    setFollowResult('')
+    setFollowReasonCode('')
+    setFollowNote('')
+    setFollowPtpDate('')
+    setFollowPtpAmount('')
+    setNextFollowUpAt('')
+    try {
+      const data = await requestJson<CollectionDetail>(`/api/admin/salary-loan/collections/${row.id}`)
+      setCollectionDetail(data)
+    } catch (e: unknown) {
+      setCollectionError(getErrorMessage(e))
+    } finally {
+      setCollectionLoading(false)
+    }
+  }
+
+  async function createCollectionEvent() {
+    if (!selectedCollection) return
+    setActionLoading(true)
+    setCollectionError(null)
+    try {
+      const nextFollowUpAtIso = nextFollowUpAt ? new Date(nextFollowUpAt).toISOString() : null
+      await requestJson(`/api/admin/salary-loan/collections/${selectedCollection.id}/events`, {
+        method: 'POST',
+        body: JSON.stringify({
+          channel: followChannel,
+          result: followResult,
+          reason_code: followReasonCode,
+          note: followNote,
+          ptp_date: followPtpDate || null,
+          ptp_amount: Number(followPtpAmount || '0'),
+          next_follow_up_at: nextFollowUpAtIso,
+        }),
+      })
+      await loadCollections()
+      await openCollection(selectedCollection)
+    } catch (e: unknown) {
+      setCollectionError(getErrorMessage(e))
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -274,7 +359,7 @@ export default function SalaryLoan() {
           onRefresh={() => void loadOrders()}
           onOpen={(o) => void openOrder(o)}
         />
-      ) : (
+      ) : tab === 'factories' ? (
         <FactoriesPanel
           loading={loading}
           factories={factories}
@@ -301,6 +386,17 @@ export default function SalaryLoan() {
             setSelectedFactory(f)
             setEditFactory({ ...f })
           }}
+        />
+      ) : (
+        <CollectionPanel
+          stage={collectionStage}
+          setStage={setCollectionStage}
+          status={collectionStatus}
+          setStatus={setCollectionStatus}
+          loading={loading}
+          rows={collectionRows}
+          onRefresh={() => void loadCollections()}
+          onOpen={(row) => void openCollection(row)}
         />
       )}
 
@@ -462,6 +558,35 @@ export default function SalaryLoan() {
         onDecide={(d) => void decide(d)}
         onDisburse={() => void disburse()}
         onReviewProof={(id, s) => void reviewProof(id, s)}
+      />
+
+      <CollectionDrawer
+        open={!!selectedCollection}
+        selected={selectedCollection}
+        detail={collectionDetail}
+        loading={collectionLoading}
+        error={collectionError}
+        actionLoading={actionLoading}
+        followChannel={followChannel}
+        setFollowChannel={setFollowChannel}
+        followResult={followResult}
+        setFollowResult={setFollowResult}
+        followReasonCode={followReasonCode}
+        setFollowReasonCode={setFollowReasonCode}
+        followNote={followNote}
+        setFollowNote={setFollowNote}
+        followPtpDate={followPtpDate}
+        setFollowPtpDate={setFollowPtpDate}
+        followPtpAmount={followPtpAmount}
+        setFollowPtpAmount={setFollowPtpAmount}
+        nextFollowUpAt={nextFollowUpAt}
+        setNextFollowUpAt={setNextFollowUpAt}
+        onClose={() => {
+          setSelectedCollection(null)
+          setCollectionDetail(null)
+          setCollectionError(null)
+        }}
+        onCreateEvent={() => void createCollectionEvent()}
       />
     </div>
   )
