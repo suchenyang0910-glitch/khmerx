@@ -4,7 +4,9 @@ import logging
 import hashlib
 import hmac
 import json
+import os
 import time
+import urllib.request
 from urllib.parse import urlencode
 from typing import Optional
 from datetime import datetime
@@ -25,6 +27,34 @@ from app.services.otp import request_phone_otp, verify_phone_otp
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def _debug_emit(hypothesis_id: str, location: str, msg: str, data: dict | None = None, trace_id: str = "") -> None:
+    _url = "http://127.0.0.1:7777/event"
+    _session = "telegram-login-500"
+    _env_path = os.path.join(".dbg", "telegram-login-500.env")
+    try:
+        with open(_env_path, "r", encoding="utf-8") as _f:
+            for _line in _f:
+                if _line.startswith("DEBUG_SERVER_URL="):
+                    _url = _line.split("=", 1)[1].strip() or _url
+                elif _line.startswith("DEBUG_SESSION_ID="):
+                    _session = _line.split("=", 1)[1].strip() or _session
+    except Exception:
+        pass
+    try:
+        _payload = json.dumps({
+            "sessionId": _session,
+            "runId": "pre-fix",
+            "hypothesisId": hypothesis_id,
+            "location": location,
+            "msg": msg,
+            "data": data or {},
+            "traceId": trace_id,
+        }).encode()
+        urllib.request.urlopen(urllib.request.Request(_url, data=_payload, headers={"Content-Type": "application/json"}), timeout=0.8).read()
+    except Exception:
+        pass
 
 
 @router.get("/dev-tma")
@@ -125,17 +155,75 @@ async def telegram_login(
     db: Session = Depends(get_db),
 ):
     """TG Mini App 登录 — 验证 initData 签名并登录/注册"""
+    trace_id = str(uuid.uuid4())
+    # #region debug-point D:route-entry
+    _debug_emit(
+        "D",
+        "app/routes/auth.py:telegram_login:entry",
+        "[DEBUG] telegram-login route entry",
+        {
+            "has_init_data": bool((req.init_data or "").strip()),
+            "init_data_len": len((req.init_data or "").strip()),
+            "origin": request.headers.get("origin", ""),
+            "user_agent": request.headers.get("user-agent", "")[:160],
+        },
+        trace_id,
+    )
+    # #endregion
     tokens = []
     try:
         tokens = get_active_bot_tokens(db)
+        # #region debug-point B:token-fetch-ok
+        _debug_emit(
+            "B",
+            "app/routes/auth.py:telegram_login:token_fetch_ok",
+            "[DEBUG] active bot tokens loaded",
+            {
+                "token_count": len(tokens),
+                "env_token_count": len([t for t in BOT_TOKENS if t]),
+            },
+            trace_id,
+        )
+        # #endregion
     except Exception:
+        # #region debug-point C:token-fetch-error
+        _debug_emit(
+            "C",
+            "app/routes/auth.py:telegram_login:token_fetch_error",
+            "[DEBUG] active bot token lookup failed",
+            {"error_type": "get_active_bot_tokens_exception"},
+            trace_id,
+        )
+        # #endregion
         tokens = []
 
     for t in BOT_TOKENS:
         if t and t not in tokens:
             tokens.append(t)
 
+    # #region debug-point A:verify-start
+    _debug_emit(
+        "A",
+        "app/routes/auth.py:telegram_login:verify_start",
+        "[DEBUG] telegram init data verify start",
+        {"merged_token_count": len(tokens)},
+        trace_id,
+    )
+    # #endregion
     tg_user = verify_telegram_init_data(req.init_data, tokens)
+    # #region debug-point A:verify-result
+    _debug_emit(
+        "A",
+        "app/routes/auth.py:telegram_login:verify_result",
+        "[DEBUG] telegram init data verify result",
+        {
+            "verified": bool(tg_user),
+            "has_tg_id": bool((tg_user or {}).get("id")) if isinstance(tg_user, dict) else False,
+            "keys": sorted(list((tg_user or {}).keys()))[:12] if isinstance(tg_user, dict) else [],
+        },
+        trace_id,
+    )
+    # #endregion
     if not tg_user:
         raw = (req.init_data or "").strip()
         if ("hash=" not in raw) and ("%3D" in raw or "%26" in raw):
@@ -144,7 +232,35 @@ async def telegram_login(
             raise HTTPException(status_code=401, detail="Invalid Telegram init data (missing hash; open via Telegram WebApp)")
         raise HTTPException(status_code=401, detail="Invalid Telegram init data (hash mismatch; check BOT_TOKEN)")
 
-    user = login_or_register(db, tg_user)
+    try:
+        user = login_or_register(db, tg_user)
+        # #region debug-point E:login-register-ok
+        _debug_emit(
+            "E",
+            "app/routes/auth.py:telegram_login:login_register_ok",
+            "[DEBUG] login_or_register completed",
+            {
+                "user_id": str(getattr(user, "id", "")),
+                "tg_id": getattr(user, "tg_id", None),
+            },
+            trace_id,
+        )
+        # #endregion
+    except Exception as exc:
+        # #region debug-point E:login-register-error
+        _debug_emit(
+            "E",
+            "app/routes/auth.py:telegram_login:login_register_error",
+            "[DEBUG] login_or_register raised exception",
+            {
+                "error_type": type(exc).__name__,
+                "error_text": str(exc)[:300],
+                "has_tg_id": bool((tg_user or {}).get("id")) if isinstance(tg_user, dict) else False,
+            },
+            trace_id,
+        )
+        # #endregion
+        raise
     lang = getattr(request.state, "lang", "km")
     return localize_auth({
         "id": str(user.id),
